@@ -1,0 +1,7 @@
+{
+	"login.form.email":"Email Address",
+	"login.form.password":"Password",
+	"login.form.submit":"Log In",
+	"login.form.required":"Required",
+	"login.form.invalid-pattern":"Invalid pattern"
+}
