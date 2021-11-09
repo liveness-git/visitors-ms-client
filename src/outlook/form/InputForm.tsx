@@ -45,7 +45,7 @@ export function InputForm() {
   const classes = useStyles();
 
   // データ取得
-  const [{ data, isLoading }, reload] = useLoadData<VisitorInfoPersonal>('http://localhost:3000/test/testdata4.json', undefined);
+  const [{ data, isLoading }, reload] = useLoadData<VisitorInfoPersonal>('/test/testdata4.json', undefined);
 
   // 入力フォームの登録
   const {

@@ -42,10 +42,10 @@ export function VisitList() {
             </TabList>
           </AppBar>
           <TabPanel value="1">
-            <DataTable currentDate={selectedDate!} url="http://localhost:3000/test/testdata1.json" />
+            <DataTable currentDate={selectedDate!} url="/test/testdata1.json" />
           </TabPanel>
           <TabPanel value="2">
-            <DataTable currentDate={selectedDate!} url="http://localhost:3000/test/testdata3.json" />
+            <DataTable currentDate={selectedDate!} url="/test/testdata3.json" />
           </TabPanel>
         </TabContext>
       </Paper>
