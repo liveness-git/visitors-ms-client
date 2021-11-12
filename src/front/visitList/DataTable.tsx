@@ -34,7 +34,8 @@ export type Columns = {
   title: string;
   field: string;
   type?: string;
-  hidden?: boolean;
+  hidden?: boolean; // テーブルに表示するか否か
+  sort: number; // ダイアログの表に表示する順番
 };
 
 export type RowData = VisitorInfoMs & VisitorInfoPersonal & VisitorInfoFront;
@@ -67,26 +68,26 @@ export function DataTable(props: DataTableProps) {
   // ダイアログを閉じる
   const handleDialogClose = async () => {
     if (isSubmited) {
-      reload();
+      await reload();
       setSubmited(false);
     }
     setDialogOpen(false);
   };
 
   const columns: Columns[] = [
-    { title: t('visittable.header.appt-time'), field: 'apptTime' },
-    { title: t('visittable.header.room-name'), field: 'roomName' },
-    { title: t('visittable.header.visit-company'), field: 'visitCompany' },
-    { title: t('visittable.header.visitor-name'), field: 'visitorName', hidden: true },
-    { title: t('visittable.header.tea-supply'), field: 'teaSupply', hidden: true },
-    { title: t('visittable.header.number-of-visitor'), field: 'numberOfVisitor', hidden: true },
-    { title: t('visittable.header.number-of-employee'), field: 'numberOfEmployee', hidden: true },
-    { title: t('visittable.header.comment'), field: 'comment', hidden: true },
-    { title: t('visittable.header.reservation-name'), field: 'reservationName' },
-    { title: t('visittable.header.contact-addr'), field: 'contactAddr' },
-    { title: t('visittable.header.check-in'), field: 'checkIn', type: 'boolean' },
-    { title: t('visittable.header.check-out'), field: 'checkOut', type: 'boolean' },
-    { title: t('visittable.header.visitor-card-number'), field: 'visitorCardNumber', hidden: true },
+    { title: t('visittable.header.appt-time'), field: 'apptTime', sort: 1 },
+    { title: t('visittable.header.room-name'), field: 'roomName', sort: 4 },
+    { title: t('visittable.header.visit-company'), field: 'visitCompany', sort: 5 },
+    { title: t('visittable.header.visitor-name'), field: 'visitorName', hidden: true, sort: 6 },
+    { title: t('visittable.header.tea-supply'), field: 'teaSupply', hidden: true, sort: 7 },
+    { title: t('visittable.header.number-of-visitor'), field: 'numberOfVisitor', hidden: true, sort: 8 },
+    { title: t('visittable.header.number-of-employee'), field: 'numberOfEmployee', hidden: true, sort: 9 },
+    { title: t('visittable.header.comment'), field: 'comment', hidden: true, sort: 10 },
+    { title: t('visittable.header.reservation-name'), field: 'reservationName', sort: 11 },
+    { title: t('visittable.header.contact-addr'), field: 'contactAddr', sort: 12 },
+    { title: t('visittable.header.check-in'), field: 'checkIn', type: 'boolean', sort: 2 },
+    { title: t('visittable.header.check-out'), field: 'checkOut', type: 'boolean', sort: 3 },
+    { title: t('visittable.header.visitor-card-number'), field: 'visitorCardNumber', hidden: true, sort: 13 },
   ];
 
   // データ取得失敗した場合

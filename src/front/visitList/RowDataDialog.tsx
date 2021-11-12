@@ -112,13 +112,17 @@ export function RowDataDialog(props: RowDataDialogProps) {
 
   // データ送信submit
   const onSubmit = async (formData: Inputs) => {
-    let result = await fetchPostData('/test/testdata2.json', formData); // TODO: urlの変更
-    if (result!.success) {
-      setSubmited(true);
-      onClose();
-      snackberContext.dispatch({ type: 'success', message: t('common.msg.update-success') });
-    } else {
-      snackberContext.dispatch({ type: 'error', message: t('common.msg.update-failed') });
+    try {
+      let result = await fetchPostData('/test/testdata2.json', formData); // TODO: urlの変更
+      if (result!.success) {
+        setSubmited(true);
+        onClose();
+        snackberContext.dispatch({ type: 'success', message: t('common.msg.update-success') });
+      } else {
+        snackberContext.dispatch({ type: 'error', message: t('common.msg.update-failed') });
+      }
+    } catch (error) {
+      snackberContext.dispatch({ type: 'error', message: (error as Error).message });
     }
   };
 
@@ -141,17 +145,21 @@ export function RowDataDialog(props: RowDataDialogProps) {
     }
   };
 
-  const listItems = columns.map((column) => {
-    let field = column.field;
-    let title = column.title;
-    let value = data[field as keyof RowData];
-    return (
-      <li key={field} className={classes.list}>
-        <div className={classes.title}>{title}</div>
-        <div className={classes.field}>{setField(field, value)}</div>
-      </li>
-    );
-  });
+  const listItems = columns
+    .sort(function (a, b) {
+      return a.sort - b.sort;
+    })
+    .map((column) => {
+      let field = column.field;
+      let title = column.title;
+      let value = data[field as keyof RowData];
+      return (
+        <li key={field} className={classes.list}>
+          <div className={classes.title}>{title}</div>
+          <div className={classes.field}>{setField(field, value)}</div>
+        </li>
+      );
+    });
 
   return (
     <>
@@ -162,10 +170,10 @@ export function RowDataDialog(props: RowDataDialogProps) {
           <Box p={2}>
             <form>
               <div className={classes.checkAction}>
-                <Button onClick={handleCheckIn} variant="contained" color="secondary" disabled={!!data.checkOut || isSubmitting}>
+                <Button onClick={handleCheckIn} variant="contained" color="secondary" disabled={!!data.checkOut}>
                   {t('visitdialog.button.check-in')}
                 </Button>
-                <Button onClick={handleCheckOut} variant="contained" color="secondary" disabled={!data.checkIn || isSubmitting}>
+                <Button onClick={handleCheckOut} variant="contained" color="secondary" disabled={!data.checkIn}>
                   {t('visitdialog.button.check-out')}
                 </Button>
               </div>
@@ -182,9 +190,8 @@ export function RowDataDialog(props: RowDataDialogProps) {
                   // placeholder={t('visitdialog.form.visitor-card-number-placeholder')}
                   autoFocus
                   {...register('visitorCardNumber', {
-                    required: t('common.form.required') as string,
+                    // required: t('common.form.required') as string,
                   })}
-                  disabled={isSubmitting}
                   error={!!errors.visitorCardNumber}
                   helperText={errors.visitorCardNumber && errors.visitorCardNumber.message}
                 />

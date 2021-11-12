@@ -95,12 +95,16 @@ export function InputForm() {
 
   // データ送信submit
   const onSubmit = async (formData: Inputs) => {
-    let result = await fetchPostData('/test/testdata2.json', formData); // TODO: urlの変更
-    if (result!.success) {
-      await reload();
-      snackberContext.dispatch({ type: 'success', message: t('common.msg.update-success') });
-    } else {
-      snackberContext.dispatch({ type: 'error', message: t('common.msg.update-failed') });
+    try {
+      let result = await fetchPostData('/test/testdata2.json', formData); // TODO: urlの変更
+      if (result!.success) {
+        await reload();
+        snackberContext.dispatch({ type: 'success', message: t('common.msg.update-success') });
+      } else {
+        snackberContext.dispatch({ type: 'error', message: t('common.msg.update-failed') });
+      }
+    } catch (error) {
+      snackberContext.dispatch({ type: 'error', message: (error as Error).message });
     }
   };
 
