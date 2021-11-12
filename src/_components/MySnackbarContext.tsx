@@ -17,12 +17,13 @@ type MySnackberProviderProps = {
 export function MySnackberProvider(props: MySnackberProviderProps) {
   const { children } = props;
 
-  // スナックバーの状態管理
+  // スナックバーの初期値
   const initialState: MySnackberState = {
     severity: 'info',
     message: '',
-    open: true,
+    open: false,
   };
+  // スナックバーの状態管理
   const [state, dispatch] = useReducer(mySnackberReducer, initialState);
 
   const handleClose = (_event?: React.SyntheticEvent, reason?: string) => {

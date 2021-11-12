@@ -17,8 +17,8 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 
 import { Copyright } from '../_components/Copyright';
-import MyCalendar from '../_components/utils/MyCalendar';
-import { MySnackberProvider } from '../_components/utils/MySnackbarContext';
+import MyCalendar from '../_components/MyCalendar';
+import { MySnackberProvider } from '../_components/MySnackbarContext';
 
 // import { useTranslation } from 'react-i18next';
 

@@ -3,7 +3,7 @@ import { createStyles, makeStyles, ThemeProvider } from '@material-ui/core/style
 
 import { outlookTheme } from '../_styles/OutlookTheme';
 import { Copyright } from '_components/Copyright';
-import { MySnackberProvider } from '_components/utils/MySnackbarContext';
+import { MySnackberProvider } from '_components/MySnackbarContext';
 
 const useStyles = makeStyles(() =>
   createStyles({

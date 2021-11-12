@@ -1,20 +1,10 @@
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert, { AlertProps } from '@material-ui/lab/Alert';
-import { makeStyles, Theme } from '@material-ui/core/styles';
 import { Color } from '@material-ui/lab';
 
 function Alert(props: AlertProps) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
 }
-
-const useStyles = makeStyles((theme: Theme) => ({
-  root: {
-    width: '100%',
-    '& > * + *': {
-      marginTop: theme.spacing(2),
-    },
-  },
-}));
 
 export type MySnackberState = {
   severity: Color;
@@ -52,15 +42,11 @@ export const mySnackberReducer = (state: MySnackberState, action: MySnackberActi
 export default function MySnackbar(props: MySnackberProps) {
   const { severity, message, open, onClose } = props;
 
-  const classes = useStyles();
-
   return (
-    <div className={classes.root}>
-      <Snackbar open={open} autoHideDuration={1500} onClose={onClose} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
-        <Alert onClose={onClose} severity={severity}>
-          {message}
-        </Alert>
-      </Snackbar>
-    </div>
+    <Snackbar open={open} autoHideDuration={1500} onClose={onClose} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
+      <Alert onClose={onClose} severity={severity}>
+        {message}
+      </Alert>
+    </Snackbar>
   );
 }

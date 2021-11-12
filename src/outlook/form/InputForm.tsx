@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useContext } from 'react';
 
 import { TextField, Button, Grid, Switch, FormControlLabel } from '@material-ui/core';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
@@ -8,11 +8,12 @@ import SaveIcon from '@material-ui/icons/Save';
 import { useForm, Controller } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 
-import { post, get, HttpResponse, PostDataResult } from '_components/utils/Http';
-import { useLoadData } from '_components/utils/useLoadData';
-import { Spinner } from '_components/utils/Spinner';
+import { useLoadData } from '_utils/useLoadData';
+import { fetchPostData } from '_utils/FetchPostData';
+import { MySnackberContext } from '_components/MySnackbarContext';
+import { Spinner } from '_components/Spinner';
 
-import { VisitorInfoPersonal } from '_components/VisitorInfo';
+import { VisitorInfoPersonal } from '_models/VisitorInfo';
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -44,8 +45,10 @@ export function InputForm() {
   const { t } = useTranslation();
   const classes = useStyles();
 
+  const snackberContext = useContext(MySnackberContext); // スナックバー取得用
+
   // データ取得
-  const [{ data, isLoading }, reload] = useLoadData<VisitorInfoPersonal>('/test/testdata4.json', undefined);
+  const [{ data, isLoading, isError }, reload] = useLoadData<VisitorInfoPersonal>('/test/testdata4.json', undefined);
 
   // 入力フォームの登録
   const {
@@ -53,7 +56,7 @@ export function InputForm() {
     handleSubmit,
     reset,
     setValue,
-    formState: { errors },
+    formState: { errors, isDirty, isSubmitting },
   } = useForm<Inputs>({ defaultValues });
 
   // 入力フォームの初期化
@@ -74,8 +77,7 @@ export function InputForm() {
     } else {
       reset(defaultValues);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data]);
+  }, [data, reset]);
 
   // 保存アクション
   const handleSave = () => {
@@ -93,30 +95,24 @@ export function InputForm() {
 
   // データ送信submit
   const onSubmit = async (formData: Inputs) => {
-    let response: HttpResponse<PostDataResult<Inputs>>;
-    try {
-      // TODO: get→postへの切り替え＋urlの変更
-      // response = await post<postDataResult<Inputs>>('http://localhost:3000/', formData);
-      response = await get<PostDataResult<Inputs>>('http://localhost:3000/test/testdata2.json');
-      console.log('formData', formData);
-      console.log('response', response);
-
-      const result = response.parsedBody;
-      if (result!.success) {
-        console.log('Success');
-        reload();
-      } else {
-        console.log('Failed'); //TODO: alert化
-      }
-    } catch (error) {
-      console.log('Error', error); //TODO: alert化
+    let result = await fetchPostData('/test/testdata2.json', formData); // TODO: urlの変更
+    if (result!.success) {
+      await reload();
+      snackberContext.dispatch({ type: 'success', message: t('common.msg.update-success') });
+    } else {
+      snackberContext.dispatch({ type: 'error', message: t('common.msg.update-failed') });
     }
   };
 
+  // データ取得失敗した場合
+  if (isError) {
+    return <div>{t('common.msg.fetch-failed')}</div>;
+  }
+
   return (
     <>
-      <Spinner open={isLoading} />
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <Spinner open={isLoading || isSubmitting} />
+      <form>
         <Controller
           name="visitCompany"
           control={control}
@@ -242,12 +238,12 @@ export function InputForm() {
 
         <Grid container justifyContent="space-between" spacing={2} className={classes.formAction}>
           <Grid item xs={6} sm={4}>
-            <Button onClick={handleSave} variant="contained" color="primary" startIcon={<SaveIcon />} fullWidth>
+            <Button onClick={handleSave} variant="contained" color="primary" disabled={!isDirty} startIcon={<SaveIcon />} fullWidth>
               {t('visitorinfoform.form.save')}
             </Button>
           </Grid>
           <Grid item xs={6} sm={4}>
-            <Button onClick={handleDelete} variant="contained" color="primary" startIcon={<DeleteIcon />} fullWidth>
+            <Button onClick={handleDelete} variant="contained" color="primary" disabled={!data} startIcon={<DeleteIcon />} fullWidth>
               {t('visitorinfoform.form.delete')}
             </Button>
           </Grid>

@@ -5,11 +5,11 @@ import { createTheme, ThemeProvider } from '@material-ui/core/styles';
 import { grey, purple } from '@material-ui/core/colors';
 
 import MaterialTable, { Column } from '@material-table/core';
-import { tableIcons } from '_components/utils/MaterialTableIcons';
+import { tableIcons } from '_utils/MaterialTableIcons';
 
-import { VisitorInfoMs, VisitorInfoPersonal, VisitorInfoFront } from '_components/VisitorInfo';
-import { useLoadData } from '_components/utils/useLoadData';
-import { Spinner } from '_components/utils/Spinner';
+import { VisitorInfoMs, VisitorInfoPersonal, VisitorInfoFront } from '_models/VisitorInfo';
+import { useLoadData } from '_utils/useLoadData';
+import { Spinner } from '_components/Spinner';
 
 import { RowDataDialog } from './RowDataDialog';
 
@@ -50,7 +50,7 @@ export function DataTable(props: DataTableProps) {
   const { t } = useTranslation();
 
   // データ取得
-  const [{ data, isLoading }, reload] = useLoadData<RowData[]>(url, []);
+  const [{ data, isLoading, isError }, reload] = useLoadData<RowData[]>(url, []);
 
   // ダイアログの状態
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -65,7 +65,7 @@ export function DataTable(props: DataTableProps) {
     setCurrentRow(selectedRow);
   };
   // ダイアログを閉じる
-  const handleDialogClose = () => {
+  const handleDialogClose = async () => {
     if (isSubmited) {
       reload();
       setSubmited(false);
@@ -88,6 +88,11 @@ export function DataTable(props: DataTableProps) {
     { title: t('visittable.header.check-out'), field: 'checkOut', type: 'boolean' },
     { title: t('visittable.header.visitor-card-number'), field: 'visitorCardNumber', hidden: true },
   ];
+
+  // データ取得失敗した場合
+  if (isError) {
+    return <div>{t('common.msg.fetch-failed')}</div>;
+  }
 
   return (
     <ThemeProvider theme={tableTheme}>

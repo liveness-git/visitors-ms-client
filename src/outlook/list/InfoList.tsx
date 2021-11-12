@@ -1,9 +1,11 @@
+import { useTranslation } from 'react-i18next';
+
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import { List, ListItem, ListItemText, ListSubheader } from '@material-ui/core';
 
-import { VisitorInfoMs, VisitorInfoPersonal, VisitorInfoFront } from '_components/VisitorInfo';
-import { useLoadData } from '_components/utils/useLoadData';
-import { Spinner } from '_components/utils/Spinner';
+import { VisitorInfoMs, VisitorInfoPersonal, VisitorInfoFront } from '_models/VisitorInfo';
+import { useLoadData } from '_utils/useLoadData';
+import { Spinner } from '_components/Spinner';
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -34,9 +36,15 @@ type RowData = {
 
 export function InfoList() {
   const classes = useStyles();
+  const { t } = useTranslation();
 
   // データ取得
-  const [{ data, isLoading }] = useLoadData<RowData[]>('http://localhost:3000/test/testdata5.json', []);
+  const [{ data, isLoading, isError }] = useLoadData<RowData[]>('/test/testdata5.json', []);
+
+  // データ取得失敗した場合
+  if (isError) {
+    return <div>{t('common.msg.fetch-failed')}</div>;
+  }
 
   return (
     <>

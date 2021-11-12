@@ -13,9 +13,10 @@ import { Box, List, TextField } from '@material-ui/core';
 import { format } from 'date-fns';
 import { MuiPickersContext } from '@material-ui/pickers/MuiPickersUtilsProvider';
 
-import { VisitorInfoFront } from '_components/VisitorInfo';
-import { post, get, HttpResponse, PostDataResult } from '_components/utils/Http';
-import { MySnackberContext } from '_components/utils/MySnackbarContext';
+import { VisitorInfoFront } from '_models/VisitorInfo';
+import { fetchPostData } from '_utils/FetchPostData';
+import { MySnackberContext } from '_components/MySnackbarContext';
+import { Spinner } from '_components/Spinner';
 
 import { RowData, Columns } from './DataTable';
 
@@ -71,10 +72,8 @@ export function RowDataDialog(props: RowDataDialogProps) {
 
   const { t } = useTranslation();
   const classes = useStyles();
-
   const muiPickContext = useContext(MuiPickersContext); // locale取得用
-
-  const snackberContext = useContext(MySnackberContext);
+  const snackberContext = useContext(MySnackberContext); // スナックバー取得用
 
   // 入力フォームの登録
   const {
@@ -96,8 +95,7 @@ export function RowDataDialog(props: RowDataDialogProps) {
     } else {
       reset();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open]);
+  }, [data.checkIn, data.checkOut, data.visitorCardNumber, open, reset]);
 
   const timestamp = () => format(new Date(), 'yyyy/MM/dd hh:mm:ss', { locale: muiPickContext?.locale });
 
@@ -114,24 +112,13 @@ export function RowDataDialog(props: RowDataDialogProps) {
 
   // データ送信submit
   const onSubmit = async (formData: Inputs) => {
-    let response: HttpResponse<PostDataResult<Inputs>>;
-    try {
-      // TODO: get→postへの切り替え＋urlの変更
-      // response = await post<postDataResult<Inputs>>('http://localhost:3000/', formData);
-      response = await get<PostDataResult<Inputs>>('http://localhost:3000/test/testdata2.json');
-      console.log('formData', formData);
-      console.log('response', response);
-
-      const result = response.parsedBody;
-      if (result!.success) {
-        setSubmited(true);
-        onClose();
-        snackberContext.dispatch({ type: 'success', message: t('common.msg.update-success') });
-      } else {
-        snackberContext.dispatch({ type: 'error', message: t('common.msg.update-failed') });
-      }
-    } catch (error) {
-      snackberContext.dispatch({ type: 'error', message: t('common.msg.fetch-failed') });
+    let result = await fetchPostData('/test/testdata2.json', formData); // TODO: urlの変更
+    if (result!.success) {
+      setSubmited(true);
+      onClose();
+      snackberContext.dispatch({ type: 'success', message: t('common.msg.update-success') });
+    } else {
+      snackberContext.dispatch({ type: 'error', message: t('common.msg.update-failed') });
     }
   };
 
@@ -167,53 +154,55 @@ export function RowDataDialog(props: RowDataDialogProps) {
   });
 
   return (
-    <Dialog open={open} onClose={onClose} fullWidth={true} maxWidth="sm" aria-labelledby="form-dialog-title">
-      <DialogTitle id="form-dialog-title">{t('visitdialog.title')}</DialogTitle>
-      <DialogContent dividers>
-        <Box p={2}>
-          <form>
-            {isSubmitting && <span>submitting!</span>}
-            <div className={classes.checkAction}>
-              <Button onClick={handleCheckIn} variant="contained" color="secondary" disabled={!!data.checkOut || isSubmitting}>
-                {t('visitdialog.button.check-in')}
-              </Button>
-              <Button onClick={handleCheckOut} variant="contained" color="secondary" disabled={!data.checkIn || isSubmitting}>
-                {t('visitdialog.button.check-out')}
-              </Button>
-            </div>
-            <div>
-              {/* <input {...register('checkIn')} />
+    <>
+      <Spinner open={isSubmitting} />
+      <Dialog open={open} onClose={onClose} fullWidth={true} maxWidth="sm" aria-labelledby="form-dialog-title">
+        <DialogTitle id="form-dialog-title">{t('visitdialog.title')}</DialogTitle>
+        <DialogContent dividers>
+          <Box p={2}>
+            <form>
+              <div className={classes.checkAction}>
+                <Button onClick={handleCheckIn} variant="contained" color="secondary" disabled={!!data.checkOut || isSubmitting}>
+                  {t('visitdialog.button.check-in')}
+                </Button>
+                <Button onClick={handleCheckOut} variant="contained" color="secondary" disabled={!data.checkIn || isSubmitting}>
+                  {t('visitdialog.button.check-out')}
+                </Button>
+              </div>
+              <div>
+                {/* <input {...register('checkIn')} />
               <input {...register('checkOut')} /> */}
-              <TextField
-                margin="normal"
-                fullWidth
-                autoComplete="off"
-                color="secondary"
-                id="visitorCardNumber"
-                label={t('visitdialog.form.visitor-card-number')}
-                // placeholder={t('visitdialog.form.visitor-card-number-placeholder')}
-                autoFocus
-                {...register('visitorCardNumber', {
-                  required: t('common.form.required') as string,
-                })}
-                disabled={isSubmitting}
-                error={!!errors.visitorCardNumber}
-                helperText={errors.visitorCardNumber && errors.visitorCardNumber.message}
-              />
-            </div>
-          </form>
-        </Box>
-        <Box p={2}>
-          <List className={classes.border} disablePadding={true}>
-            {listItems}
-          </List>
-        </Box>
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={handleCancel} color="secondary">
-          {t('visitdialog.button.cancel')}
-        </Button>
-      </DialogActions>
-    </Dialog>
+                <TextField
+                  margin="normal"
+                  fullWidth
+                  autoComplete="off"
+                  color="secondary"
+                  id="visitorCardNumber"
+                  label={t('visitdialog.form.visitor-card-number')}
+                  // placeholder={t('visitdialog.form.visitor-card-number-placeholder')}
+                  autoFocus
+                  {...register('visitorCardNumber', {
+                    required: t('common.form.required') as string,
+                  })}
+                  disabled={isSubmitting}
+                  error={!!errors.visitorCardNumber}
+                  helperText={errors.visitorCardNumber && errors.visitorCardNumber.message}
+                />
+              </div>
+            </form>
+          </Box>
+          <Box p={2}>
+            <List className={classes.border} disablePadding={true}>
+              {listItems}
+            </List>
+          </Box>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCancel} color="secondary">
+            {t('visitdialog.button.cancel')}
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </>
   );
 }
