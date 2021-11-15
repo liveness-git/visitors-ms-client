@@ -146,6 +146,7 @@ export function RowDataDialog(props: RowDataDialogProps) {
   };
 
   const listItems = columns
+    .slice()
     .sort(function (a, b) {
       return a.sort - b.sort;
     })
@@ -178,8 +179,6 @@ export function RowDataDialog(props: RowDataDialogProps) {
                 </Button>
               </div>
               <div>
-                {/* <input {...register('checkIn')} />
-              <input {...register('checkOut')} /> */}
                 <TextField
                   margin="normal"
                   fullWidth
