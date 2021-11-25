@@ -1,5 +1,11 @@
 # visitors-ms client
 
+## 0.0.0.5-2021-11-25
+
+- 受付。border の CSS 描画がおかしい箇所を調整。
+- ssl 設定。(.env.local で設定)
+- outlook/form → outlook/inputform, outlook/readform に分割。
+
 ## 0.0.0.4-2021-11-15
 
 - 受付。カレンダー選択による取得データ url の変更。

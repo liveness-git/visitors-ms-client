@@ -28,6 +28,13 @@ const tableTheme = createTheme({
       // selected: true,
     },
   },
+  overrides: {
+    MuiTable: {
+      root: {
+        borderCollapse: 'separate',
+      },
+    },
+  },
 });
 
 export type Columns = {

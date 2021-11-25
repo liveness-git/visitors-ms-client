@@ -12,7 +12,12 @@ export function Routes() {
         <Route exact path="/login" component={Login} />
         {/* <Route exact path="/logout" component={Logout} /> */}
         <Route path="/front" component={VisitList} />
-        <Route exact path="/outlook/form" component={VisitorInfoForm} />
+        <Route exact path="/outlook/inputform">
+          <VisitorInfoForm isRead={false} />
+        </Route>
+        <Route exact path="/outlook/readform">
+          <VisitorInfoForm isRead={true} />
+        </Route>
         <Route path="/outlook" component={VisitorInfoList} />
         <Redirect from="/" to="/login" />
       </Switch>

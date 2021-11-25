@@ -21,28 +21,30 @@ import { Spinner } from '_components/Spinner';
 import { RowData, Columns } from './DataTable';
 
 const useStyles = makeStyles((tableTheme) => {
-  const border = '1px solid rgba(0, 0, 0, 0.12)';
+  const border = 'thin solid rgba(0, 0, 0, 0.12)';
 
   return createStyles({
-    border: {
-      borderTop: border,
-      borderLeft: border,
-      borderRight: border,
-    },
     list: {
       display: 'flex',
       flexFlow: 'row-wrap',
       width: '100%',
+      '&:first-child div': {
+        borderTop: border,
+      },
     },
     title: {
+      boxSizing: 'border-box',
       flexBasis: '25%',
       padding: '0.7em',
       backgroundColor: tableTheme.palette.primary.light,
+      borderLeft: border,
       borderBottom: border,
     },
     field: {
+      boxSizing: 'border-box',
       flexBasis: '75%',
       padding: '0.7em',
+      borderRight: border,
       borderBottom: border,
     },
     checkAction: {
@@ -198,9 +200,7 @@ export function RowDataDialog(props: RowDataDialogProps) {
             </form>
           </Box>
           <Box p={2}>
-            <List className={classes.border} disablePadding={true}>
-              {listItems}
-            </List>
+            <List disablePadding={true}>{listItems}</List>
           </Box>
         </DialogContent>
         <DialogActions>
