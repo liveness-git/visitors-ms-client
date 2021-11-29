@@ -41,7 +41,7 @@ const defaultValues: Inputs = {
   contactAddr: '',
 };
 
-export function InputForm(props: { isRead: boolean }) {
+export function InputForm() {
   const { t } = useTranslation();
   const classes = useStyles();
 
@@ -240,13 +240,7 @@ export function InputForm(props: { isRead: boolean }) {
           )}
         />
 
-        <Grid
-          container
-          justifyContent="space-between"
-          spacing={2}
-          className={classes.formAction}
-          style={props.isRead ? { display: 'none' } : undefined}
-        >
+        <Grid container justifyContent="space-between" spacing={2} className={classes.formAction}>
           <Grid item xs={6} sm={4}>
             <Button onClick={handleSave} variant="contained" color="primary" disabled={!isDirty} startIcon={<SaveIcon />} fullWidth>
               {t('visitorinfoform.form.save')}

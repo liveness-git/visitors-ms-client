@@ -1,5 +1,6 @@
 {
 	"common.form.required":"必須入力です。",
+	"common.msg.no-data":"該当データがありません。",
 	"common.msg.fetch-failed":"通信に失敗しました。",
 	"common.msg.update-success":"更新しました。",
 	"common.msg.update-failed":"更新に失敗しました。",

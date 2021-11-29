@@ -18,3 +18,19 @@ export const outlookTheme = createTheme({
     },
   },
 });
+
+export const readOnlyTheme = createTheme({
+  palette: {
+    primary: blue,
+    secondary: blue,
+  },
+  props: {
+    MuiTextField: {
+      margin: 'normal',
+      fullWidth: true,
+    },
+    MuiInput: {
+      // readOnly: true,
+    },
+  },
+});
