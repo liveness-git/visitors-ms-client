@@ -1,7 +1,8 @@
 import { BrowserRouter, Redirect, Route, Switch } from 'react-router-dom';
 import { Login } from './login/Login';
 // import { Logout } from './logout/Logout';
-import { VisitList } from './front/visitList';
+import { VisitList as Front } from './front/visitList';
+import { VisitList as Main } from './main/visitList';
 import { VisitorInfoForm } from './outlook/form';
 import { VisitorInfoList } from './outlook/list';
 
@@ -11,7 +12,8 @@ export function Routes() {
       <Switch>
         <Route exact path="/login" component={Login} />
         {/* <Route exact path="/logout" component={Logout} /> */}
-        <Route path="/front" component={VisitList} />
+        <Route path="/front" component={Front} />
+        <Route path="/main" component={Main} />
         <Route exact path="/outlook/inputform">
           <VisitorInfoForm isRead={false} />
         </Route>
