@@ -2,27 +2,10 @@ import { Avatar, Box, Button, Container, makeStyles, TextField, Typography } fro
 import { LockOutlined as LockOutlinedIcon } from '@material-ui/icons';
 import { useTranslation } from 'react-i18next';
 import { SubmitHandler, useForm } from 'react-hook-form';
-import { Copyright } from '../_components/Copyright';
+import { Copyright } from '../../_components/Copyright';
+import { makeLoginStyles } from '_styles/MakeLoginStyles';
 
-const useStyles = makeStyles((theme) => ({
-  paper: {
-    marginTop: theme.spacing(8),
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-  },
-  avatar: {
-    margin: theme.spacing(1),
-    backgroundColor: theme.palette.secondary.main,
-  },
-  form: {
-    width: '100%', // Fix IE 11 issue.
-    marginTop: theme.spacing(1),
-  },
-  submit: {
-    margin: theme.spacing(3, 0, 2),
-  },
-}));
+const useStyles = makeLoginStyles();
 
 type LoginInputs = {
   email: string;

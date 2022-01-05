@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import clsx from 'clsx';
 
 import { makeStyles, createStyles } from '@material-ui/core/styles';
@@ -19,6 +19,9 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import { Copyright } from '../_components/Copyright';
 import MyCalendar from '../_components/MyCalendar';
 import { MySnackberProvider } from '../_components/MySnackbarContext';
+import { get } from '_utils/Http';
+import { Menu, MenuItem } from '@material-ui/core';
+import { AccountCircle } from '@material-ui/icons';
 
 // import { useTranslation } from 'react-i18next';
 
@@ -126,6 +129,57 @@ const BaseTemplate = ({ children, title, currentDate, calendarOnChange }: BaseTe
     setOpen(false);
   };
 
+  // アカウントアイコンの制御
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const accountIconOpen = Boolean(anchorEl);
+  const handleAccountMenu = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+  const handleSignOut = async () => {
+    try {
+      const result = await get<string | undefined>('/oauth/signout');
+      if (result.ok) {
+        window.location.href = '/signin';
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  // MS認証の状態
+  const [signedIn, setSignedIn] = useState(false);
+  const [email, setEmail] = useState('');
+
+  // MS認証状態の確認
+  const checkAuth = useCallback(async () => {
+    try {
+      // サーバーのセッションにユーザー情報が登録されているか確認
+      const result = await get<string>('/user/email');
+      if (result.parsedBody) {
+        setSignedIn(true);
+        setEmail(result.parsedBody);
+      } else {
+        // TODO: ここに遷移することってある？？？
+        setSignedIn(false);
+        console.log('Failed to retrieve email');
+      }
+    } catch (error) {
+      // serverのpoliciesで弾かれた場合、ここへ遷移
+      window.location.href = '/signin';
+    }
+  }, []);
+
+  useEffect(() => {
+    checkAuth();
+  }, [checkAuth]);
+
+  if (!signedIn) {
+    return <></>;
+  }
+
   return (
     <MySnackberProvider>
       <div className={classes.root}>
@@ -134,6 +188,35 @@ const BaseTemplate = ({ children, title, currentDate, calendarOnChange }: BaseTe
             <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
               Visitors for Microsoft
             </Typography>
+            <div>
+              <IconButton
+                aria-label="account of current user"
+                aria-controls="menu-appbar"
+                aria-haspopup="true"
+                onClick={handleAccountMenu}
+                color="inherit"
+              >
+                <AccountCircle />
+              </IconButton>
+              <Menu
+                id="menu-appbar"
+                anchorEl={anchorEl}
+                anchorOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right',
+                }}
+                keepMounted
+                transformOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right',
+                }}
+                open={accountIconOpen}
+                onClose={handleMenuClose}
+              >
+                <MenuItem onClick={handleMenuClose}>{email}</MenuItem>
+                <MenuItem onClick={handleSignOut}>Sign Out</MenuItem>
+              </Menu>
+            </div>
           </Toolbar>
         </AppBar>
         <Drawer

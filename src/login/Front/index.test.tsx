@@ -1,6 +1,6 @@
 import { fireEvent, render } from '@testing-library/react';
-import { Login } from './Login';
-import '../i18n';
+import { Login } from '.';
+import '../../i18n';
 
 let container: HTMLElement;
 beforeEach(() => {

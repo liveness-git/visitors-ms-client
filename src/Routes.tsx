@@ -1,6 +1,10 @@
 import { BrowserRouter, Redirect, Route, Switch } from 'react-router-dom';
-import { Login } from './login/Login';
+
+import { Login } from './login/Front';
 // import { Logout } from './logout/Logout';
+import { SignIn } from './login/Main/SignIn';
+import { AuthorizeWrapper } from 'login/Main/Authorize';
+
 import { VisitList as Front } from './front/visitList';
 import { VisitList as Main } from './main/visitList';
 import { VisitorInfoForm } from './outlook/form';
@@ -10,10 +14,15 @@ export function Routes() {
   return (
     <BrowserRouter>
       <Switch>
+        {/*** フロント ***/}
         <Route exact path="/login" component={Login} />
         {/* <Route exact path="/logout" component={Logout} /> */}
         <Route path="/front" component={Front} />
+        {/*** 一般メイン ***/}
+        <Route exact path="/signin" component={SignIn} />
+        <Route exact path="/oauth/redirect" component={AuthorizeWrapper} />
         <Route path="/main" component={Main} />
+        {/*** 一般アドイン ***/}
         <Route exact path="/outlook/inputform">
           <VisitorInfoForm isRead={false} />
         </Route>
@@ -21,7 +30,8 @@ export function Routes() {
           <VisitorInfoForm isRead={true} />
         </Route>
         <Route path="/outlook" component={VisitorInfoList} />
-        <Redirect from="/" to="/login" />
+        {/*** リダイレクト ***/}
+        <Redirect from="/" to="/signin" />
       </Switch>
     </BrowserRouter>
   );

@@ -1,5 +1,7 @@
 {
 	"common.form.required":"必須入力です。",
+	"common.msg.signin-success":"サインインしました。しばらくお待ちください。",
+	"common.msg.signin-failed":"サインインに失敗しました。",
 	"common.msg.no-data":"該当データがありません。",
 	"common.msg.fetch-failed":"通信に失敗しました。",
 	"common.msg.update-success":"更新しました。",
@@ -8,6 +10,7 @@
 	"login.form.password":"パスワード",
 	"login.form.submit":"ログイン",
 	"login.form.invalid-pattern":"無効なパターンです。",
+	"login.msal.signin":"Office365にサインイン",
 	"visitlist.title":"来訪一覧",
 	"visitlist.tab.conference-rooms":"会議室",
 	"visitlist.tab.free-space":"フリースペース",

@@ -2,13 +2,12 @@ import { createContext, useReducer } from 'react';
 
 import MySnackbar, { MySnackberAction, mySnackberReducer, MySnackberState } from './MySnackbar';
 
-export type MySnackberContext = {
+export type MySnackberContextType = {
   state: MySnackberState;
   dispatch: React.Dispatch<MySnackberAction>;
 };
 
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const MySnackberContext = createContext({} as MySnackberContext);
+export const MySnackberContext = createContext({} as MySnackberContextType);
 
 type MySnackberProviderProps = {
   children: React.ReactNode;
