@@ -15,4 +15,11 @@ export const theme = createTheme({
   mixins: {
     toolbar: { minHeight: 50 },
   },
+  overrides: {
+    MuiTooltip: {
+      tooltip: {
+        fontSize: '1em',
+      },
+    },
+  },
 });

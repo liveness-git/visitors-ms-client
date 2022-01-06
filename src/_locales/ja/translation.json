@@ -39,5 +39,9 @@
 	"visitorinfoform.form.save":"保存する",
 	"visitorinfoform.form.delete":"削除する",
 	"visitorinfoform.form.cancel":"キャンセル",
-	"visitorinfolist.title":"来訪一覧"
+	"visitorinfolist.title":"来訪一覧",
+	"main.menu.created-visit-info":"作成した来訪情報",
+	"main.menu.by-meeting-room":"会議室別",
+	"main.visitlist.title":"から１か月間の来訪情報",
+	"main.visitlist.picker-label":"選択日"
 }

@@ -12,16 +12,19 @@ import Divider from '@material-ui/core/Divider';
 import Container from '@material-ui/core/Container';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import IconButton from '@material-ui/core/IconButton';
-import CalendarTodayIcon from '@material-ui/icons/CalendarToday';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
+import { Link } from 'react-router-dom';
+import { ListItemText, Menu, MenuItem, Tooltip } from '@material-ui/core';
+import { AccountCircle } from '@material-ui/icons';
+import MenuIcon from '@material-ui/icons/Menu';
+import EditIcon from '@material-ui/icons/Edit';
+import MeetingRoomIcon from '@material-ui/icons/MeetingRoom';
 
 import { Copyright } from '../_components/Copyright';
-import MyCalendar from '../_components/MyCalendar';
 import { MySnackberProvider } from '../_components/MySnackbarContext';
 import { get } from '_utils/Http';
-import { Menu, MenuItem } from '@material-ui/core';
-import { AccountCircle } from '@material-ui/icons';
+import { useTranslation } from 'react-i18next';
 
 // import { useTranslation } from 'react-i18next';
 
@@ -49,6 +52,12 @@ const useStyles = makeStyles((theme) => {
     },
     toolbar: {
       paddingRight: 24,
+    },
+    menuButton: {
+      marginRight: 36,
+    },
+    menuButtonHidden: {
+      display: 'none',
     },
     title: {
       flexGrow: 1,
@@ -111,13 +120,10 @@ const useStyles = makeStyles((theme) => {
 
 type BaseTemplateProps = {
   children: React.ReactNode;
-  title: string;
-  currentDate: Date | null;
-  calendarOnChange: (date: Date | null) => void;
 };
 
-const BaseTemplate = ({ children, title, currentDate, calendarOnChange }: BaseTemplateProps) => {
-  // const { t } = useTranslation();
+const BaseTemplate = ({ children }: BaseTemplateProps) => {
+  const { t } = useTranslation();
   const classes = useStyles();
 
   // 左メニューエリアの開閉
@@ -185,6 +191,15 @@ const BaseTemplate = ({ children, title, currentDate, calendarOnChange }: BaseTe
       <div className={classes.root}>
         <AppBar position="absolute" className={clsx(classes.appBar, open && classes.appBarShift)}>
           <Toolbar className={classes.toolbar}>
+            <IconButton
+              edge="start"
+              color="inherit"
+              aria-label="open drawer"
+              onClick={handleDrawerOpen}
+              className={clsx(classes.menuButton, open && classes.menuButtonHidden)}
+            >
+              <MenuIcon />
+            </IconButton>
             <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
               Visitors for Microsoft
             </Typography>
@@ -233,22 +248,34 @@ const BaseTemplate = ({ children, title, currentDate, calendarOnChange }: BaseTe
           </div>
           <Divider />
           <List>
-            <ListItem button onClick={handleDrawerOpen} className={clsx(open && classes.calendarHidden)}>
-              <ListItemIcon>
-                <CalendarTodayIcon />
-              </ListItemIcon>
-            </ListItem>
-            <ListItem className={clsx(!open && classes.calendarHidden)}>
-              <MyCalendar date={currentDate} onChange={calendarOnChange} />
-            </ListItem>
+            <Link to="/main/visitinfo" className={classes.link}>
+              <ListItem button>
+                <Tooltip title={t('main.menu.created-visit-info') as string}>
+                  <ListItemIcon>
+                    <EditIcon />
+                  </ListItemIcon>
+                </Tooltip>
+                <ListItemText primary={t('main.menu.created-visit-info')} />
+              </ListItem>
+            </Link>
+            <Link to="/main" className={classes.link}>
+              <ListItem button>
+                <Tooltip title={t('main.menu.by-meeting-room') as string}>
+                  <ListItemIcon>
+                    <MeetingRoomIcon />
+                  </ListItemIcon>
+                </Tooltip>
+                <ListItemText primary={t('main.menu.by-meeting-room')} />
+              </ListItem>
+            </Link>
           </List>
         </Drawer>
         <main className={classes.content}>
           <div className={classes.appBarSpacer} />
           <Container maxWidth="lg" className={classes.container}>
-            <Typography component="h2" variant="h5" color="inherit" noWrap className={classes.pageTitle}>
+            {/* <Typography component="h2" variant="h5" color="inherit" noWrap className={classes.pageTitle}>
               {title}
-            </Typography>
+            </Typography> */}
             {children}
             <Box pt={4}>
               <Copyright />

@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react';
 
-import { AppBar, Paper } from '@material-ui/core';
+import { AppBar, Box, Paper, Typography } from '@material-ui/core';
 import Tab from '@material-ui/core/Tab';
 import TabContext from '@material-ui/lab/TabContext';
 import TabList from '@material-ui/lab/TabList';
@@ -12,6 +12,7 @@ import { format } from 'date-fns';
 
 import BaseTemplate from '../BaseTemplate';
 import { DataTable } from './DataTable';
+import { KeyboardDatePicker } from '@material-ui/pickers';
 
 export function VisitList() {
   const { t } = useTranslation();
@@ -29,11 +30,27 @@ export function VisitList() {
   };
 
   const muiPickContext = useContext(MuiPickersContext); // locale取得用
-  const title = selectedDate ? format(selectedDate, 'yyyy/MM/dd', { locale: muiPickContext?.locale }) + ' ' + t('visitlist.title') : '';
 
   return (
-    <BaseTemplate title={title} currentDate={selectedDate} calendarOnChange={handleDateChange}>
+    // <BaseTemplate title={title} currentDate={selectedDate} calendarOnChange={handleDateChange}>
+    <BaseTemplate>
       <Paper square>
+        <Box px={2} py={1}>
+          <KeyboardDatePicker
+            margin="normal"
+            id="date-picker-dialog"
+            label={t('main.visitlist.picker-label')}
+            format="yyyy/MM/dd"
+            value={selectedDate}
+            onChange={handleDateChange}
+            KeyboardButtonProps={{
+              'aria-label': 'change date',
+            }}
+            size="small"
+            style={{ width: 180 }}
+          />
+          <div style={{ display: 'inline' }}>{t('main.visitlist.title')}</div>
+        </Box>
         <TabContext value={value}>
           <AppBar position="static" color="default">
             <TabList indicatorColor="primary" textColor="primary" variant="fullWidth" onChange={handleTabChange} aria-label="view tabs">
@@ -42,10 +59,10 @@ export function VisitList() {
             </TabList>
           </AppBar>
           <TabPanel value="1">
-            <DataTable currentDate={selectedDate!} url={`/test/testdata1.json?timestamp=${selectedDate!.getTime()}`} />
+            <DataTable currentDate={selectedDate!} url={`/event/visitlist?timestamp=${selectedDate!.getTime()}&type=rooms`} />
           </TabPanel>
           <TabPanel value="2">
-            <DataTable currentDate={selectedDate!} url={`/test/testdata1.json?timestamp=${selectedDate!.getTime()}`} />
+            <DataTable currentDate={selectedDate!} url={`/event/visitlist?timestamp=${selectedDate!.getTime()}&type=free`} />
           </TabPanel>
         </TabContext>
       </Paper>
