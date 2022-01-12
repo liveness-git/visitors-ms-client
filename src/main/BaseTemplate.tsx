@@ -148,7 +148,7 @@ const BaseTemplate = ({ children }: BaseTemplateProps) => {
     try {
       const result = await get<string | undefined>('/oauth/signout');
       if (result.ok) {
-        window.location.href = '/signin';
+        window.location.href = '/login';
       }
     } catch (error) {
       console.log(error);
@@ -174,7 +174,7 @@ const BaseTemplate = ({ children }: BaseTemplateProps) => {
       }
     } catch (error) {
       // serverのpoliciesで弾かれた場合、ここへ遷移
-      window.location.href = '/signin';
+      window.location.href = '/login';
     }
   }, []);
 
@@ -229,7 +229,7 @@ const BaseTemplate = ({ children }: BaseTemplateProps) => {
                 onClose={handleMenuClose}
               >
                 <MenuItem onClick={handleMenuClose}>{email}</MenuItem>
-                <MenuItem onClick={handleSignOut}>Sign Out</MenuItem>
+                <MenuItem onClick={handleSignOut}>{t('main.menu.logout')}</MenuItem>
               </Menu>
             </div>
           </Toolbar>

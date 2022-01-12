@@ -7,7 +7,7 @@ import { grey, purple } from '@material-ui/core/colors';
 import MaterialTable, { Column } from '@material-table/core';
 import { tableIcons } from '_utils/MaterialTableIcons';
 
-import { VisitorInfoMs, VisitorInfoPersonal, VisitorInfoFront } from '_models/VisitorInfo';
+import { VisitorInfoMs, VisitorInfoPersonal } from '_models/VisitorInfo';
 import { useLoadData } from '_utils/useLoadData';
 import { Spinner } from '_components/Spinner';
 
@@ -27,6 +27,12 @@ const tableTheme = createTheme({
       // hover: true,
       // selected: true,
     },
+    MuiTextField: {
+      variant: 'outlined',
+      margin: 'dense',
+      fullWidth: true,
+      minRows: 4,
+    },
   },
   overrides: {
     MuiTable: {
@@ -40,12 +46,10 @@ const tableTheme = createTheme({
 export type Columns = {
   title: string;
   field: string;
-  type?: string;
   hidden?: boolean; // テーブルに表示するか否か
-  sort: number; // ダイアログの表に表示する順番
 };
 
-export type RowData = VisitorInfoMs & VisitorInfoPersonal & VisitorInfoFront;
+export type RowData = VisitorInfoMs & VisitorInfoPersonal;
 
 type DataTableProps = {
   currentDate: Date;
@@ -82,19 +86,16 @@ export function DataTable(props: DataTableProps) {
   };
 
   const columns: Columns[] = [
-    { title: t('visittable.header.appt-time'), field: 'apptTime', sort: 1 },
-    { title: t('visittable.header.room-name'), field: 'roomName', sort: 4 },
-    { title: t('visittable.header.visit-company'), field: 'visitCompany', sort: 5 },
-    { title: t('visittable.header.visitor-name'), field: 'visitorName', hidden: true, sort: 6 },
-    { title: t('visittable.header.tea-supply'), field: 'teaSupply', hidden: true, sort: 7 },
-    { title: t('visittable.header.number-of-visitor'), field: 'numberOfVisitor', hidden: true, sort: 8 },
-    { title: t('visittable.header.number-of-employee'), field: 'numberOfEmployee', hidden: true, sort: 9 },
-    { title: t('visittable.header.comment'), field: 'comment', hidden: true, sort: 10 },
-    { title: t('visittable.header.reservation-name'), field: 'reservationName', sort: 11 },
-    { title: t('visittable.header.contact-addr'), field: 'contactAddr', sort: 12 },
-    { title: t('visittable.header.check-in'), field: 'checkIn', type: 'boolean', sort: 2 },
-    { title: t('visittable.header.check-out'), field: 'checkOut', type: 'boolean', sort: 3 },
-    { title: t('visittable.header.visitor-card-number'), field: 'visitorCardNumber', hidden: true, sort: 13 },
+    { title: t('visittable.header.appt-time'), field: 'apptTime' },
+    { title: t('visittable.header.room-name'), field: 'roomName' },
+    { title: t('visittable.header.visit-company'), field: 'visitCompany' },
+    { title: t('visittable.header.visitor-name'), field: 'visitorName', hidden: true },
+    { title: t('visittable.header.tea-supply'), field: 'teaSupply', hidden: true },
+    { title: t('visittable.header.number-of-visitor'), field: 'numberOfVisitor', hidden: true },
+    { title: t('visittable.header.number-of-employee'), field: 'numberOfEmployee', hidden: true },
+    { title: t('visittable.header.comment'), field: 'comment', hidden: true },
+    { title: t('visittable.header.reservation-name'), field: 'reservationName' },
+    { title: t('visittable.header.contact-addr'), field: 'contactAddr' },
   ];
 
   // データ取得失敗した場合
@@ -118,14 +119,7 @@ export function DataTable(props: DataTableProps) {
         icons={tableIcons}
       />
       {currentRow && (
-        <RowDataDialog
-          open={dialogOpen}
-          onClose={handleDialogClose}
-          currentDate={currentDate}
-          data={currentRow}
-          columns={columns}
-          setSubmited={setSubmited}
-        />
+        <RowDataDialog open={dialogOpen} onClose={handleDialogClose} currentDate={currentDate} data={currentRow} setSubmited={setSubmited} />
       )}
     </ThemeProvider>
   );

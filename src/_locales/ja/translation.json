@@ -1,7 +1,7 @@
 {
 	"common.form.required":"必須入力です。",
-	"common.msg.signin-success":"サインインしました。しばらくお待ちください。",
-	"common.msg.signin-failed":"サインインに失敗しました。",
+	"common.msg.login-success":"ログインしました。しばらくお待ちください。",
+	"common.msg.login-failed":"ログインに失敗しました。",
 	"common.msg.no-data":"該当データがありません。",
 	"common.msg.fetch-failed":"通信に失敗しました。",
 	"common.msg.update-success":"更新しました。",
@@ -10,7 +10,7 @@
 	"login.form.password":"パスワード",
 	"login.form.submit":"ログイン",
 	"login.form.invalid-pattern":"無効なパターンです。",
-	"login.msal.signin":"Office365にサインイン",
+	"login.msal.login":"Office365でログイン",
 	"visitlist.title":"来訪一覧",
 	"visitlist.tab.conference-rooms":"会議室",
 	"visitlist.tab.free-space":"フリースペース",
@@ -42,6 +42,8 @@
 	"visitorinfolist.title":"来訪一覧",
 	"main.menu.created-visit-info":"作成した来訪情報",
 	"main.menu.by-meeting-room":"会議室別",
+	"main.menu.logout":"ログアウト",
 	"main.visitlist.title":"から１か月間の来訪情報",
-	"main.visitlist.picker-label":"選択日"
+	"main.visitlist.picker-label":"選択日",
+	"main.visitlist.add-event":"新規作成"
 }

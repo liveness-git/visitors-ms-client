@@ -43,7 +43,7 @@ export function SignIn() {
           Visitors for Microsoft
         </Typography>
         <Button onClick={handleClick} fullWidth variant="contained" color="primary" className={classes.submit}>
-          {t('login.msal.signin')}
+          {t('login.msal.login')}
         </Button>
       </div>
       <Box mt={8}>
