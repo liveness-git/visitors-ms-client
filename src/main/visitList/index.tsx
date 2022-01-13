@@ -15,11 +15,19 @@ import { DataTable } from './DataTable';
 
 const useStyles = makeStyles((theme) => {
   return createStyles({
+    datePickerArea: {},
+    actionButtonArea: {
+      textAlign: 'right',
+      margin: 'auto',
+    },
     datePicker: {
+      margin: 'auto 0',
+    },
+    keyboardDatePicker: {
       '& .MuiOutlinedInput-adornedEnd': { paddingRight: 0 },
     },
     title: {
-      // marginTop: '0.5em',
+      margin: 'auto 0.25em',
     },
     button: {
       margin: theme.spacing(1),
@@ -42,13 +50,18 @@ export function VisitList() {
     setTabValue(newValue);
   };
 
+  // 新規作成ボタン
+  const handleCreateClick = (_event: React.ChangeEvent<{}>) => {
+    alert('create!');
+  };
+
   return (
     <BaseTemplate>
       <Paper square>
         <Box px={2} py={1}>
-          <Grid container alignItems="center" justifyContent="space-between">
-            <Grid container item xs={6}>
-              <Grid item>
+          <Grid container alignItems="stretch" justifyContent="space-between">
+            <Grid container item xs={12} sm={9} className={classes.datePickerArea}>
+              <Grid item className={classes.datePicker}>
                 <KeyboardDatePicker
                   margin="normal"
                   id="date-picker-dialog"
@@ -60,7 +73,7 @@ export function VisitList() {
                     'aria-label': 'change date',
                   }}
                   size="small"
-                  className={classes.datePicker}
+                  className={classes.keyboardDatePicker}
                   inputProps={{
                     style: {
                       width: 85,
@@ -68,14 +81,12 @@ export function VisitList() {
                   }}
                 />
               </Grid>
-              <Grid item>
-                <Typography component="h5" className={classes.title}>
-                  {t('main.visitlist.title')}
-                </Typography>
+              <Grid item className={classes.title}>
+                <Typography component="h5">{t('main.visitlist.title')}</Typography>
               </Grid>
             </Grid>
-            <Grid item xs={6}>
-              <Button variant="contained" color="secondary" className={classes.button} startIcon={<AddCircleIcon />}>
+            <Grid item xs={12} sm={3} className={classes.actionButtonArea}>
+              <Button variant="contained" color="secondary" startIcon={<AddCircleIcon />} onClick={handleCreateClick}>
                 {t('main.visitlist.add-event')}
               </Button>
             </Grid>

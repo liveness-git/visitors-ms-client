@@ -30,7 +30,7 @@ export function Routes() {
         </Route>
         <Route path="/outlook" component={VisitorInfoList} />
         {/*** リダイレクト ***/}
-        <Redirect from="/" to="/login" />
+        <Redirect from="/" to="/main" />
       </Switch>
     </BrowserRouter>
   );
