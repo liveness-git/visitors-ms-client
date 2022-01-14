@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useReducer, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { createTheme, ThemeProvider } from '@material-ui/core/styles';
@@ -51,21 +51,45 @@ export type Columns = {
 
 export type RowData = VisitorInfoMs & VisitorInfoPersonal;
 
+export type DataDialogState = {
+  mode: 'rowData' | 'addData';
+  open: boolean;
+};
+
+export type DataDialogAction = {
+  type: 'rowDataOpen' | 'addDataOpen' | 'close';
+};
+
+export const dataDialogReducer = (state: DataDialogState, action: DataDialogAction): DataDialogState => {
+  switch (action.type) {
+    case 'rowDataOpen':
+      return { mode: 'rowData', open: true };
+    case 'addDataOpen':
+      return { mode: 'addData', open: true };
+    case 'close':
+      return { ...state, open: false };
+    default:
+      return state;
+  }
+};
+
 type DataTableProps = {
   currentDate: Date;
   url: string;
+  dataDialogHook: {
+    state: DataDialogState;
+    dispatch: React.Dispatch<DataDialogAction>;
+  };
 };
 
 export function DataTable(props: DataTableProps) {
-  const { currentDate, url } = props;
+  const { currentDate, url, dataDialogHook } = props;
 
   const { t } = useTranslation();
 
   // データ取得
   const [{ data, isLoading, isError }, reload] = useLoadData<RowData[]>(url, []);
 
-  // ダイアログの状態
-  const [dialogOpen, setDialogOpen] = useState(false);
   // submitの状態
   const [isSubmited, setSubmited] = useState(false);
   // 選択行の状態
@@ -73,7 +97,7 @@ export function DataTable(props: DataTableProps) {
 
   // ダイアログを開く
   const handleDialogOpen = (selectedRow: RowData) => {
-    setDialogOpen(true);
+    dataDialogHook.dispatch({ type: 'rowDataOpen' });
     setCurrentRow(selectedRow);
   };
   // ダイアログを閉じる
@@ -82,7 +106,7 @@ export function DataTable(props: DataTableProps) {
       await reload();
       setSubmited(false);
     }
-    setDialogOpen(false);
+    dataDialogHook.dispatch({ type: 'close' });
   };
 
   const columns: Columns[] = [
@@ -118,9 +142,15 @@ export function DataTable(props: DataTableProps) {
         }}
         icons={tableIcons}
       />
-      {currentRow && (
-        <RowDataDialog open={dialogOpen} onClose={handleDialogClose} currentDate={currentDate} data={currentRow} setSubmited={setSubmited} />
-      )}
+      {/* {currentRow && ( */}
+      <RowDataDialog
+        open={dataDialogHook.state.open}
+        onClose={handleDialogClose}
+        currentDate={currentDate}
+        data={dataDialogHook.state.mode === 'addData' ? null : currentRow}
+        setSubmited={setSubmited}
+      />
+      {/* )} */}
     </ThemeProvider>
   );
 }

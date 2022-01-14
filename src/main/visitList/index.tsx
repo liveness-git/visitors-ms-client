@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useReducer, useState } from 'react';
 
 import { AppBar, Box, Button, createStyles, Grid, makeStyles, Paper, Typography } from '@material-ui/core';
 import Tab from '@material-ui/core/Tab';
@@ -11,7 +11,7 @@ import AddCircleIcon from '@material-ui/icons/AddCircle';
 import { useTranslation } from 'react-i18next';
 
 import BaseTemplate from '../BaseTemplate';
-import { DataTable } from './DataTable';
+import { DataDialogAction, dataDialogReducer, DataDialogState, DataTable } from './DataTable';
 
 const useStyles = makeStyles((theme) => {
   return createStyles({
@@ -34,6 +34,7 @@ const useStyles = makeStyles((theme) => {
     },
   });
 });
+
 export function VisitList() {
   const { t } = useTranslation();
   const classes = useStyles();
@@ -50,9 +51,17 @@ export function VisitList() {
     setTabValue(newValue);
   };
 
+  // ダイアログの初期値
+  const initialState: DataDialogState = {
+    mode: 'addData',
+    open: false,
+  };
+  // ダイアログの状態
+  const [dataDialogState, dataDialogDispatch] = useReducer(dataDialogReducer, initialState);
+
   // 新規作成ボタン
   const handleCreateClick = (_event: React.ChangeEvent<{}>) => {
-    alert('create!');
+    dataDialogDispatch({ type: 'addDataOpen' });
   };
 
   return (
@@ -100,10 +109,18 @@ export function VisitList() {
             </TabList>
           </AppBar>
           <TabPanel value="1">
-            <DataTable currentDate={selectedDate!} url={`/event/visitlist?timestamp=${selectedDate!.getTime()}&type=rooms`} />
+            <DataTable
+              currentDate={selectedDate!}
+              url={`/event/visitlist?timestamp=${selectedDate!.getTime()}&type=rooms`}
+              dataDialogHook={{ state: dataDialogState, dispatch: dataDialogDispatch }}
+            />
           </TabPanel>
           <TabPanel value="2">
-            <DataTable currentDate={selectedDate!} url={`/event/visitlist?timestamp=${selectedDate!.getTime()}&type=free`} />
+            <DataTable
+              currentDate={selectedDate!}
+              url={`/event/visitlist?timestamp=${selectedDate!.getTime()}&type=free`}
+              dataDialogHook={{ state: dataDialogState, dispatch: dataDialogDispatch }}
+            />
           </TabPanel>
         </TabContext>
       </Paper>

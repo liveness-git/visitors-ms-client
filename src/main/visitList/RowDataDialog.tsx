@@ -77,7 +77,7 @@ type RowDataDialogProps = {
   open: boolean;
   onClose: () => void;
   currentDate: Date;
-  data: RowData;
+  data: RowData | null;
   setSubmited: ($: boolean) => void;
 };
 
@@ -100,7 +100,7 @@ export function RowDataDialog(props: RowDataDialogProps) {
 
   // 入力フォームの初期化
   useEffect(() => {
-    if (open) {
+    if (open && !!data) {
       reset({
         mode: 'upd',
         key: data.key,
@@ -116,19 +116,7 @@ export function RowDataDialog(props: RowDataDialogProps) {
     } else {
       reset(defaultValues);
     }
-  }, [
-    data.comment,
-    data.contactAddr,
-    data.key,
-    data.numberOfEmployee,
-    data.numberOfVisitor,
-    data.reservationName,
-    data.teaSupply,
-    data.visitCompany,
-    data.visitorName,
-    open,
-    reset,
-  ]);
+  }, [data, open, reset]);
 
   // 保存アクション
   const handleSave = () => {
@@ -167,17 +155,21 @@ export function RowDataDialog(props: RowDataDialogProps) {
         <DialogTitle id="form-dialog-title">{t('visitdialog.title')}</DialogTitle>
         <DialogContent dividers>
           <Box p={2}>
-            <List disablePadding={true}>
-              <li key="app-time" className={classes.list}>
-                <div className={classes.title}>{t('visittable.header.appt-time')}</div>
-                <div className={classes.field}>{format(currentDate, 'yyyy/MM/dd', { locale: muiPickContext?.locale }) + ' ' + data.apptTime}</div>
-              </li>
-              <li key="room-name" className={classes.list}>
-                <div className={classes.title}>{t('visittable.header.room-name')}</div>
-                <div className={classes.field}>{data.roomName}</div>
-              </li>
-            </List>
+            {!!!data && <>test</>}
+            {!!data && (
+              <List disablePadding={true}>
+                <li key="app-time" className={classes.list}>
+                  <div className={classes.title}>{t('visittable.header.appt-time')}</div>
+                  <div className={classes.field}>{format(currentDate, 'yyyy/MM/dd', { locale: muiPickContext?.locale }) + ' ' + data.apptTime}</div>
+                </li>
+                <li key="room-name" className={classes.list}>
+                  <div className={classes.title}>{t('visittable.header.room-name')}</div>
+                  <div className={classes.field}>{data.roomName}</div>
+                </li>
+              </List>
+            )}
           </Box>
+
           <Box px={2}>
             <form>
               <Controller
@@ -304,13 +296,13 @@ export function RowDataDialog(props: RowDataDialogProps) {
               />
 
               <Grid container justifyContent="space-between" spacing={2} className={classes.formAction}>
-                <Grid item xs={6}>
+                <Grid item xs={!data ? 12 : 6}>
                   <Button onClick={handleSave} variant="contained" color="secondary" disabled={!isDirty} startIcon={<SaveIcon />} fullWidth>
                     {t('visitorinfoform.form.save')}
                   </Button>
                 </Grid>
-                <Grid item xs={6}>
-                  <Button onClick={handleDelete} variant="contained" color="secondary" disabled={!data} startIcon={<DeleteIcon />} fullWidth>
+                <Grid item xs={6} style={!data ? { display: 'none' } : undefined}>
+                  <Button onClick={handleDelete} variant="contained" color="secondary" /*disabled={!data}*/ startIcon={<DeleteIcon />} fullWidth>
                     {t('visitorinfoform.form.delete')}
                   </Button>
                 </Grid>
