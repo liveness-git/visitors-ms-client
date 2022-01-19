@@ -41,7 +41,7 @@ export function Authorize() {
           if (result.parsedBody.ok) {
             snackberContext.dispatch({ type: 'success', message: t('common.msg.login-success') });
           } else {
-            snackberContext.dispatch({ type: 'error', message: t('common.msg.login-failed') }); //TODO:test
+            snackberContext.dispatch({ type: 'error', message: t('common.msg.login-failed') }); //TODO:あとでtestが必要
           }
           setTimeout(() => {
             window.location.replace('/main');

@@ -90,6 +90,7 @@ export function RowDataDialog(props: RowDataDialogProps) {
   useEffect(() => {
     if (open) {
       reset({
+        id: data.id,
         checkIn: data.checkIn,
         checkOut: data.checkOut,
         visitorCardNumber: data.visitorCardNumber,
@@ -97,7 +98,7 @@ export function RowDataDialog(props: RowDataDialogProps) {
     } else {
       reset();
     }
-  }, [data.checkIn, data.checkOut, data.visitorCardNumber, open, reset]);
+  }, [data, open, reset]);
 
   const timestamp = () => format(new Date(), 'yyyy/MM/dd hh:mm:ss', { locale: muiPickContext?.locale });
 

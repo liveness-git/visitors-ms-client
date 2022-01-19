@@ -248,7 +248,7 @@ const BaseTemplate = ({ children }: BaseTemplateProps) => {
           </div>
           <Divider />
           <List>
-            <Link to="/main/visitinfo" className={classes.link}>
+            <Link to="/main" className={classes.link}>
               <ListItem button>
                 <Tooltip title={t('main.menu.created-visit-info') as string}>
                   <ListItemIcon>

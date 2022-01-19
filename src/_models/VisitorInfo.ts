@@ -1,5 +1,6 @@
 export type VisitorInfoPersonal = {
-  key: string;
+  eventId: string;
+  visitorId: string;
   visitCompany: string;
   visitorName: string;
   teaSupply: boolean;
@@ -11,7 +12,7 @@ export type VisitorInfoPersonal = {
 };
 
 export type VisitorInfoFront = {
-  key: string;
+  id: string;
   checkIn: string;
   checkOut: string;
   visitorCardNumber: string;

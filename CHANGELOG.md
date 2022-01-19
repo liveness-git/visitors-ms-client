@@ -1,8 +1,14 @@
 # visitors-ms client
 
+## 0.0.0.14-2022-01-19
+
+- eventId,visitorId の連携部分を追加。
+- 来訪情報の更新処理追加
+- 来訪情報の削除確認メッセージを追加。
+
 ## 0.0.0.13-2022-01-19
 
-- fetchPostData：get→post へ切り替え
+- fetchPostata：get→post へ切り替え
 - loading 時のデバッグ用 setTimeout を削除。
 - main 側：ダイアログからの reload 処理方法を変更。
 

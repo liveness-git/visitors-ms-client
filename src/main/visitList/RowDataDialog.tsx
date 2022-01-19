@@ -1,4 +1,4 @@
-import { useContext, useEffect } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Controller, useForm } from 'react-hook-form';
 
@@ -21,6 +21,7 @@ import { MySnackberContext } from '_components/MySnackbarContext';
 import { Spinner } from '_components/Spinner';
 
 import { RowData } from './DataTable';
+import { DeleteConfirmDialog } from './DeleteConfirmDialog';
 
 const useStyles = makeStyles((tableTheme) => {
   const border = 'thin solid rgba(0, 0, 0, 0.12)';
@@ -63,7 +64,8 @@ type Inputs = {
 
 const defaultValues: Inputs = {
   mode: 'ins',
-  key: '',
+  eventId: '',
+  visitorId: '',
   visitCompany: '',
   visitorName: '',
   reservationName: '',
@@ -89,6 +91,9 @@ export function RowDataDialog(props: RowDataDialogProps) {
   const muiPickContext = useContext(MuiPickersContext); // locale取得用
   const snackberContext = useContext(MySnackberContext); // スナックバー取得用
 
+  // 削除確認メッセージの状態
+  const [delConfOpen, setDelConfOpen] = useState(false);
+
   // 入力フォームの登録
   const {
     control,
@@ -103,7 +108,8 @@ export function RowDataDialog(props: RowDataDialogProps) {
     if (open && !!data) {
       reset({
         mode: 'upd',
-        key: data.key,
+        eventId: data.eventId,
+        visitorId: data.visitorId,
         visitCompany: data.visitCompany,
         visitorName: data.visitorName,
         teaSupply: data.teaSupply,
@@ -122,8 +128,12 @@ export function RowDataDialog(props: RowDataDialogProps) {
   const handleSave = () => {
     handleSubmit(onSubmit)();
   };
-  // 削除アクション
+  // 削除アクション(確認メッセージ)
   const handleDelete = () => {
+    setDelConfOpen(true);
+  };
+  // 削除アクション
+  const deleteAction = () => {
     setValue('mode', 'del');
     handleSubmit(onSubmit)();
   };
@@ -159,6 +169,13 @@ export function RowDataDialog(props: RowDataDialogProps) {
 
   const handleCancel = () => {
     onClose();
+  };
+
+  const handleDelConfClose = (deleteOk: boolean) => {
+    setDelConfOpen(false);
+    if (deleteOk) {
+      deleteAction();
+    }
   };
 
   return (
@@ -329,6 +346,7 @@ export function RowDataDialog(props: RowDataDialogProps) {
           </Button>
         </DialogActions>
       </Dialog>
+      <DeleteConfirmDialog open={delConfOpen} onClose={handleDelConfClose}></DeleteConfirmDialog>
     </>
   );
 }

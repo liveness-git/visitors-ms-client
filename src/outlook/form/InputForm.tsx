@@ -30,7 +30,8 @@ type Inputs = {
 
 const defaultValues: Inputs = {
   mode: 'ins',
-  key: '',
+  eventId: '',
+  visitorId: '',
   visitCompany: '',
   visitorName: '',
   reservationName: '',
@@ -64,7 +65,8 @@ export function InputForm() {
     if (data) {
       reset({
         mode: 'upd',
-        key: data.key,
+        eventId: data.eventId,
+        visitorId: data.visitorId,
         visitCompany: data.visitCompany,
         visitorName: data.visitorName,
         teaSupply: data.teaSupply,
