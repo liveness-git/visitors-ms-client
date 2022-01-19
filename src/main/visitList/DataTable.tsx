@@ -90,8 +90,6 @@ export function DataTable(props: DataTableProps) {
   // データ取得
   const [{ data, isLoading, isError }, reload] = useLoadData<RowData[]>(url, []);
 
-  // submitの状態
-  const [isSubmited, setSubmited] = useState(false);
   // 選択行の状態
   const [currentRow, setCurrentRow] = useState<RowData | null>(null);
 
@@ -102,10 +100,6 @@ export function DataTable(props: DataTableProps) {
   };
   // ダイアログを閉じる
   const handleDialogClose = async () => {
-    if (isSubmited) {
-      await reload();
-      setSubmited(false);
-    }
     dataDialogHook.dispatch({ type: 'close' });
   };
 
@@ -142,15 +136,13 @@ export function DataTable(props: DataTableProps) {
         }}
         icons={tableIcons}
       />
-      {/* {currentRow && ( */}
       <RowDataDialog
         open={dataDialogHook.state.open}
         onClose={handleDialogClose}
         currentDate={currentDate}
         data={dataDialogHook.state.mode === 'addData' ? null : currentRow}
-        setSubmited={setSubmited}
+        reload={reload}
       />
-      {/* )} */}
     </ThemeProvider>
   );
 }

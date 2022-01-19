@@ -1,8 +1,14 @@
 # visitors-ms client
 
+## 0.0.0.13-2022-01-19
+
+- fetchPostData：get→post へ切り替え
+- loading 時のデバッグ用 setTimeout を削除。
+- main 側：ダイアログからの reload 処理方法を変更。
+
 ## 0.0.0.12-2022-01-19
 
-- ダイアログからの reload 処理方法を変更。
+- front 側：ダイアログからの reload 処理方法を変更。
 
 ## 0.0.0.11-2022-01-14
 

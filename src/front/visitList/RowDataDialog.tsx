@@ -115,7 +115,7 @@ export function RowDataDialog(props: RowDataDialogProps) {
   // データ送信submit
   const onSubmit = async (formData: Inputs) => {
     try {
-      let result = await fetchPostData('/test/testdata2.json', formData); // TODO: urlの変更
+      const result = await fetchPostData('/test/testdata2.json', formData); // TODO: urlの変更
       if (result!.success) {
         await reload();
         onClose();
@@ -153,9 +153,9 @@ export function RowDataDialog(props: RowDataDialogProps) {
       return a.sort - b.sort;
     })
     .map((column) => {
-      let field = column.field;
-      let title = column.title;
-      let value = data[field as keyof RowData];
+      const field = column.field;
+      const title = column.title;
+      const value = data[field as keyof RowData];
       return (
         <li key={field} className={classes.list}>
           <div className={classes.title}>{title}</div>

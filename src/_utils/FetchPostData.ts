@@ -1,10 +1,9 @@
-import { post, get, HttpResponse, PostDataResult } from '_utils/Http';
+import { post, HttpResponse, PostDataResult } from '_utils/Http';
 
 export async function fetchPostData<T>(url: string, formData: T) {
   let response: HttpResponse<PostDataResult<T>>;
   try {
-    // response = await post<postDataResult<Inputs>>(url, formData);
-    response = await get<PostDataResult<T>>(url); // TODO: get→postへの切り替え
+    response = await post<PostDataResult<T>>(url, formData);
     console.log('formData', formData); // TODO: debug
     console.log('response', response); // TODO: debug
 

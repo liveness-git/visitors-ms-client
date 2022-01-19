@@ -78,11 +78,11 @@ type RowDataDialogProps = {
   onClose: () => void;
   currentDate: Date;
   data: RowData | null;
-  setSubmited: ($: boolean) => void;
+  reload: () => void;
 };
 
 export function RowDataDialog(props: RowDataDialogProps) {
-  const { open, onClose, currentDate, data, setSubmited } = props;
+  const { open, onClose, currentDate, data, reload } = props;
 
   const { t } = useTranslation();
   const classes = useStyles();
@@ -131,9 +131,22 @@ export function RowDataDialog(props: RowDataDialogProps) {
   // データ送信submit
   const onSubmit = async (formData: Inputs) => {
     try {
-      let result = await fetchPostData('/test/testdata2.json', formData); // TODO: urlの変更
+      let url = '';
+      switch (formData.mode) {
+        case 'ins':
+          url = '/event/addevent';
+          // url = '/visitor/create';
+          break;
+        case 'upd':
+          url = '/visitor/update';
+          break;
+        case 'del':
+          url = '/visitor/delete';
+          break;
+      }
+      const result = await fetchPostData(url, formData);
       if (result!.success) {
-        setSubmited(true);
+        await reload();
         onClose();
         snackberContext.dispatch({ type: 'success', message: t('common.msg.update-success') });
       } else {
