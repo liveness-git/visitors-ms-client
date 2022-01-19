@@ -62,8 +62,6 @@ export function DataTable(props: DataTableProps) {
 
   // ダイアログの状態
   const [dialogOpen, setDialogOpen] = useState(false);
-  // submitの状態
-  const [isSubmited, setSubmited] = useState(false);
   // 選択行の状態
   const [currentRow, setCurrentRow] = useState<RowData | null>(null);
 
@@ -74,10 +72,6 @@ export function DataTable(props: DataTableProps) {
   };
   // ダイアログを閉じる
   const handleDialogClose = async () => {
-    if (isSubmited) {
-      await reload();
-      setSubmited(false);
-    }
     setDialogOpen(false);
   };
 
@@ -118,14 +112,7 @@ export function DataTable(props: DataTableProps) {
         icons={tableIcons}
       />
       {currentRow && (
-        <RowDataDialog
-          open={dialogOpen}
-          onClose={handleDialogClose}
-          currentDate={currentDate}
-          data={currentRow}
-          columns={columns}
-          setSubmited={setSubmited}
-        />
+        <RowDataDialog open={dialogOpen} onClose={handleDialogClose} currentDate={currentDate} data={currentRow} columns={columns} reload={reload} />
       )}
     </ThemeProvider>
   );
