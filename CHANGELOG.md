@@ -1,5 +1,9 @@
 # visitors-ms client
 
+## 0.0.0.15-2022-02-10
+
+- iCalUId による連携に変更
+
 ## 0.0.0.14-2022-01-19
 
 - eventId,visitorId の連携部分を追加。

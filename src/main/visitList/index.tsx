@@ -76,6 +76,7 @@ export function VisitList() {
                   id="date-picker-dialog"
                   label={t('main.visitlist.picker-label')}
                   format="yyyy/MM/dd"
+                  showTodayButton
                   value={selectedDate}
                   onChange={handleDateChange}
                   KeyboardButtonProps={{
@@ -109,18 +110,10 @@ export function VisitList() {
             </TabList>
           </AppBar>
           <TabPanel value="1">
-            <DataTable
-              currentDate={selectedDate!}
-              url={`/event/visitlist?timestamp=${selectedDate!.getTime()}&type=rooms`}
-              dataDialogHook={{ state: dataDialogState, dispatch: dataDialogDispatch }}
-            />
+            <DataTable currentTab="rooms" currentDate={selectedDate!} dataDialogHook={{ state: dataDialogState, dispatch: dataDialogDispatch }} />
           </TabPanel>
           <TabPanel value="2">
-            <DataTable
-              currentDate={selectedDate!}
-              url={`/event/visitlist?timestamp=${selectedDate!.getTime()}&type=free`}
-              dataDialogHook={{ state: dataDialogState, dispatch: dataDialogDispatch }}
-            />
+            <DataTable currentTab="free" currentDate={selectedDate!} dataDialogHook={{ state: dataDialogState, dispatch: dataDialogDispatch }} />
           </TabPanel>
         </TabContext>
       </Paper>

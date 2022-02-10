@@ -12,6 +12,7 @@ import { useLoadData } from '_utils/useLoadData';
 import { Spinner } from '_components/Spinner';
 
 import { RowDataDialog } from './RowDataDialog';
+import { RoomType } from '_models/Room';
 
 const tableTheme = createTheme({
   palette: {
@@ -26,12 +27,6 @@ const tableTheme = createTheme({
     MuiTableRow: {
       // hover: true,
       // selected: true,
-    },
-    MuiTextField: {
-      variant: 'outlined',
-      margin: 'dense',
-      fullWidth: true,
-      minRows: 4,
     },
   },
   overrides: {
@@ -74,8 +69,8 @@ export const dataDialogReducer = (state: DataDialogState, action: DataDialogActi
 };
 
 type DataTableProps = {
+  currentTab: RoomType;
   currentDate: Date;
-  url: string;
   dataDialogHook: {
     state: DataDialogState;
     dispatch: React.Dispatch<DataDialogAction>;
@@ -83,12 +78,15 @@ type DataTableProps = {
 };
 
 export function DataTable(props: DataTableProps) {
-  const { currentDate, url, dataDialogHook } = props;
+  const { currentDate, dataDialogHook, currentTab } = props;
 
   const { t } = useTranslation();
 
   // データ取得
-  const [{ data, isLoading, isError }, reload] = useLoadData<RowData[]>(url, []);
+  const [{ data, isLoading, isError }, reload] = useLoadData<RowData[]>(
+    `/event/visitlist?timestamp=${currentDate!.getTime()}&type=${currentTab}`,
+    []
+  );
 
   // 選択行の状態
   const [currentRow, setCurrentRow] = useState<RowData | null>(null);
@@ -137,6 +135,7 @@ export function DataTable(props: DataTableProps) {
         icons={tableIcons}
       />
       <RowDataDialog
+        currentTab={currentTab}
         open={dataDialogHook.state.open}
         onClose={handleDialogClose}
         currentDate={currentDate}
