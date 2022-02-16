@@ -80,10 +80,14 @@ const inputformTheme = createTheme({
   },
 });
 
+type NewDateType = () => Date;
+const startTimeBufferMinute = 10;
+const endTimeBufferMinute = 30;
+
 type EventType = {
   subject: string;
-  startTime: Date;
-  endTime: Date;
+  startTime: NewDateType;
+  endTime: NewDateType;
   room: string;
 };
 
@@ -106,8 +110,8 @@ const defaultValues: Inputs = {
   comment: '',
   contactAddr: '',
   subject: '',
-  startTime: new Date(),
-  endTime: addMinutes(new Date(), 30),
+  startTime: () => addMinutes(new Date(), startTimeBufferMinute),
+  endTime: () => addMinutes(new Date(), startTimeBufferMinute + endTimeBufferMinute),
   room: '',
 };
 type RowDataDialogProps = {
@@ -285,6 +289,7 @@ export function RowDataDialog(props: RowDataDialogProps) {
                             <KeyboardDateTimePicker
                               {...field}
                               ampm={false}
+                              format="yyyy/MM/dd HH:mm"
                               disablePast
                               // minutesStep={5}
                               label={t('visittable.header.event-start-time')}
@@ -303,6 +308,7 @@ export function RowDataDialog(props: RowDataDialogProps) {
                             <KeyboardDateTimePicker
                               {...field}
                               ampm={false}
+                              format="yyyy/MM/dd HH:mm"
                               disablePast
                               // minutesStep={5}
                               label={t('visittable.header.event-end-time')}
