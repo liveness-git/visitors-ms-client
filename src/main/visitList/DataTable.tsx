@@ -138,7 +138,6 @@ export function DataTable(props: DataTableProps) {
         currentTab={currentTab}
         open={dataDialogHook.state.open}
         onClose={handleDialogClose}
-        currentDate={currentDate}
         data={dataDialogHook.state.mode === 'addData' ? null : currentRow}
         reload={reload}
       />

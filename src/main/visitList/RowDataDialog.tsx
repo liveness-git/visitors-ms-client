@@ -13,8 +13,7 @@ import { Box, FormControlLabel, Grid, List, Switch, TextField } from '@material-
 import DeleteIcon from '@material-ui/icons/Delete';
 import SaveIcon from '@material-ui/icons/Save';
 
-import { format, addMinutes } from 'date-fns';
-import { MuiPickersContext } from '@material-ui/pickers/MuiPickersUtilsProvider';
+import { addMinutes } from 'date-fns';
 
 import { VisitorInfoPersonal } from '_models/VisitorInfo';
 import { fetchPostData } from '_utils/FetchPostData';
@@ -25,7 +24,7 @@ import { RowData } from './DataTable';
 import { DeleteConfirmDialog } from './DeleteConfirmDialog';
 import { useLoadData } from '_utils/useLoadData';
 import { Room, RoomType } from '_models/Room';
-import { KeyboardDateTimePicker } from '@material-ui/pickers';
+import { DateTimePicker } from '@material-ui/pickers';
 
 const useStyles = makeStyles((tableTheme) => {
   const border = 'thin solid rgba(0, 0, 0, 0.12)';
@@ -81,8 +80,9 @@ const inputformTheme = createTheme({
 });
 
 type NewDateType = () => Date;
-const startTimeBufferMinute = 10;
+const startTimeBufferMinute = 0;
 const endTimeBufferMinute = 30;
+const change5MinuteIntervals = (date: Date) => Math.ceil(date.getTime() / 1000 / 60 / 5) * 1000 * 60 * 5;
 
 type EventType = {
   subject: string;
@@ -110,25 +110,23 @@ const defaultValues: Inputs = {
   comment: '',
   contactAddr: '',
   subject: '',
-  startTime: () => addMinutes(new Date(), startTimeBufferMinute),
-  endTime: () => addMinutes(new Date(), startTimeBufferMinute + endTimeBufferMinute),
+  startTime: () => addMinutes(change5MinuteIntervals(new Date()), startTimeBufferMinute),
+  endTime: () => addMinutes(change5MinuteIntervals(new Date()), startTimeBufferMinute + endTimeBufferMinute),
   room: '',
 };
 type RowDataDialogProps = {
   currentTab: RoomType;
   open: boolean;
   onClose: () => void;
-  currentDate: Date;
   data: RowData | null;
   reload: () => void;
 };
 
 export function RowDataDialog(props: RowDataDialogProps) {
-  const { currentTab, open, onClose, currentDate, data, reload } = props;
+  const { currentTab, open, onClose, data, reload } = props;
 
   const { t } = useTranslation();
   const classes = useStyles();
-  const muiPickContext = useContext(MuiPickersContext); // locale取得用
   const snackberContext = useContext(MySnackberContext); // スナックバー取得用
 
   // 会議室データ取得
@@ -143,6 +141,7 @@ export function RowDataDialog(props: RowDataDialogProps) {
     handleSubmit,
     reset,
     setValue,
+    setError,
     formState: { errors, isDirty, isSubmitting },
   } = useForm<Inputs>({ defaultValues });
 
@@ -203,7 +202,9 @@ export function RowDataDialog(props: RowDataDialogProps) {
         onClose();
         snackberContext.dispatch({ type: 'success', message: t('common.msg.update-success') });
       } else {
-        snackberContext.dispatch({ type: 'error', message: t('common.msg.update-failed') });
+        // snackberContext.dispatch({ type: 'error', message: t('common.msg.update-failed') });
+        console.log(result.errors);
+        // setError('apiError', { message: error });
       }
     } catch (error) {
       snackberContext.dispatch({ type: 'error', message: (error as Error).message });
@@ -234,9 +235,7 @@ export function RowDataDialog(props: RowDataDialogProps) {
                   <List disablePadding={true}>
                     <li key="app-time" className={classes.list}>
                       <div className={classes.title}>{t('visittable.header.appt-time')}</div>
-                      <div className={classes.field}>
-                        {format(currentDate, 'yyyy/MM/dd', { locale: muiPickContext?.locale }) + ' ' + data.apptTime}
-                      </div>
+                      <div className={classes.field}>{data.apptTime}</div>
                     </li>
                     <li key="room-name" className={classes.list}>
                       <div className={classes.title}>{t('visittable.header.room-name')}</div>
@@ -286,12 +285,12 @@ export function RowDataDialog(props: RowDataDialogProps) {
                           control={control}
                           rules={{ required: t('common.form.required') as string }}
                           render={({ field }) => (
-                            <KeyboardDateTimePicker
+                            <DateTimePicker
                               {...field}
                               ampm={false}
                               format="yyyy/MM/dd HH:mm"
                               disablePast
-                              // minutesStep={5}
+                              minutesStep={5}
                               label={t('visittable.header.event-start-time')}
                               error={!!errors.startTime}
                               helperText={errors.startTime && errors.startTime.message}
@@ -305,12 +304,12 @@ export function RowDataDialog(props: RowDataDialogProps) {
                           control={control}
                           rules={{ required: t('common.form.required') as string }}
                           render={({ field }) => (
-                            <KeyboardDateTimePicker
+                            <DateTimePicker
                               {...field}
                               ampm={false}
                               format="yyyy/MM/dd HH:mm"
                               disablePast
-                              // minutesStep={5}
+                              minutesStep={5}
                               label={t('visittable.header.event-end-time')}
                               error={!!errors.endTime}
                               helperText={errors.endTime && errors.endTime.message}
