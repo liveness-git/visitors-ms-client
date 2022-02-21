@@ -5,4 +5,5 @@ export type Room = {
   email: string;
   type: RoomType;
   sort: string;
+  teaSupply: boolean;
 };

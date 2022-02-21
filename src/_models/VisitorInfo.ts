@@ -21,4 +21,5 @@ export type VisitorInfoFront = {
 export type VisitorInfoMs = {
   apptTime: string;
   roomName: string;
+  roomEmail: string;
 };

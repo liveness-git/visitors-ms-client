@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Controller, useForm } from 'react-hook-form';
+import { Controller, useForm, useWatch } from 'react-hook-form';
 
 import { makeStyles, createStyles, createTheme, ThemeProvider } from '@material-ui/core/styles';
 import { grey, purple } from '@material-ui/core/colors';
@@ -145,6 +145,28 @@ export function RowDataDialog(props: RowDataDialogProps) {
     formState: { errors, isDirty, isSubmitting },
   } = useForm<Inputs>({ defaultValues });
 
+  // 給茶選択の制御
+  const [disabledTeaSupply, setDisabledTeaSupply] = useState(false);
+
+  // 給茶選択の制御用に会議室選択を監視
+  const roomWatch = useWatch({ control, name: 'room' });
+
+  // 給茶選択のエフェクト(更新時)
+  useEffect(() => {
+    if (!!data && !!rooms) {
+      const result = rooms.some((room) => room.email === data.roomEmail && room.teaSupply);
+      setDisabledTeaSupply(!result);
+    }
+  }, [data, rooms]);
+  // 給茶選択のエフェクト(新規作成時)
+  useEffect(() => {
+    if (!!roomWatch && !!rooms) {
+      const result = rooms.some((room) => room.id === roomWatch && room.teaSupply);
+      if (!result) setValue('teaSupply', false);
+      setDisabledTeaSupply(!result);
+    }
+  }, [roomWatch, rooms, setValue]);
+
   // 入力フォームの初期化
   useEffect(() => {
     if (open && !!data) {
@@ -202,9 +224,15 @@ export function RowDataDialog(props: RowDataDialogProps) {
         onClose();
         snackberContext.dispatch({ type: 'success', message: t('common.msg.update-success') });
       } else {
+        // エラー判定のセット
+        if (result!.errors) {
+          const errors = result!.errors;
+          for (let key in errors) {
+            let name = key as keyof Inputs;
+            setError(name, { message: t(errors[name]![0]) });
+          }
+        }
         // snackberContext.dispatch({ type: 'error', message: t('common.msg.update-failed') });
-        console.log(result.errors);
-        // setError('apiError', { message: error });
       }
     } catch (error) {
       snackberContext.dispatch({ type: 'error', message: (error as Error).message });
@@ -239,7 +267,11 @@ export function RowDataDialog(props: RowDataDialogProps) {
                     </li>
                     <li key="room-name" className={classes.list}>
                       <div className={classes.title}>{t('visittable.header.room-name')}</div>
-                      <div className={classes.field}>{data.roomName}</div>
+                      <div className={classes.field}>
+                        {data.roomName} {'<'}
+                        {data.roomEmail}
+                        {'>'}
+                      </div>
                     </li>
                   </List>
                 )}
@@ -272,7 +304,9 @@ export function RowDataDialog(props: RowDataDialogProps) {
                         >
                           {rooms!.map((option) => (
                             <option key={option.id} value={option.id}>
-                              {option.name}
+                              {option.name} {'<'}
+                              {option.email}
+                              {'>'}
                             </option>
                           ))}
                         </TextField>
@@ -359,7 +393,14 @@ export function RowDataDialog(props: RowDataDialogProps) {
                         <Controller
                           name="teaSupply"
                           control={control}
-                          render={({ field }) => <Switch onChange={(e) => field.onChange(e.target.checked)} checked={field.value} color="primary" />}
+                          render={({ field }) => (
+                            <Switch
+                              onChange={(e) => field.onChange(e.target.checked)}
+                              checked={field.value}
+                              color="primary"
+                              disabled={disabledTeaSupply}
+                            />
+                          )}
                         />
                       }
                       label={t('visittable.header.tea-supply')}

@@ -39,6 +39,7 @@
 	"visitdialog.form.tea-supply-no":"なし",
 	"visitdialog.form.visitor-card-number":"カード番号",
 	"visitdialog.form.visitor-card-number-placeholder":"カード番号を入力してください",
+	"visitdialog.form.error.event-time":"日付の関係性に誤りがあります",
 	"visitorinfoform.title":"来訪情報",
 	"visitorinfoform.form.save":"保存する",
 	"visitorinfoform.form.delete":"削除する",
