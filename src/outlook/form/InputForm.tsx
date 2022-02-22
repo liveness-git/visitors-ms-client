@@ -30,11 +30,10 @@ type Inputs = {
 
 const defaultValues: Inputs = {
   mode: 'ins',
-  eventId: '',
+  iCalUId: '',
   visitorId: '',
   visitCompany: '',
   visitorName: '',
-  reservationName: '',
   teaSupply: false,
   numberOfVisitor: 0,
   numberOfEmployee: 0,
@@ -65,7 +64,7 @@ export function InputForm() {
     if (data) {
       reset({
         mode: 'upd',
-        eventId: data.eventId,
+        iCalUId: data.iCalUId,
         visitorId: data.visitorId,
         visitCompany: data.visitCompany,
         visitorName: data.visitorName,
@@ -73,7 +72,6 @@ export function InputForm() {
         numberOfVisitor: data.numberOfVisitor,
         numberOfEmployee: data.numberOfEmployee,
         comment: data.comment,
-        reservationName: data.reservationName,
         contactAddr: data.contactAddr,
       });
     } else {
@@ -210,20 +208,6 @@ export function InputForm() {
               label={t('visittable.header.comment')}
               error={!!errors.comment}
               helperText={errors.comment && errors.comment.message}
-            />
-          )}
-        />
-
-        <Controller
-          name="reservationName"
-          control={control}
-          rules={{ required: t('common.form.required') as string }}
-          render={({ field }) => (
-            <TextField
-              {...field}
-              label={t('visittable.header.reservation-name')}
-              error={!!errors.reservationName}
-              helperText={errors.reservationName && errors.reservationName.message}
             />
           )}
         />

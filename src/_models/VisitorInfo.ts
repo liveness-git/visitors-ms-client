@@ -1,5 +1,5 @@
 export type VisitorInfoPersonal = {
-  eventId: string;
+  iCalUId: string;
   visitorId: string;
   visitCompany: string;
   visitorName: string;
@@ -7,7 +7,6 @@ export type VisitorInfoPersonal = {
   numberOfVisitor: number;
   numberOfEmployee: number;
   comment: string;
-  reservationName: string;
   contactAddr: string;
 };
 
@@ -22,4 +21,6 @@ export type VisitorInfoMs = {
   apptTime: string;
   roomName: string;
   roomEmail: string;
+  reservationName: string;
+  isAuthor: boolean;
 };

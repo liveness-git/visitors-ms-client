@@ -54,7 +54,6 @@ export function ReadForm() {
         </Grid>
 
         <TextField value={data?.comment} multiline label={t('visittable.header.comment')} />
-        <TextField value={data?.reservationName} label={t('visittable.header.reservation-name')} />
         <TextField value={data?.contactAddr} label={t('visittable.header.contact-addr')} />
       </ThemeProvider>
     </>

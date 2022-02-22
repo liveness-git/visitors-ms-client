@@ -1,5 +1,12 @@
 # visitors-ms client
 
+## 0.0.0.19-2022-02-22
+
+- 予約者名(reservationName)は MS から取得するよう変更。
+- visitor 登録関係なく自身に関係ある会議室予約を全て表示するよう変更。
+- 新規作成ダイアログを open した際、DateTimePicker から出るエラー回避のために「ref={null}」を追加。
+  参考 url=>https://stackoverflow.com/questions/67877887/react-hook-form-v7-function-components-cannot-be-given-refs-attempts-to-access
+
 ## 0.0.0.18-2022-02-21
 
 - イベントの日付関係性チェック追加。

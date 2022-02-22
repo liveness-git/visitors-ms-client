@@ -99,11 +99,10 @@ type Inputs = {
 // 入力フォームの初期値
 const defaultValues: Inputs = {
   mode: 'ins',
-  eventId: '',
+  iCalUId: '',
   visitorId: '',
   visitCompany: '',
   visitorName: '',
-  reservationName: '',
   teaSupply: false,
   numberOfVisitor: 0,
   numberOfEmployee: 0,
@@ -172,7 +171,7 @@ export function RowDataDialog(props: RowDataDialogProps) {
     if (open && !!data) {
       reset({
         mode: 'upd',
-        eventId: data.eventId,
+        iCalUId: data.iCalUId,
         visitorId: data.visitorId,
         visitCompany: data.visitCompany,
         visitorName: data.visitorName,
@@ -180,7 +179,6 @@ export function RowDataDialog(props: RowDataDialogProps) {
         numberOfVisitor: data.numberOfVisitor,
         numberOfEmployee: data.numberOfEmployee,
         comment: data.comment,
-        reservationName: data.reservationName,
         contactAddr: data.contactAddr,
       });
     } else {
@@ -212,7 +210,7 @@ export function RowDataDialog(props: RowDataDialogProps) {
           // url = '/visitor/create';
           break;
         case 'upd':
-          url = '/visitor/update';
+          url = !data?.visitorId ? '/visitor/create' : '/visitor/update';
           break;
         case 'del':
           url = '/visitor/delete';
@@ -328,6 +326,7 @@ export function RowDataDialog(props: RowDataDialogProps) {
                               label={t('visittable.header.event-start-time')}
                               error={!!errors.startTime}
                               helperText={errors.startTime && errors.startTime.message}
+                              ref={null}
                             />
                           )}
                         />
@@ -347,6 +346,7 @@ export function RowDataDialog(props: RowDataDialogProps) {
                               label={t('visittable.header.event-end-time')}
                               error={!!errors.endTime}
                               helperText={errors.endTime && errors.endTime.message}
+                              ref={null}
                             />
                           )}
                         />
@@ -460,20 +460,6 @@ export function RowDataDialog(props: RowDataDialogProps) {
                 />
 
                 <Controller
-                  name="reservationName"
-                  control={control}
-                  rules={{ required: t('common.form.required') as string }}
-                  render={({ field }) => (
-                    <TextField
-                      {...field}
-                      label={t('visittable.header.reservation-name')}
-                      error={!!errors.reservationName}
-                      helperText={errors.reservationName && errors.reservationName.message}
-                    />
-                  )}
-                />
-
-                <Controller
                   name="contactAddr"
                   control={control}
                   // rules={{ required: t('common.form.required') as string }}
@@ -488,12 +474,12 @@ export function RowDataDialog(props: RowDataDialogProps) {
                 />
 
                 <Grid container justifyContent="space-between" spacing={2} className={classes.formAction}>
-                  <Grid item xs={!data ? 12 : 6}>
+                  <Grid item xs={!data || !data.visitorId ? 12 : 6}>
                     <Button onClick={handleSave} variant="contained" color="primary" disabled={!isDirty} startIcon={<SaveIcon />} fullWidth>
                       {t('visitorinfoform.form.save')}
                     </Button>
                   </Grid>
-                  <Grid item xs={6} style={!data ? { display: 'none' } : undefined}>
+                  <Grid item xs={6} style={!data || !data.visitorId ? { display: 'none' } : undefined}>
                     <Button onClick={handleDelete} variant="contained" color="primary" /*disabled={!data}*/ startIcon={<DeleteIcon />} fullWidth>
                       {t('visitorinfoform.form.delete')}
                     </Button>
