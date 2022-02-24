@@ -11,8 +11,9 @@ import { VisitorInfoMs, VisitorInfoPersonal } from '_models/VisitorInfo';
 import { useLoadData } from '_utils/useLoadData';
 import { Spinner } from '_components/Spinner';
 
-import { RowDataDialog } from './RowDataDialog';
+import { RowDataInputDialog } from './RowDataInputDialog';
 import { RoomType } from '_models/Room';
+import { RowDataReadDialog } from './RowDataReadDialog';
 
 const tableTheme = createTheme({
   palette: {
@@ -48,21 +49,26 @@ export type RowData = VisitorInfoMs & VisitorInfoPersonal;
 
 export type DataDialogState = {
   mode: 'rowData' | 'addData';
-  open: boolean;
+  inputOpen: boolean;
+  readOpen: boolean;
 };
 
 export type DataDialogAction = {
-  type: 'rowDataOpen' | 'addDataOpen' | 'close';
+  type: 'inputOpen' | 'addDataOpen' | 'inputClose' | 'readOpen' | 'readClose';
 };
 
 export const dataDialogReducer = (state: DataDialogState, action: DataDialogAction): DataDialogState => {
   switch (action.type) {
-    case 'rowDataOpen':
-      return { mode: 'rowData', open: true };
+    case 'inputOpen':
+      return { mode: 'rowData', inputOpen: true, readOpen: false };
     case 'addDataOpen':
-      return { mode: 'addData', open: true };
-    case 'close':
-      return { ...state, open: false };
+      return { mode: 'addData', inputOpen: true, readOpen: false };
+    case 'inputClose':
+      return { ...state, inputOpen: false };
+    case 'readOpen':
+      return { mode: 'rowData', inputOpen: false, readOpen: true };
+    case 'readClose':
+      return { ...state, readOpen: false };
     default:
       return state;
   }
@@ -93,12 +99,20 @@ export function DataTable(props: DataTableProps) {
 
   // ダイアログを開く
   const handleDialogOpen = (selectedRow: RowData) => {
-    dataDialogHook.dispatch({ type: 'rowDataOpen' });
+    if (selectedRow.isAuthor) {
+      dataDialogHook.dispatch({ type: 'inputOpen' });
+    } else {
+      dataDialogHook.dispatch({ type: 'readOpen' });
+    }
     setCurrentRow(selectedRow);
   };
-  // ダイアログを閉じる
-  const handleDialogClose = async () => {
-    dataDialogHook.dispatch({ type: 'close' });
+  // ダイアログを閉じる(input)
+  const handleInputDialogClose = async () => {
+    dataDialogHook.dispatch({ type: 'inputClose' });
+  };
+  // ダイアログを閉じる(read)
+  const handleReadDialogClose = async () => {
+    dataDialogHook.dispatch({ type: 'readClose' });
   };
 
   const columns: Columns[] = [
@@ -134,13 +148,14 @@ export function DataTable(props: DataTableProps) {
         }}
         icons={tableIcons}
       />
-      <RowDataDialog
+      <RowDataInputDialog
         currentTab={currentTab}
-        open={dataDialogHook.state.open}
-        onClose={handleDialogClose}
+        open={dataDialogHook.state.inputOpen}
+        onClose={handleInputDialogClose}
         data={dataDialogHook.state.mode === 'addData' ? null : currentRow}
         reload={reload}
       />
+      <RowDataReadDialog open={dataDialogHook.state.readOpen} onClose={handleReadDialogClose} data={currentRow} />
     </ThemeProvider>
   );
 }

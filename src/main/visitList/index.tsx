@@ -54,7 +54,8 @@ export function VisitList() {
   // ダイアログの初期値
   const initialState: DataDialogState = {
     mode: 'addData',
-    open: false,
+    inputOpen: false,
+    readOpen: false,
   };
   // ダイアログの状態
   const [dataDialogState, dataDialogDispatch] = useReducer(dataDialogReducer, initialState);

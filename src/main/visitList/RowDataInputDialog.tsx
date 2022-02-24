@@ -113,7 +113,7 @@ const defaultValues: Inputs = {
   endTime: () => addMinutes(change5MinuteIntervals(new Date()), startTimeBufferMinute + endTimeBufferMinute),
   room: '',
 };
-type RowDataDialogProps = {
+type RowDataInputDialogProps = {
   currentTab: RoomType;
   open: boolean;
   onClose: () => void;
@@ -121,7 +121,7 @@ type RowDataDialogProps = {
   reload: () => void;
 };
 
-export function RowDataDialog(props: RowDataDialogProps) {
+export function RowDataInputDialog(props: RowDataInputDialogProps) {
   const { currentTab, open, onClose, data, reload } = props;
 
   const { t } = useTranslation();
@@ -270,6 +270,10 @@ export function RowDataDialog(props: RowDataDialogProps) {
                         {data.roomEmail}
                         {'>'}
                       </div>
+                    </li>
+                    <li key="reservation-name" className={classes.list}>
+                      <div className={classes.title}>{t('visittable.header.reservation-name')}</div>
+                      <div className={classes.field}>{data?.reservationName}</div>
                     </li>
                   </List>
                 )}
