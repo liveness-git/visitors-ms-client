@@ -47,7 +47,7 @@
 	"visitorinfoform.delete-confirm-title":"来訪情報を削除しますか？",
 	"visitorinfoform.delete-confirm-message":"office365の会議室予約は削除されません。必要な場合は、outlookより削除をお願いします。",
 	"visitorinfolist.title":"来訪一覧",
-	"main.menu.created-visit-info":"作成した来訪情報",
+	"main.menu.created-visit-info":"自分の会議予約",
 	"main.menu.by-meeting-room":"会議室別",
 	"main.menu.logout":"ログアウト",
 	"main.visitlist.title":"から１か月間の来訪情報",
