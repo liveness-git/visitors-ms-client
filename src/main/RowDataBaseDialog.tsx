@@ -1,14 +1,13 @@
 import { useTranslation } from 'react-i18next';
 
+import { Box, List, Button } from '@material-ui/core';
 import { makeStyles, createStyles } from '@material-ui/core/styles';
-import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import { Box, List } from '@material-ui/core';
 
-import { RowData } from './DataTable';
+import { RowDataType } from './DataTableBase';
 
 export const useRowDataDialogStyles = makeStyles((tableTheme) => {
   const border = 'thin solid rgba(0, 0, 0, 0.12)';
@@ -44,7 +43,7 @@ export const useRowDataDialogStyles = makeStyles((tableTheme) => {
 type RowDataBaseDialogProps = {
   open: boolean;
   onClose: () => void;
-  data: RowData | null;
+  data: RowDataType | null;
   children: React.ReactNode;
 };
 

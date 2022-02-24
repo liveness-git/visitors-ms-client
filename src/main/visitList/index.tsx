@@ -11,7 +11,8 @@ import AddCircleIcon from '@material-ui/icons/AddCircle';
 import { useTranslation } from 'react-i18next';
 
 import BaseTemplate from '../BaseTemplate';
-import { dataDialogReducer, DataDialogState, DataTable } from './DataTable';
+import { DataTable } from './DataTable';
+import { dataDialogReducer, DataDialogState } from '../DataTableBase';
 
 const useStyles = makeStyles((theme) => {
   return createStyles({

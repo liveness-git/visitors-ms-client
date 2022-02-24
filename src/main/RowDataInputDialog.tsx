@@ -2,27 +2,29 @@ import { useContext, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Controller, useForm, useWatch } from 'react-hook-form';
 
+import { Box, FormControlLabel, Grid, Switch, TextField, Button } from '@material-ui/core';
 import { makeStyles, createStyles, createTheme, ThemeProvider } from '@material-ui/core/styles';
 import { grey, purple } from '@material-ui/core/colors';
-import Button from '@material-ui/core/Button';
 
-import { Box, FormControlLabel, Grid, Switch, TextField } from '@material-ui/core';
 import DeleteIcon from '@material-ui/icons/Delete';
 import SaveIcon from '@material-ui/icons/Save';
+
+import { DateTimePicker } from '@material-ui/pickers';
 
 import { addMinutes } from 'date-fns';
 
 import { VisitorInfoPersonal } from '_models/VisitorInfo';
+import { Room, RoomType } from '_models/Room';
+
 import { fetchPostData } from '_utils/FetchPostData';
+import { useLoadData } from '_utils/useLoadData';
+
 import { MySnackberContext } from '_components/MySnackbarContext';
 import { Spinner } from '_components/Spinner';
 
-import { RowData } from './DataTable';
+import { RowDataType } from './DataTableBase';
 import { RowDataBaseDialog, useRowDataDialogStyles } from './RowDataBaseDialog';
 import { DeleteConfirmDialog } from './DeleteConfirmDialog';
-import { useLoadData } from '_utils/useLoadData';
-import { Room, RoomType } from '_models/Room';
-import { DateTimePicker } from '@material-ui/pickers';
 
 const useStyles = makeStyles((tableTheme) => {
   return createStyles({
@@ -90,7 +92,7 @@ type RowDataInputDialogProps = {
   currentTab: RoomType;
   open: boolean;
   onClose: () => void;
-  data: RowData | null;
+  data: RowDataType | null;
   reload: () => void;
 };
 

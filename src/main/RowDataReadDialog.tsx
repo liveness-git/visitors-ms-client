@@ -2,13 +2,13 @@ import { useTranslation } from 'react-i18next';
 
 import { Box, List } from '@material-ui/core';
 
-import { RowData } from './DataTable';
+import { RowDataType } from './DataTableBase';
 import { RowDataBaseDialog, useRowDataDialogStyles } from './RowDataBaseDialog';
 
 type RowDataReadDialogProps = {
   open: boolean;
   onClose: () => void;
-  data: RowData | null;
+  data: RowDataType | null;
 };
 
 export function RowDataReadDialog(props: RowDataReadDialogProps) {
