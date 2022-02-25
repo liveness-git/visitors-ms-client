@@ -14,7 +14,7 @@ import { DateTimePicker } from '@material-ui/pickers';
 import { addMinutes } from 'date-fns';
 
 import { VisitorInfoPersonal } from '_models/VisitorInfo';
-import { Room, RoomType } from '_models/Room';
+import { Room } from '_models/Room';
 
 import { fetchPostData } from '_utils/FetchPostData';
 import { useLoadData } from '_utils/useLoadData';
@@ -89,7 +89,6 @@ const defaultValues: Inputs = {
   room: '',
 };
 type RowDataInputDialogProps = {
-  currentTab: RoomType;
   open: boolean;
   onClose: () => void;
   data: RowDataType | null;
@@ -97,14 +96,13 @@ type RowDataInputDialogProps = {
 };
 
 export function RowDataInputDialog(props: RowDataInputDialogProps) {
-  const { currentTab, open, onClose, data, reload } = props;
+  const { open, onClose, data, reload } = props;
 
   const { t } = useTranslation();
   const classes = { ...useRowDataDialogStyles(), ...useStyles() };
   const snackberContext = useContext(MySnackberContext); // スナックバー取得用
 
   // 会議室データ取得
-  // const [{ data: rooms }] = useLoadData<Room[]>(`/room/choices?type=${currentTab}`, []);
   const [{ data: rooms }] = useLoadData<Room[]>(`/room/choices`, []);
 
   // 削除確認メッセージの状態

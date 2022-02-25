@@ -1,7 +1,6 @@
 import { createTheme, ThemeProvider } from '@material-ui/core/styles';
 import { grey, purple } from '@material-ui/core/colors';
 
-import { RoomType } from '_models/Room';
 import { VisitorInfoMs, VisitorInfoPersonal } from '_models/VisitorInfo';
 
 import { Spinner } from '_components/Spinner';
@@ -63,7 +62,6 @@ export const dataDialogReducer = (state: DataDialogState, action: DataDialogActi
 };
 
 type DataTableBaseProps = {
-  currentTab: RoomType;
   currentRow: RowDataType | null;
   dataDialogHook: {
     state: DataDialogState;
@@ -75,7 +73,7 @@ type DataTableBaseProps = {
 };
 
 export function DataTableBase(props: DataTableBaseProps) {
-  const { dataDialogHook, currentTab, isLoading, reload, currentRow, children } = props;
+  const { dataDialogHook, isLoading, reload, currentRow, children } = props;
 
   // ダイアログを閉じる(input)
   const handleInputDialogClose = async () => {
@@ -91,7 +89,6 @@ export function DataTableBase(props: DataTableBaseProps) {
       <Spinner open={isLoading} />
       {children}
       <RowDataInputDialog
-        currentTab={currentTab}
         open={dataDialogHook.state.inputOpen}
         onClose={handleInputDialogClose}
         data={dataDialogHook.state.mode === 'addData' ? null : currentRow}

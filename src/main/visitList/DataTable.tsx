@@ -68,7 +68,7 @@ export function DataTable(props: DataTableProps) {
   }
 
   return (
-    <DataTableBase currentTab={currentTab} currentRow={currentRow} dataDialogHook={dataDialogHook} isLoading={isLoading} reload={reload}>
+    <DataTableBase currentRow={currentRow} dataDialogHook={dataDialogHook} isLoading={isLoading} reload={reload}>
       <MaterialTable
         columns={columns as Column<RowDataType>[]}
         data={data!}

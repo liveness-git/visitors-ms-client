@@ -5,7 +5,10 @@ import { SignIn } from './login/Main';
 import { AuthorizeWrapper } from 'login/Main/Authorize';
 
 import { VisitList as Front } from './front/visitList';
+
 import { VisitList as Main } from './main/visitList';
+import { ByRoom } from './main/byRoom';
+
 import { VisitorInfoForm } from './outlook/form';
 import { VisitorInfoList } from './outlook/list';
 
@@ -20,6 +23,7 @@ export function Routes() {
         {/*** 一般メイン ***/}
         <Route exact path="/login" component={SignIn} />
         <Route exact path="/oauth/redirect" component={AuthorizeWrapper} />
+        <Route exact path="/main/byroom" component={ByRoom} />
         <Route path="/main" component={Main} />
         {/*** 一般アドイン ***/}
         <Route exact path="/outlook/inputform">

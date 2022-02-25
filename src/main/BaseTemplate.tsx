@@ -20,11 +20,13 @@ import { AccountCircle } from '@material-ui/icons';
 import MenuIcon from '@material-ui/icons/Menu';
 import EditIcon from '@material-ui/icons/Edit';
 import MeetingRoomIcon from '@material-ui/icons/MeetingRoom';
+import RefreshIcon from '@material-ui/icons/Refresh';
 
 import { Copyright } from '../_components/Copyright';
 import { MySnackberProvider } from '../_components/MySnackbarContext';
 import { get } from '_utils/Http';
 import { useTranslation } from 'react-i18next';
+import { User } from '_models/User';
 
 // import { useTranslation } from 'react-i18next';
 
@@ -148,12 +150,16 @@ const BaseTemplate = ({ children }: BaseTemplateProps) => {
     try {
       const result = await get<string | undefined>('/oauth/signout');
       if (result.ok) {
+        sessionStorage.removeItem(key);
         window.location.href = '/login';
       }
     } catch (error) {
       console.log(error);
     }
   };
+
+  // セッションストレージkey
+  const key = 'liveness-visitor-user';
 
   // MS認証の状態
   const [signedIn, setSignedIn] = useState(false);
@@ -162,21 +168,38 @@ const BaseTemplate = ({ children }: BaseTemplateProps) => {
   // MS認証状態の確認
   const checkAuth = useCallback(async () => {
     try {
-      // サーバーのセッションにユーザー情報が登録されているか確認
-      const result = await get<string>('/user/email');
-      if (result.parsedBody) {
+      const data = sessionStorage.getItem(key);
+      if (data) {
+        // セッションストレージから復元
+        const user = JSON.parse(data) as User;
+        setEmail(user.email);
         setSignedIn(true);
-        setEmail(result.parsedBody);
       } else {
-        // TODO: ここに遷移することってある？？？
-        setSignedIn(false);
-        console.log('Failed to retrieve email');
+        // サーバーのセッションにユーザー情報が登録されているか確認
+        const result = await get<User>('/user/me');
+        if (result.parsedBody) {
+          const user = result.parsedBody;
+          sessionStorage.setItem(key, JSON.stringify(user));
+          setEmail(user.email);
+          setSignedIn(true);
+        } else {
+          // TODO: ここに遷移することってある？？？
+          sessionStorage.removeItem(key);
+          setSignedIn(false);
+          console.log('Failed to retrieve email');
+        }
       }
     } catch (error) {
       // serverのpoliciesで弾かれた場合、ここへ遷移
+      sessionStorage.removeItem(key);
       window.location.href = '/login';
     }
   }, []);
+
+  // 画面リフレッシュ
+  const refreshPage = () => {
+    window.location.reload();
+  };
 
   useEffect(() => {
     checkAuth();
@@ -258,7 +281,7 @@ const BaseTemplate = ({ children }: BaseTemplateProps) => {
                 <ListItemText primary={t('main.menu.created-visit-info')} />
               </ListItem>
             </Link>
-            <Link to="/main" className={classes.link}>
+            <Link to="/main/byroom" className={classes.link}>
               <ListItem button>
                 <Tooltip title={t('main.menu.by-meeting-room') as string}>
                   <ListItemIcon>
@@ -268,6 +291,14 @@ const BaseTemplate = ({ children }: BaseTemplateProps) => {
                 <ListItemText primary={t('main.menu.by-meeting-room')} />
               </ListItem>
             </Link>
+            <ListItem button onClick={refreshPage}>
+              <Tooltip title={t('main.menu.refresh') as string}>
+                <ListItemIcon>
+                  <RefreshIcon />
+                </ListItemIcon>
+              </Tooltip>
+              <ListItemText primary={t('main.menu.refresh')} />
+            </ListItem>
           </List>
         </Drawer>
         <main className={classes.content}>

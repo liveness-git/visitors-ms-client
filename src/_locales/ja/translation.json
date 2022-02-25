@@ -49,8 +49,12 @@
 	"visitorinfolist.title":"来訪一覧",
 	"main.menu.created-visit-info":"自分の会議予約",
 	"main.menu.by-meeting-room":"会議室別",
+	"main.menu.refresh":"refresh",
 	"main.menu.logout":"ログアウト",
 	"main.visitlist.title":"から１か月間の来訪情報",
 	"main.visitlist.picker-label":"選択日",
-	"main.visitlist.add-event":"新規作成"
+	"main.visitlist.add-event":"新規作成",
+	"main.byroom.title":"の来訪情報",
+	"main.byroom.picker-label":"選択日",
+	"main.byroom.add-event":"新規作成"
 }
