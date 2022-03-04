@@ -25,7 +25,7 @@ export function DataTable(props: DataTableProps) {
   const { t } = useTranslation();
 
   // データ取得
-  const [{ data, isLoading, isError }, reload] = useLoadData<RowDataType[]>(`/event/visitlist?timestamp=${currentDate!.getTime()}`, []);
+  const [{ data, isLoading, isError }, reload] = useLoadData<RowDataType[]>(`/event/byroom?timestamp=${currentDate!.getTime()}`, []);
 
   // 選択行の状態
   const [currentRow, setCurrentRow] = useState<RowDataType | null>(null);
