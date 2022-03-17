@@ -1,10 +1,6 @@
 import React, { useReducer, useState } from 'react';
 
-import { AppBar, Box, Button, createStyles, Grid, makeStyles, Paper, Typography } from '@material-ui/core';
-import Tab from '@material-ui/core/Tab';
-import TabContext from '@material-ui/lab/TabContext';
-import TabList from '@material-ui/lab/TabList';
-import TabPanel from '@material-ui/lab/TabPanel';
+import { Box, Button, createStyles, Grid, makeStyles, Paper, Typography } from '@material-ui/core';
 import { KeyboardDatePicker } from '@material-ui/pickers';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
 
@@ -44,12 +40,6 @@ export function VisitList() {
   const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
   const handleDateChange = (date: Date | null) => {
     setSelectedDate(date);
-  };
-
-  // タブ切り替え
-  const [value, setTabValue] = useState('1');
-  const handleTabChange = (_event: React.ChangeEvent<{}>, newValue: string) => {
-    setTabValue(newValue);
   };
 
   // ダイアログの初期値
@@ -104,20 +94,9 @@ export function VisitList() {
             </Grid>
           </Grid>
         </Box>
-        <TabContext value={value}>
-          <AppBar position="static" color="default">
-            <TabList indicatorColor="primary" textColor="primary" variant="fullWidth" onChange={handleTabChange} aria-label="view tabs">
-              <Tab label={t('visitlist.tab.conference-rooms')} value="1" />
-              <Tab label={t('visitlist.tab.free-space')} value="2" />
-            </TabList>
-          </AppBar>
-          <TabPanel value="1">
-            <DataTable currentTab="rooms" currentDate={selectedDate!} dataDialogHook={{ state: dataDialogState, dispatch: dataDialogDispatch }} />
-          </TabPanel>
-          <TabPanel value="2">
-            <DataTable currentTab="free" currentDate={selectedDate!} dataDialogHook={{ state: dataDialogState, dispatch: dataDialogDispatch }} />
-          </TabPanel>
-        </TabContext>
+        <Box p={2}>
+          <DataTable currentDate={selectedDate!} dataDialogHook={{ state: dataDialogState, dispatch: dataDialogDispatch }} />
+        </Box>
       </Paper>
     </BaseTemplate>
   );

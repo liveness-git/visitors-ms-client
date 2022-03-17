@@ -18,9 +18,18 @@ export type VisitorInfoFront = {
 };
 
 export type VisitorInfoMs = {
+  subject: string;
   apptTime: string;
   roomName: string;
   roomEmail: string;
   reservationName: string;
   isAuthor: boolean;
+  resourceStatus: string;
+};
+
+export type MsEventInputType = {
+  subject: string;
+  startTime: () => Date;
+  endTime: () => Date;
+  room: string;
 };

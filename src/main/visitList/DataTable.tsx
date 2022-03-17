@@ -1,23 +1,46 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import clsx from 'clsx';
 
-import MaterialTable, { Column } from '@material-table/core';
+import { createStyles, makeStyles, Theme } from '@material-ui/core';
+import MaterialTable, { Column, MTableCell } from '@material-table/core';
 
 import { tableIcons } from '_utils/MaterialTableIcons';
 import { useLoadData } from '_utils/useLoadData';
 
-import { RoomType } from '_models/Room';
-
 import { DataDialogAction, DataDialogState, DataTableBase, RowDataType, tableTheme } from '../DataTableBase';
+import { ClassNameMap } from '@material-ui/core/styles/withStyles';
+
+const useStyles = makeStyles<Theme>(() => {
+  return createStyles({
+    //cell default
+    cellApptTime: {},
+    cellRoomName: {},
+    cellResourceStatus: {},
+    cellReservationName: {},
+    cellVisitCompany: {},
+    cellSubject: {},
+    // 会議室状態が辞退の場合
+    declinedApptTime: { textDecoration: 'line-through 2px solid red' },
+    declinedRoomName: {
+      '&::after': {
+        textDecoration: 'none !important',
+        marginLeft: 5,
+        padding: '1px 5px',
+        color: 'red',
+        border: '1px solid red',
+        content: '"辞退"', // TODO: t("visitdialog.view.resource-status-declined")の実装に変更したい
+      },
+    },
+  });
+});
 
 export type Columns = {
   title: string;
   field: string;
-  hidden?: boolean; // テーブルに表示するか否か
 };
 
 type DataTableProps = {
-  currentTab: RoomType;
   currentDate: Date;
   dataDialogHook: {
     state: DataDialogState;
@@ -26,15 +49,13 @@ type DataTableProps = {
 };
 
 export function DataTable(props: DataTableProps) {
-  const { currentDate, dataDialogHook, currentTab } = props;
+  const { currentDate, dataDialogHook } = props;
 
   const { t } = useTranslation();
+  const classes = useStyles('test');
 
   // データ取得
-  const [{ data, isLoading, isError }, reload] = useLoadData<RowDataType[]>(
-    `/event/visitlist?timestamp=${currentDate!.getTime()}&type=${currentTab}`,
-    []
-  );
+  const [{ data, isLoading, isError }, reload] = useLoadData<RowDataType[]>(`/event/visitlist?timestamp=${currentDate!.getTime()}`, []);
 
   // 選択行の状態
   const [currentRow, setCurrentRow] = useState<RowDataType | null>(null);
@@ -53,14 +74,17 @@ export function DataTable(props: DataTableProps) {
     { title: t('visittable.header.appt-time'), field: 'apptTime' },
     { title: t('visittable.header.room-name'), field: 'roomName' },
     { title: t('visittable.header.visit-company'), field: 'visitCompany' },
-    { title: t('visittable.header.visitor-name'), field: 'visitorName', hidden: true },
-    { title: t('visittable.header.tea-supply'), field: 'teaSupply', hidden: true },
-    { title: t('visittable.header.number-of-visitor'), field: 'numberOfVisitor', hidden: true },
-    { title: t('visittable.header.number-of-employee'), field: 'numberOfEmployee', hidden: true },
-    { title: t('visittable.header.comment'), field: 'comment', hidden: true },
     { title: t('visittable.header.reservation-name'), field: 'reservationName' },
-    { title: t('visittable.header.contact-addr'), field: 'contactAddr' },
+    { title: t('visittable.header.event-subject'), field: 'subject' },
   ];
+
+  const cellStyle = (field: String, rowData: RowDataType) => {
+    const className = field.charAt(0).toUpperCase() + field.slice(1);
+    return clsx(
+      classes[`cell${className}` as keyof ClassNameMap],
+      rowData.resourceStatus === 'declined' && classes[`declined${className}` as keyof ClassNameMap]
+    );
+  };
 
   // データ取得失敗した場合
   if (isError) {
@@ -71,6 +95,10 @@ export function DataTable(props: DataTableProps) {
     <DataTableBase currentRow={currentRow} dataDialogHook={dataDialogHook} isLoading={isLoading} reload={reload}>
       <MaterialTable
         columns={columns as Column<RowDataType>[]}
+        components={{
+          // Row: (props) => <MTableBodyRow {...props} className={rowStyle(props.data)} />,
+          Cell: (props) => <MTableCell {...props} className={cellStyle(props.columnDef.field, props.rowData)} />,
+        }}
         data={data!}
         onRowClick={(_event, selectedRow?) => !!selectedRow && handleDialogOpen(selectedRow)}
         options={{
@@ -78,6 +106,7 @@ export function DataTable(props: DataTableProps) {
           toolbar: false,
           search: false,
           headerStyle: { backgroundColor: tableTheme.palette.primary.light },
+          tableLayout: 'fixed',
         }}
         icons={tableIcons}
       />

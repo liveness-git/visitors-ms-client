@@ -13,7 +13,7 @@ import { DateTimePicker } from '@material-ui/pickers';
 
 import { addMinutes } from 'date-fns';
 
-import { VisitorInfoPersonal } from '_models/VisitorInfo';
+import { VisitorInfoPersonal, MsEventInputType } from '_models/VisitorInfo';
 import { Room } from '_models/Room';
 
 import { fetchPostData } from '_utils/FetchPostData';
@@ -54,22 +54,14 @@ const inputformTheme = createTheme({
   },
 });
 
-type NewDateType = () => Date;
 const startTimeBufferMinute = 0;
 const endTimeBufferMinute = 30;
 const change5MinuteIntervals = (date: Date) => Math.ceil(date.getTime() / 1000 / 60 / 5) * 1000 * 60 * 5;
 
-type EventType = {
-  subject: string;
-  startTime: NewDateType;
-  endTime: NewDateType;
-  room: string;
-};
-
 type Inputs = {
   mode: 'ins' | 'upd' | 'del';
 } & VisitorInfoPersonal &
-  EventType;
+  MsEventInputType;
 
 // 入力フォームの初期値
 const defaultValues: Inputs = {

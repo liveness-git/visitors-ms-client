@@ -53,6 +53,17 @@ export function RowDataBaseDialog(props: RowDataBaseDialogProps) {
   const { t } = useTranslation();
   const classes = useRowDataDialogStyles();
 
+  const resourceStatus = (status: string) => {
+    switch (status) {
+      case 'accepted':
+        return t('visitdialog.view.resource-status-accepted');
+      case 'declined':
+        return t('visitdialog.view.resource-status-declined');
+      default:
+        return '';
+    }
+  };
+
   const handleCancel = () => {
     onClose();
   };
@@ -65,6 +76,14 @@ export function RowDataBaseDialog(props: RowDataBaseDialogProps) {
           {!!data && (
             <Box p={2}>
               <List disablePadding={true}>
+                <li key="resource-status" className={classes.list}>
+                  <div className={classes.title}>{t('visittable.header.resource-status')}</div>
+                  <div className={classes.field}>{resourceStatus(data.resourceStatus)}</div>
+                </li>
+                <li key="event-subject" className={classes.list}>
+                  <div className={classes.title}>{t('visittable.header.event-subject')}</div>
+                  <div className={classes.field}>{data.subject}</div>
+                </li>
                 <li key="app-time" className={classes.list}>
                   <div className={classes.title}>{t('visittable.header.appt-time')}</div>
                   <div className={classes.field}>{data.apptTime}</div>
