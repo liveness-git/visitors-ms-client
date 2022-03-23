@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import i18next from 'i18next';
 import clsx from 'clsx';
 
 import { createStyles, makeStyles, Theme } from '@material-ui/core';
@@ -24,12 +25,12 @@ const useStyles = makeStyles<Theme>(() => {
     declinedApptTime: { textDecoration: 'line-through 2px solid red' },
     declinedRoomName: {
       '&::after': {
-        textDecoration: 'none !important',
+        wordBreak: 'keep-all',
         marginLeft: 5,
         padding: '1px 5px',
         color: 'red',
         border: '1px solid red',
-        content: '"辞退"', // TODO: t("visitdialog.view.resource-status-declined")の実装に変更したい
+        content: `"${i18next.t('visitdialog.view.resource-status-declined')}"`,
       },
     },
   });

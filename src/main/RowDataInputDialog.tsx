@@ -1,4 +1,5 @@
 import { useContext, useEffect, useState } from 'react';
+import { useRouteMatch } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Controller, useForm, useWatch } from 'react-hook-form';
 
@@ -15,6 +16,7 @@ import { addMinutes } from 'date-fns';
 
 import { VisitorInfoPersonal, MsEventInputType } from '_models/VisitorInfo';
 import { Room } from '_models/Room';
+import { LocationParams } from '_models/Location';
 
 import { fetchPostData } from '_utils/FetchPostData';
 import { useLoadData } from '_utils/useLoadData';
@@ -93,9 +95,10 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
   const { t } = useTranslation();
   const classes = { ...useRowDataDialogStyles(), ...useStyles() };
   const snackberContext = useContext(MySnackberContext); // スナックバー取得用
+  const match = useRouteMatch<LocationParams>();
 
-  // 会議室データ取得
-  const [{ data: rooms }] = useLoadData<Room[]>(`/room/choices`, []);
+  // 会議室一覧の取得
+  const [{ data: rooms }] = useLoadData<Room[]>(`/room/choices?location=${match.params.location}`, []);
 
   // 削除確認メッセージの状態
   const [delConfOpen, setDelConfOpen] = useState(false);

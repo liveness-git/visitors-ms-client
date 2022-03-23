@@ -7,6 +7,8 @@ import { makeLoginStyles } from '_styles/MakeLoginStyles';
 import { useContext, useEffect, useState } from 'react';
 import { get } from '_utils/Http';
 import { useTranslation } from 'react-i18next';
+import { getTempLocation, removeTempLocation } from '_utils/SessionStrage';
+import { Location } from '_models/Location';
 
 type Response = {
   ok: boolean;
@@ -43,8 +45,19 @@ export function Authorize() {
           } else {
             snackberContext.dispatch({ type: 'error', message: t('common.msg.login-failed') }); //TODO:あとでtestが必要
           }
+          // urlにロケーションを設定
+          let location = getTempLocation(); // sessionStrageからlocationを取得
+          removeTempLocation(); // sessionStrageからlocationを削除
+          if (!location || location === 'undefined') {
+            const first = await get<Location>('/location/first');
+            if (first.parsedBody) {
+              location = first.parsedBody.url;
+            } else {
+              throw new Error('Location is not registered.');
+            }
+          }
           setTimeout(() => {
-            window.location.replace('/main');
+            window.location.replace(`/${location}/main`);
           }, 1500);
         }
       } catch (error) {

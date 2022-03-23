@@ -21,10 +21,10 @@ export function Routes() {
         {/* <Route exact path="/logout" component={Logout} /> */}
         <Route path="/front" component={Front} />
         {/*** 一般メイン ***/}
-        <Route exact path="/login" component={SignIn} />
+        <Route exact path="/:location?/login" component={SignIn} />
         <Route exact path="/oauth/redirect" component={AuthorizeWrapper} />
-        <Route exact path="/main/byroom" component={ByRoom} />
-        <Route path="/main" component={Main} />
+        <Route exact path="/:location/main/byroom" component={ByRoom} />
+        <Route exact path="/:location/main" component={Main} />
         {/*** 一般アドイン ***/}
         <Route exact path="/outlook/inputform">
           <VisitorInfoForm isRead={false} />
@@ -34,7 +34,7 @@ export function Routes() {
         </Route>
         <Route path="/outlook" component={VisitorInfoList} />
         {/*** リダイレクト ***/}
-        <Redirect from="/" to="/main" />
+        <Redirect from="/" to="/login" />
       </Switch>
     </BrowserRouter>
   );

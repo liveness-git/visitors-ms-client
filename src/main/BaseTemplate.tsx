@@ -1,4 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { Link, useRouteMatch } from 'react-router-dom';
 import clsx from 'clsx';
 
 import { makeStyles, createStyles } from '@material-ui/core/styles';
@@ -14,7 +16,6 @@ import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import IconButton from '@material-ui/core/IconButton';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
-import { Link } from 'react-router-dom';
 import { ListItemText, Menu, MenuItem, Tooltip } from '@material-ui/core';
 import { AccountCircle } from '@material-ui/icons';
 import MenuIcon from '@material-ui/icons/Menu';
@@ -22,13 +23,15 @@ import EditIcon from '@material-ui/icons/Edit';
 import MeetingRoomIcon from '@material-ui/icons/MeetingRoom';
 import RefreshIcon from '@material-ui/icons/Refresh';
 
+import { get } from '_utils/Http';
+import { getUserInfo, removeUserInfo, saveUserInfo } from '_utils/SessionStrage';
+
 import { Copyright } from '../_components/Copyright';
 import { MySnackberProvider } from '../_components/MySnackbarContext';
-import { get } from '_utils/Http';
-import { useTranslation } from 'react-i18next';
-import { User } from '_models/User';
+import { MyLocation } from '_components/MyLocation';
 
-// import { useTranslation } from 'react-i18next';
+import { User } from '_models/User';
+import { LocationParams } from '_models/Location';
 
 const useStyles = makeStyles((theme) => {
   const drawerWidth = 315;
@@ -63,6 +66,9 @@ const useStyles = makeStyles((theme) => {
     },
     title: {
       flexGrow: 1,
+    },
+    location: {
+      color: 'white',
     },
     drawerPaper: {
       position: 'relative',
@@ -127,6 +133,7 @@ type BaseTemplateProps = {
 const BaseTemplate = ({ children }: BaseTemplateProps) => {
   const { t } = useTranslation();
   const classes = useStyles();
+  const match = useRouteMatch<LocationParams>();
 
   // 左メニューエリアの開閉
   const [open, setOpen] = useState(false);
@@ -150,16 +157,13 @@ const BaseTemplate = ({ children }: BaseTemplateProps) => {
     try {
       const result = await get<string | undefined>('/oauth/signout');
       if (result.ok) {
-        sessionStorage.removeItem(key);
+        removeUserInfo(); //sessionStrageからUser情報を削除
         window.location.href = '/login';
       }
     } catch (error) {
       console.log(error);
     }
   };
-
-  // セッションストレージkey
-  const key = 'liveness-visitor-user';
 
   // MS認証の状態
   const [signedIn, setSignedIn] = useState(false);
@@ -168,9 +172,9 @@ const BaseTemplate = ({ children }: BaseTemplateProps) => {
   // MS認証状態の確認
   const checkAuth = useCallback(async () => {
     try {
-      const data = sessionStorage.getItem(key);
+      const data = getUserInfo(); //sessionStrageからUser情報を取得
       if (data) {
-        // セッションストレージから復元
+        // sessionStrageから復元
         const user = JSON.parse(data) as User;
         setEmail(user.email);
         setSignedIn(true);
@@ -179,19 +183,19 @@ const BaseTemplate = ({ children }: BaseTemplateProps) => {
         const result = await get<User>('/user/me');
         if (result.parsedBody) {
           const user = result.parsedBody;
-          sessionStorage.setItem(key, JSON.stringify(user));
+          saveUserInfo(JSON.stringify(user)); //sessionStrageにUser情報を格納
           setEmail(user.email);
           setSignedIn(true);
         } else {
           // TODO: ここに遷移することってある？？？
-          sessionStorage.removeItem(key);
+          removeUserInfo();
           setSignedIn(false);
           console.log('Failed to retrieve email');
         }
       }
     } catch (error) {
       // serverのpoliciesで弾かれた場合、ここへ遷移
-      sessionStorage.removeItem(key);
+      removeUserInfo();
       window.location.href = '/login';
     }
   }, []);
@@ -226,6 +230,9 @@ const BaseTemplate = ({ children }: BaseTemplateProps) => {
             <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
               Visitors for Microsoft
             </Typography>
+            <div>
+              <MyLocation></MyLocation>
+            </div>
             <div>
               <IconButton
                 aria-label="account of current user"
@@ -271,7 +278,7 @@ const BaseTemplate = ({ children }: BaseTemplateProps) => {
           </div>
           <Divider />
           <List>
-            <Link to="/main" className={classes.link}>
+            <Link to={`/${match.params.location}/main`} className={classes.link}>
               <ListItem button>
                 <Tooltip title={t('main.menu.created-visit-info') as string}>
                   <ListItemIcon>
@@ -281,7 +288,7 @@ const BaseTemplate = ({ children }: BaseTemplateProps) => {
                 <ListItemText primary={t('main.menu.created-visit-info')} />
               </ListItem>
             </Link>
-            <Link to="/main/byroom" className={classes.link}>
+            <Link to={`/${match.params.location}/main/byroom`} className={classes.link}>
               <ListItem button>
                 <Tooltip title={t('main.menu.by-meeting-room') as string}>
                   <ListItemIcon>

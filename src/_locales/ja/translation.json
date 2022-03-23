@@ -26,6 +26,7 @@
 	"visittable.header.contact-addr":"連絡先",
 	"visittable.header.check-in":"イン",
 	"visittable.header.check-out":"アウト",
+	"visittable.header.resource-status":"会議室状態",
 	"visittable.header.event-subject":"件名",
 	"visittable.header.event-room":"会議室",
 	"visittable.header.event-start-time":"開始時刻",

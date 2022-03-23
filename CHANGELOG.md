@@ -1,5 +1,11 @@
 # visitors-ms client
 
+## 0.0.0.26-2022-03-22
+
+- ロケーション機能追加
+- CSS の context に他言語化実装
+- sessionStrage を関数化
+
 ## 0.0.0.25-2022-03-18
 
 - VisitList のタブ(room/free)機能廃止。
