@@ -29,7 +29,7 @@ export function DeleteConfirmDialog(props: DeleteConfirmDialogPorps) {
   return (
     <div>
       <Dialog open={open} onClose={handleClose} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
-        <DialogTitle id="alert-dialog-title">{t('visitorinfoform.delete-confirm-title')}</DialogTitle>
+        {/* <DialogTitle id="alert-dialog-title">{t('visitorinfoform.delete-confirm-title')}</DialogTitle> */}
         <DialogContent>
           <DialogContentText id="alert-dialog-description">{t('visitorinfoform.delete-confirm-message')}</DialogContentText>
         </DialogContent>

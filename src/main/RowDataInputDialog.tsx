@@ -175,14 +175,14 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
       let url = '';
       switch (formData.mode) {
         case 'ins':
-          url = '/event/addevent';
-          // url = '/visitor/create';
+          url = '/event/create';
           break;
         case 'upd':
           url = !data?.visitorId ? '/visitor/create' : '/visitor/update';
           break;
         case 'del':
-          url = '/visitor/delete';
+          url = '/event/delete';
+          // url = '/visitor/delete';
           break;
       }
       const result = await fetchPostData(url, formData);
@@ -419,12 +419,12 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
               />
 
               <Grid container justifyContent="space-between" spacing={2} className={classes.formAction}>
-                <Grid item xs={!data || !data.visitorId ? 12 : 6}>
+                <Grid item xs={!data ? 12 : 6}>
                   <Button onClick={handleSave} variant="contained" color="primary" disabled={!isDirty} startIcon={<SaveIcon />} fullWidth>
                     {t('visitorinfoform.form.save')}
                   </Button>
                 </Grid>
-                <Grid item xs={6} style={!data || !data.visitorId ? { display: 'none' } : undefined}>
+                <Grid item xs={6} style={!data ? { display: 'none' } : undefined}>
                   <Button onClick={handleDelete} variant="contained" color="primary" /*disabled={!data}*/ startIcon={<DeleteIcon />} fullWidth>
                     {t('visitorinfoform.form.delete')}
                   </Button>
