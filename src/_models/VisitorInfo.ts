@@ -20,6 +20,8 @@ export type VisitorInfoFront = {
 export type VisitorInfoMs = {
   subject: string;
   apptTime: string;
+  startDateTime: number;
+  endDateTime: number;
   roomName: string;
   roomEmail: string;
   reservationName: string;
@@ -29,7 +31,7 @@ export type VisitorInfoMs = {
 
 export type MsEventInputType = {
   subject: string;
-  startTime: () => Date;
-  endTime: () => Date;
+  startTime: Date;
+  endTime: Date;
   room: string;
 };

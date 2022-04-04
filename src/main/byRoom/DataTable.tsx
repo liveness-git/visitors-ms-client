@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useRouteMatch } from 'react-router-dom';
+import { LocationParams } from '_models/Location';
 
 import { useLoadData } from '_utils/useLoadData';
 
@@ -23,9 +25,13 @@ export function DataTable(props: DataTableProps) {
   const { currentDate, dataDialogHook } = props;
 
   const { t } = useTranslation();
+  const match = useRouteMatch<LocationParams>();
 
   // データ取得
-  const [{ data, isLoading, isError }, reload] = useLoadData<RowDataType[]>(`/event/byroom?timestamp=${currentDate!.getTime()}`, []);
+  const [{ data, isLoading, isError }, reload] = useLoadData<RowDataType[]>(
+    `/event/byroom?timestamp=${currentDate!.getTime()}&location=${match.params.location}`,
+    []
+  );
 
   // 選択行の状態
   const [currentRow, setCurrentRow] = useState<RowDataType | null>(null);

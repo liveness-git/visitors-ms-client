@@ -1,10 +1,15 @@
 import { post, HttpResponse, PostDataResult } from '_utils/Http';
 
-export async function fetchPostData<T>(url: string, formData: T) {
+type FormDataType<T> = {
+  inputs: T;
+  dirtyFields: { [P in keyof T]?: boolean };
+};
+
+export async function fetchPostData<T>(url: string, formData: FormDataType<T>) {
   let response: HttpResponse<PostDataResult<T>>;
   try {
-    response = await post<PostDataResult<T>>(url, formData);
     console.log('formData', formData); // TODO: debug
+    response = await post<PostDataResult<T>>(url, formData);
     console.log('response', response); // TODO: debug
 
     const result = response.parsedBody;

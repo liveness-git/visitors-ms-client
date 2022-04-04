@@ -26,7 +26,7 @@ export function MyLocation() {
 
   return (
     <FormControl color="primary" margin="dense" size="small">
-      <Select style={{ color: 'white' }} inputProps={{ disableUnderline: true }} value={selected} onChange={handleOnChange}>
+      <Select style={{ color: 'white' }} value={selected} onChange={handleOnChange}>
         {locations.map((data) => {
           return (
             <MenuItem key={data.url} value={data.url}>

@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react';
+import { useCallback, useContext, useEffect, useState } from 'react';
 import { useRouteMatch } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Controller, useForm, useWatch } from 'react-hook-form';
@@ -78,8 +78,8 @@ const defaultValues: Inputs = {
   comment: '',
   contactAddr: '',
   subject: '',
-  startTime: () => addMinutes(change5MinuteIntervals(new Date()), startTimeBufferMinute),
-  endTime: () => addMinutes(change5MinuteIntervals(new Date()), startTimeBufferMinute + endTimeBufferMinute),
+  startTime: addMinutes(change5MinuteIntervals(new Date()), startTimeBufferMinute),
+  endTime: addMinutes(change5MinuteIntervals(new Date()), startTimeBufferMinute + endTimeBufferMinute),
   room: '',
 };
 type RowDataInputDialogProps = {
@@ -100,6 +100,15 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
   // 会議室一覧の取得
   const [{ data: rooms }] = useLoadData<Room[]>(`/room/choices?location=${match.params.location}`, []);
 
+  // 会議室ID取得
+  const getRoomId = useCallback(
+    (roomEmail: string) => {
+      const $ = rooms!.find((room) => room.email === roomEmail);
+      return $ ? $!.id : '';
+    },
+    [rooms]
+  );
+
   // 削除確認メッセージの状態
   const [delConfOpen, setDelConfOpen] = useState(false);
 
@@ -110,7 +119,7 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
     reset,
     setValue,
     setError,
-    formState: { errors, isDirty, isSubmitting },
+    formState: { errors, isDirty, isSubmitting, dirtyFields },
   } = useForm<Inputs>({ defaultValues });
 
   // 給茶選択の制御
@@ -119,14 +128,7 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
   // 給茶選択の制御用に会議室選択を監視
   const roomWatch = useWatch({ control, name: 'room' });
 
-  // 給茶選択のエフェクト(更新時)
-  useEffect(() => {
-    if (!!data && !!rooms) {
-      const result = rooms.some((room) => room.email === data.roomEmail && room.teaSupply);
-      setDisabledTeaSupply(!result);
-    }
-  }, [data, rooms]);
-  // 給茶選択のエフェクト(新規作成時)
+  // 給茶選択のエフェクト
   useEffect(() => {
     if (!!roomWatch && !!rooms) {
       const result = rooms.some((room) => room.id === roomWatch && room.teaSupply);
@@ -149,11 +151,15 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
         numberOfEmployee: data.numberOfEmployee,
         comment: data.comment,
         contactAddr: data.contactAddr,
+        subject: data.subject,
+        startTime: new Date(data.startDateTime),
+        endTime: new Date(data.endDateTime),
+        room: getRoomId(data.roomEmail),
       });
     } else {
       reset(defaultValues);
     }
-  }, [data, open, reset]);
+  }, [data, open, reset, getRoomId]);
 
   // 保存アクション
   const handleSave = () => {
@@ -178,15 +184,17 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
           url = '/event/create';
           break;
         case 'upd':
-          url = !data?.visitorId ? '/visitor/create' : '/visitor/update';
+          url = '/event/update';
+          // url = !data?.visitorId ? '/visitor/create' : '/visitor/update';
           break;
         case 'del':
           url = '/event/delete';
           // url = '/visitor/delete';
           break;
       }
-      const result = await fetchPostData(url, formData);
+      const result = await fetchPostData(url, { inputs: formData, dirtyFields: dirtyFields });
       if (result!.success) {
+        if (formData.mode === 'del') await new Promise((r) => setTimeout(r, 1000)); // MSGraphのイベント削除が反映されるまでのタイムラグを考慮
         await reload();
         onClose();
         snackberContext.dispatch({ type: 'success', message: t('common.msg.update-success') });
@@ -219,87 +227,87 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
       <RowDataBaseDialog open={open} onClose={onClose} data={data}>
         <ThemeProvider theme={inputformTheme}>
           <form>
-            {!data && (
-              <Box p={2}>
-                <Controller
-                  name="subject"
-                  control={control}
-                  rules={{ required: t('common.form.required') as string }}
-                  render={({ field }) => (
-                    <TextField
-                      {...field}
-                      label={t('visittable.header.event-subject')}
-                      error={!!errors.subject}
-                      helperText={errors.subject && errors.subject.message}
-                    />
-                  )}
-                />
-                <Controller
-                  name="room"
-                  control={control}
-                  rules={{ required: t('common.form.required') as string }}
-                  render={({ field }) => (
-                    <TextField
-                      {...field}
-                      select
-                      label={t('visittable.header.event-room')}
-                      error={!!errors.room}
-                      helperText={errors.room && errors.room.message}
-                    >
-                      {rooms!.map((option) => (
-                        <option key={option.id} value={option.id}>
-                          {option.name} {'<'}
-                          {option.email}
-                          {'>'}
-                        </option>
-                      ))}
-                    </TextField>
-                  )}
-                />
-                <Grid container spacing={1}>
-                  <Grid item xs={6}>
-                    <Controller
-                      name="startTime"
-                      control={control}
-                      rules={{ required: t('common.form.required') as string }}
-                      render={({ field }) => (
-                        <DateTimePicker
-                          {...field}
-                          ampm={false}
-                          format="yyyy/MM/dd HH:mm"
-                          disablePast
-                          minutesStep={5}
-                          label={t('visittable.header.event-start-time')}
-                          error={!!errors.startTime}
-                          helperText={errors.startTime && errors.startTime.message}
-                          ref={null}
-                        />
-                      )}
-                    />
-                  </Grid>
-                  <Grid item xs={6}>
-                    <Controller
-                      name="endTime"
-                      control={control}
-                      rules={{ required: t('common.form.required') as string }}
-                      render={({ field }) => (
-                        <DateTimePicker
-                          {...field}
-                          ampm={false}
-                          format="yyyy/MM/dd HH:mm"
-                          disablePast
-                          minutesStep={5}
-                          label={t('visittable.header.event-end-time')}
-                          error={!!errors.endTime}
-                          helperText={errors.endTime && errors.endTime.message}
-                          ref={null}
-                        />
-                      )}
-                    />
-                  </Grid>
+            {/* {!data && ( */}
+            <Box p={2}>
+              <Controller
+                name="subject"
+                control={control}
+                rules={{ required: t('common.form.required') as string }}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    label={t('visittable.header.event-subject')}
+                    error={!!errors.subject}
+                    helperText={errors.subject && errors.subject.message}
+                  />
+                )}
+              />
+              <Controller
+                name="room"
+                control={control}
+                rules={{ required: t('common.form.required') as string }}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    select
+                    label={t('visittable.header.event-room')}
+                    error={!!errors.room}
+                    helperText={errors.room && errors.room.message}
+                  >
+                    {rooms!.map((option) => (
+                      <option key={option.id} value={option.id}>
+                        {option.name} {'<'}
+                        {option.email}
+                        {'>'}
+                      </option>
+                    ))}
+                  </TextField>
+                )}
+              />
+              <Grid container spacing={1}>
+                <Grid item xs={6}>
+                  <Controller
+                    name="startTime"
+                    control={control}
+                    rules={{ required: t('common.form.required') as string }}
+                    render={({ field }) => (
+                      <DateTimePicker
+                        {...field}
+                        ampm={false}
+                        format="yyyy/MM/dd HH:mm"
+                        disablePast
+                        minutesStep={5}
+                        label={t('visittable.header.event-start-time')}
+                        error={!!errors.startTime}
+                        helperText={errors.startTime && errors.startTime.message}
+                        ref={null}
+                      />
+                    )}
+                  />
                 </Grid>
-              </Box>
-            )}
+                <Grid item xs={6}>
+                  <Controller
+                    name="endTime"
+                    control={control}
+                    rules={{ required: t('common.form.required') as string }}
+                    render={({ field }) => (
+                      <DateTimePicker
+                        {...field}
+                        ampm={false}
+                        format="yyyy/MM/dd HH:mm"
+                        disablePast
+                        minutesStep={5}
+                        label={t('visittable.header.event-end-time')}
+                        error={!!errors.endTime}
+                        helperText={errors.endTime && errors.endTime.message}
+                        ref={null}
+                      />
+                    )}
+                  />
+                </Grid>
+              </Grid>
+            </Box>
+            {/* )} */}
 
             <Box px={2}>
               <Controller

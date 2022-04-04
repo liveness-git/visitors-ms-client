@@ -80,26 +80,6 @@ export function RowDataBaseDialog(props: RowDataBaseDialogProps) {
                   <div className={classes.title}>{t('visittable.header.resource-status')}</div>
                   <div className={classes.field}>{resourceStatus(data.resourceStatus)}</div>
                 </li>
-                <li key="event-subject" className={classes.list}>
-                  <div className={classes.title}>{t('visittable.header.event-subject')}</div>
-                  <div className={classes.field}>{data.subject}</div>
-                </li>
-                <li key="app-time" className={classes.list}>
-                  <div className={classes.title}>{t('visittable.header.appt-time')}</div>
-                  <div className={classes.field}>{data.apptTime}</div>
-                </li>
-                <li key="room-name" className={classes.list}>
-                  <div className={classes.title}>{t('visittable.header.room-name')}</div>
-                  <div className={classes.field}>
-                    {data.roomName} {'<'}
-                    {data.roomEmail}
-                    {'>'}
-                  </div>
-                </li>
-                <li key="reservation-name" className={classes.list}>
-                  <div className={classes.title}>{t('visittable.header.reservation-name')}</div>
-                  <div className={classes.field}>{data.reservationName}</div>
-                </li>
               </List>
             </Box>
           )}

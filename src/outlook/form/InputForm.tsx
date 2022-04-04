@@ -56,7 +56,7 @@ export function InputForm() {
     handleSubmit,
     reset,
     setValue,
-    formState: { errors, isDirty, isSubmitting },
+    formState: { errors, isDirty, isSubmitting, dirtyFields },
   } = useForm<Inputs>({ defaultValues });
 
   // 入力フォームの初期化
@@ -96,7 +96,7 @@ export function InputForm() {
   // データ送信submit
   const onSubmit = async (formData: Inputs) => {
     try {
-      let result = await fetchPostData('/test/testdata2.json', formData); // TODO: urlの変更
+      let result = await fetchPostData('/test/testdata2.json', { inputs: formData, dirtyFields: dirtyFields }); // TODO: urlの変更
       if (result!.success) {
         await reload();
         snackberContext.dispatch({ type: 'success', message: t('common.msg.update-success') });

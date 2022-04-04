@@ -83,7 +83,7 @@ export function RowDataDialog(props: RowDataDialogProps) {
     handleSubmit,
     setValue,
     reset,
-    formState: { errors, isSubmitting },
+    formState: { errors, isSubmitting, dirtyFields },
   } = useForm<Inputs>();
 
   // 入力フォームの初期化
@@ -116,7 +116,7 @@ export function RowDataDialog(props: RowDataDialogProps) {
   // データ送信submit
   const onSubmit = async (formData: Inputs) => {
     try {
-      const result = await fetchPostData('/test/testdata2.json', formData); // TODO: urlの変更
+      const result = await fetchPostData('/test/testdata2.json', { inputs: formData, dirtyFields: dirtyFields }); // TODO: urlの変更
       if (result!.success) {
         await reload();
         onClose();
