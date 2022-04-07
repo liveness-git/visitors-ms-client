@@ -25,14 +25,6 @@ export function Routes() {
         <Route exact path="/oauth/redirect" component={AuthorizeWrapper} />
         <Route exact path="/:location/main/byroom" component={ByRoom} />
         <Route exact path="/:location/main" component={Main} />
-        {/*** 一般アドイン ***/}
-        <Route exact path="/outlook/inputform">
-          <VisitorInfoForm isRead={false} />
-        </Route>
-        <Route exact path="/outlook/readform">
-          <VisitorInfoForm isRead={true} />
-        </Route>
-        <Route path="/outlook" component={VisitorInfoList} />
         {/*** リダイレクト ***/}
         <Redirect from="/" to="/login" />
       </Switch>
