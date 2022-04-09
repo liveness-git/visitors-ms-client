@@ -1,9 +1,9 @@
-import { useCallback, useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useRouteMatch } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Controller, useForm, useWatch } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 
-import { Box, FormControlLabel, Grid, Switch, TextField, Button } from '@material-ui/core';
+import { Box, Grid, TextField, Button } from '@material-ui/core';
 import { makeStyles, createStyles, createTheme, ThemeProvider } from '@material-ui/core/styles';
 import { grey, purple } from '@material-ui/core/colors';
 
@@ -14,7 +14,7 @@ import { DateTimePicker } from '@material-ui/pickers';
 
 import { addMinutes } from 'date-fns';
 
-import { VisitorInfoPersonal, MsEventInputType } from '_models/VisitorInfo';
+import { VisitorInfo, EventInputType, RoomInputType } from '_models/VisitorInfo';
 import { Room } from '_models/Room';
 import { LocationParams } from '_models/Location';
 
@@ -24,9 +24,11 @@ import { useLoadData } from '_utils/useLoadData';
 import { MySnackberContext } from '_components/MySnackbarContext';
 import { Spinner } from '_components/Spinner';
 
-import { RowDataType } from './DataTableBase';
+import { RowDataType, tableTheme } from './DataTableBase';
 import { RowDataBaseDialog, useRowDataDialogStyles } from './RowDataBaseDialog';
 import { DeleteConfirmDialog } from './DeleteConfirmDialog';
+import { RoomInputFields } from './RoomInputFields';
+import { RoomReadFields } from './RoomReadFields';
 
 const useStyles = makeStyles((tableTheme) => {
   return createStyles({
@@ -60,27 +62,31 @@ const startTimeBufferMinute = 0;
 const endTimeBufferMinute = 30;
 const change5MinuteIntervals = (date: Date) => Math.ceil(date.getTime() / 1000 / 60 / 5) * 1000 * 60 * 5;
 
-type Inputs = {
+export type Inputs = {
   mode: 'ins' | 'upd' | 'del';
-} & VisitorInfoPersonal &
-  MsEventInputType;
+} & VisitorInfo &
+  EventInputType;
 
 // 入力フォームの初期値
 const defaultValues: Inputs = {
   mode: 'ins',
   iCalUId: '',
+  subject: '',
   visitorId: '',
   visitCompany: '',
   visitorName: '',
-  teaSupply: false,
-  numberOfVisitor: 0,
-  numberOfEmployee: 0,
+  resourcies: {
+    key: {
+      roomForEdit: '',
+      teaSupply: false,
+      numberOfVisitor: 0,
+      numberOfEmployee: 0,
+    },
+  },
   comment: '',
   contactAddr: '',
-  subject: '',
   startTime: addMinutes(change5MinuteIntervals(new Date()), startTimeBufferMinute),
   endTime: addMinutes(change5MinuteIntervals(new Date()), startTimeBufferMinute + endTimeBufferMinute),
-  room: '',
 };
 type RowDataInputDialogProps = {
   open: boolean;
@@ -100,15 +106,6 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
   // 会議室一覧の取得
   const [{ data: rooms }] = useLoadData<Room[]>(`/room/choices?location=${match.params.location}`, []);
 
-  // 会議室ID取得
-  const getRoomId = useCallback(
-    (roomEmail: string) => {
-      const $ = rooms!.find((room) => room.email === roomEmail);
-      return $ ? $!.id : '';
-    },
-    [rooms]
-  );
-
   // 削除確認メッセージの状態
   const [delConfOpen, setDelConfOpen] = useState(false);
 
@@ -122,44 +119,34 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
     formState: { errors, isDirty, isSubmitting, dirtyFields },
   } = useForm<Inputs>({ defaultValues });
 
-  // 給茶選択の制御
-  const [disabledTeaSupply, setDisabledTeaSupply] = useState(false);
-
-  // 給茶選択の制御用に会議室選択を監視
-  const roomWatch = useWatch({ control, name: 'room' });
-
-  // 給茶選択のエフェクト
-  useEffect(() => {
-    if (!!roomWatch && !!rooms) {
-      const result = rooms.some((room) => room.id === roomWatch && room.teaSupply);
-      if (!result) setValue('teaSupply', false);
-      setDisabledTeaSupply(!result);
-    }
-  }, [roomWatch, rooms, setValue]);
-
   // 入力フォームの初期化
   useEffect(() => {
     if (open && !!data) {
       reset({
         mode: 'upd',
         iCalUId: data.iCalUId,
+        subject: data.subject,
         visitorId: data.visitorId,
         visitCompany: data.visitCompany,
         visitorName: data.visitorName,
-        teaSupply: data.teaSupply,
-        numberOfVisitor: data.numberOfVisitor,
-        numberOfEmployee: data.numberOfEmployee,
+        resourcies: Object.keys(data.resourcies).reduce((newObj, room) => {
+          newObj[room] = {
+            roomForEdit: room,
+            teaSupply: data.resourcies[room].teaSupply,
+            numberOfVisitor: data.resourcies[room].numberOfVisitor,
+            numberOfEmployee: data.resourcies[room].numberOfEmployee,
+          };
+          return newObj;
+        }, {} as RoomInputType),
         comment: data.comment,
         contactAddr: data.contactAddr,
-        subject: data.subject,
         startTime: new Date(data.startDateTime),
         endTime: new Date(data.endDateTime),
-        room: getRoomId(data.roomEmail),
       });
     } else {
       reset(defaultValues);
     }
-  }, [data, open, reset, getRoomId]);
+  }, [data, open, reset]);
 
   // 保存アクション
   const handleSave = () => {
@@ -227,7 +214,6 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
       <RowDataBaseDialog open={open} onClose={onClose} data={data}>
         <ThemeProvider theme={inputformTheme}>
           <form>
-            {/* {!data && ( */}
             <Box p={2}>
               <Controller
                 name="subject"
@@ -242,28 +228,7 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
                   />
                 )}
               />
-              <Controller
-                name="room"
-                control={control}
-                rules={{ required: t('common.form.required') as string }}
-                render={({ field }) => (
-                  <TextField
-                    {...field}
-                    select
-                    label={t('visittable.header.event-room')}
-                    error={!!errors.room}
-                    helperText={errors.room && errors.room.message}
-                  >
-                    {rooms!.map((option) => (
-                      <option key={option.id} value={option.id}>
-                        {option.name} {'<'}
-                        {option.email}
-                        {'>'}
-                      </option>
-                    ))}
-                  </TextField>
-                )}
-              />
+
               <Grid container spacing={1}>
                 <Grid item xs={6}>
                   <Controller
@@ -307,9 +272,31 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
                 </Grid>
               </Grid>
             </Box>
-            {/* )} */}
 
-            <Box px={2}>
+            {(() => {
+              let result = <></>;
+              if (!data) {
+                /* mode=ins */
+                result = <RoomInputFields control={control} setValue={setValue} rooms={rooms} roomId="" errors={errors} />;
+              } else {
+                /* mode=upd */
+                if (Object.keys(data.resourcies).length === 1) {
+                  /* 単一会議室 */
+                  result = (
+                    <RoomInputFields control={control} setValue={setValue} rooms={rooms} roomId={Object.keys(data.resourcies)[0]} errors={errors} />
+                  );
+                } else {
+                  /* 複数会議室 */
+                  const nested = Object.keys(data.resourcies).map((roomId) => {
+                    return <RoomReadFields data={data.resourcies[roomId]} />;
+                  });
+                  result = <ThemeProvider theme={tableTheme}>{nested}</ThemeProvider>;
+                }
+              }
+              return result;
+            })()}
+
+            <Box p={2}>
               <Controller
                 name="visitCompany"
                 control={control}
@@ -339,64 +326,6 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
                 )}
               />
 
-              <Grid container spacing={1}>
-                <Grid item xs={4}>
-                  <FormControlLabel
-                    control={
-                      <Controller
-                        name="teaSupply"
-                        control={control}
-                        render={({ field }) => (
-                          <Switch
-                            onChange={(e) => field.onChange(e.target.checked)}
-                            checked={field.value}
-                            color="primary"
-                            disabled={disabledTeaSupply}
-                          />
-                        )}
-                      />
-                    }
-                    label={t('visittable.header.tea-supply')}
-                  />
-                </Grid>
-
-                <Grid item xs={4}>
-                  <Controller
-                    name="numberOfVisitor"
-                    control={control}
-                    rules={{ required: t('common.form.required') as string }}
-                    render={({ field }) => (
-                      <TextField
-                        type="number"
-                        inputProps={{ min: 0, style: { textAlign: 'right' } }}
-                        {...field}
-                        label={t('visittable.header.number-of-visitor')}
-                        error={!!errors.numberOfVisitor}
-                        helperText={errors.numberOfVisitor && errors.numberOfVisitor.message}
-                      />
-                    )}
-                  />
-                </Grid>
-
-                <Grid item xs={4}>
-                  <Controller
-                    name="numberOfEmployee"
-                    control={control}
-                    rules={{ required: t('common.form.required') as string }}
-                    render={({ field }) => (
-                      <TextField
-                        type="number"
-                        inputProps={{ min: 0, style: { textAlign: 'right' } }}
-                        {...field}
-                        label={t('visittable.header.number-of-employee')}
-                        error={!!errors.numberOfEmployee}
-                        helperText={errors.numberOfEmployee && errors.numberOfEmployee.message}
-                      />
-                    )}
-                  />
-                </Grid>
-              </Grid>
-
               <Controller
                 name="comment"
                 control={control}
@@ -425,7 +354,9 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
                   />
                 )}
               />
+            </Box>
 
+            <Box px={2}>
               <Grid container justifyContent="space-between" spacing={2} className={classes.formAction}>
                 <Grid item xs={!data ? 12 : 6}>
                   <Button onClick={handleSave} variant="contained" color="primary" disabled={!isDirty} startIcon={<SaveIcon />} fullWidth>

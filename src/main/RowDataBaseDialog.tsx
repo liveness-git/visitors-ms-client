@@ -8,6 +8,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 
 import { RowDataType } from './DataTableBase';
+import { strRoomStatus } from './RoomReadFields';
 
 export const useRowDataDialogStyles = makeStyles((tableTheme) => {
   const border = 'thin solid rgba(0, 0, 0, 0.12)';
@@ -15,8 +16,8 @@ export const useRowDataDialogStyles = makeStyles((tableTheme) => {
   return createStyles({
     list: {
       display: 'flex',
-      flexFlow: 'row-wrap',
-      width: '100%',
+      // flexFlow: 'row-wrap',
+      // width: '100%',
       '&:first-child div': {
         borderTop: border,
       },
@@ -53,17 +54,6 @@ export function RowDataBaseDialog(props: RowDataBaseDialogProps) {
   const { t } = useTranslation();
   const classes = useRowDataDialogStyles();
 
-  const resourceStatus = (status: string) => {
-    switch (status) {
-      case 'accepted':
-        return t('visitdialog.view.resource-status-accepted');
-      case 'declined':
-        return t('visitdialog.view.resource-status-declined');
-      default:
-        return '';
-    }
-  };
-
   const handleCancel = () => {
     onClose();
   };
@@ -78,7 +68,7 @@ export function RowDataBaseDialog(props: RowDataBaseDialogProps) {
               <List disablePadding={true}>
                 <li key="resource-status" className={classes.list}>
                   <div className={classes.title}>{t('visittable.header.resource-status')}</div>
-                  <div className={classes.field}>{resourceStatus(data.resourceStatus)}</div>
+                  <div className={classes.field}>{t(strRoomStatus(data.roomStatus))}</div>
                 </li>
               </List>
             </Box>

@@ -19,7 +19,7 @@ const useStyles = makeStyles<Theme>(() => {
     //cell default
     cellApptTime: {},
     cellRoomName: {},
-    cellResourceStatus: {},
+    cellRoomStatus: {},
     cellReservationName: {},
     cellVisitCompany: {},
     cellSubject: {},
@@ -89,7 +89,7 @@ export function DataTable(props: DataTableProps) {
     const className = field.charAt(0).toUpperCase() + field.slice(1);
     return clsx(
       classes[`cell${className}` as keyof ClassNameMap],
-      rowData.resourceStatus === 'declined' && classes[`declined${className}` as keyof ClassNameMap]
+      rowData.roomStatus === 'declined' && classes[`declined${className}` as keyof ClassNameMap]
     );
   };
 

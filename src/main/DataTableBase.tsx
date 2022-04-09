@@ -1,7 +1,7 @@
 import { createTheme, ThemeProvider } from '@material-ui/core/styles';
 import { grey, purple } from '@material-ui/core/colors';
 
-import { VisitorInfoMs, VisitorInfoPersonal } from '_models/VisitorInfo';
+import { VisitorInfo, VisitorInfoReadOnly } from '_models/VisitorInfo';
 
 import { Spinner } from '_components/Spinner';
 
@@ -32,7 +32,7 @@ export const tableTheme = createTheme({
   },
 });
 
-export type RowDataType = VisitorInfoMs & VisitorInfoPersonal;
+export type RowDataType = VisitorInfo & VisitorInfoReadOnly;
 
 export type DataDialogState = {
   mode: 'rowData' | 'addData';
@@ -94,7 +94,7 @@ export function DataTableBase(props: DataTableBaseProps) {
         data={dataDialogHook.state.mode === 'addData' ? null : currentRow}
         reload={reload}
       />
-      <RowDataReadDialog open={dataDialogHook.state.readOpen} onClose={handleReadDialogClose} data={currentRow} />
+      {!!currentRow && <RowDataReadDialog open={dataDialogHook.state.readOpen} onClose={handleReadDialogClose} data={currentRow} />}
     </ThemeProvider>
   );
 }

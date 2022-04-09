@@ -7,13 +7,13 @@ import { grey, purple } from '@material-ui/core/colors';
 import MaterialTable, { Column } from '@material-table/core';
 import { tableIcons } from '_utils/MaterialTableIcons';
 
-import { VisitorInfoMs, VisitorInfoPersonal, VisitorInfoFront } from '_models/VisitorInfo';
+import { VisitorInfo, VisitorInfoReadOnly, VisitorInfoFront } from '_models/VisitorInfo';
 import { useLoadData } from '_utils/useLoadData';
 import { Spinner } from '_components/Spinner';
 
 import { RowDataDialog } from './RowDataDialog';
 
-const tableTheme = createTheme({
+export const tableTheme = createTheme({
   palette: {
     primary: {
       main: grey[300],
@@ -45,7 +45,7 @@ export type Columns = {
   sort: number; // ダイアログの表に表示する順番
 };
 
-export type RowData = VisitorInfoMs & VisitorInfoPersonal & VisitorInfoFront;
+export type RowData = VisitorInfo & VisitorInfoReadOnly & VisitorInfoFront;
 
 type DataTableProps = {
   currentDate: Date;

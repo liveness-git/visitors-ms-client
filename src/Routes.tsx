@@ -9,9 +9,6 @@ import { VisitList as Front } from './front/visitList';
 import { VisitList as Main } from './main/visitList';
 import { ByRoom } from './main/byRoom';
 
-import { VisitorInfoForm } from './outlook/form';
-import { VisitorInfoList } from './outlook/list';
-
 export function Routes() {
   return (
     <BrowserRouter>

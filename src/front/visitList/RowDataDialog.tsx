@@ -13,7 +13,7 @@ import { Box, List, TextField } from '@material-ui/core';
 import { format } from 'date-fns';
 import { MuiPickersContext } from '@material-ui/pickers/MuiPickersUtilsProvider';
 
-import { VisitorInfoFront } from '_models/VisitorInfo';
+import { VisitorInfo, VisitorInfoFront, FrontInputType, RoomInputType } from '_models/VisitorInfo';
 import { fetchPostData } from '_utils/FetchPostData';
 import { MySnackberContext } from '_components/MySnackbarContext';
 import { Spinner } from '_components/Spinner';
@@ -58,7 +58,7 @@ const useStyles = makeStyles((tableTheme) => {
   });
 });
 
-type Inputs = VisitorInfoFront;
+type Inputs = VisitorInfoFront & FrontInputType;
 
 type RowDataDialogProps = {
   open: boolean;
@@ -90,7 +90,7 @@ export function RowDataDialog(props: RowDataDialogProps) {
   useEffect(() => {
     if (open) {
       reset({
-        id: data.id,
+        id: data.visitorId,
         checkIn: data.checkIn,
         checkOut: data.checkOut,
         visitorCardNumber: data.visitorCardNumber,
@@ -134,7 +134,8 @@ export function RowDataDialog(props: RowDataDialogProps) {
   };
 
   // 詳細情報のセット
-  const setField = (field: string, value: string | boolean | number) => {
+  // const setField = (field: string, value: string | boolean | number) => {// TODO:複数会議室が未対応
+  const setField = (field: string, value: any) => {
     switch (field) {
       // 予約時間
       case 'apptTime':
