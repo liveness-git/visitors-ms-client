@@ -63,7 +63,7 @@ export function RowDataBaseDialog(props: RowDataBaseDialogProps) {
       <Dialog open={open} onClose={onClose} fullWidth={true} maxWidth="sm" aria-labelledby="form-dialog-title">
         <DialogTitle id="form-dialog-title">{t('visitdialog.title')}</DialogTitle>
         <DialogContent dividers>
-          {!!data && (
+          {!!data && data.isAuthor && !data.isMSMultipleLocations && (
             <Box p={2}>
               <List disablePadding={true}>
                 <li key="resource-status" className={classes.list}>

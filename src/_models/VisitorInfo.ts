@@ -22,10 +22,11 @@ export type VisitorInfoReadOnly = {
   apptTime: string;
   startDateTime: number;
   endDateTime: number;
-  roomName: string; //TODO:表での表示用
+  roomName: string; //表での表示用
   roomStatus: string; // TODO:表での表示用
   reservationName: string;
   isAuthor: boolean;
+  isMSMultipleLocations: boolean; // MSEventに複数の場所(会議室以外も含む)が登録されているか否か
   resourcies: {
     [room: string]: ResourciesReadOnly;
   };
@@ -38,8 +39,8 @@ export type ResourciesReadOnly = {
 
 // 編集画面で型が変更になる項目
 export type EventInputType = {
-  startTime: Date;
-  endTime: Date;
+  startTime: Date | (() => Date);
+  endTime: Date | (() => Date);
   resourcies: {
     [room: string]: ResourciesInputType;
   };

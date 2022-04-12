@@ -13,7 +13,7 @@ import { Box, List, TextField } from '@material-ui/core';
 import { format } from 'date-fns';
 import { MuiPickersContext } from '@material-ui/pickers/MuiPickersUtilsProvider';
 
-import { VisitorInfo, VisitorInfoFront, FrontInputType, RoomInputType } from '_models/VisitorInfo';
+import { VisitorInfoFront, FrontInputType } from '_models/VisitorInfo';
 import { fetchPostData } from '_utils/FetchPostData';
 import { MySnackberContext } from '_components/MySnackbarContext';
 import { Spinner } from '_components/Spinner';

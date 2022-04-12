@@ -4,6 +4,7 @@ import { Control, Controller, DeepMap, DeepPartial, FieldError, UseFormSetValue,
 import { Box, FormControlLabel, Grid, Switch, TextField } from '@material-ui/core';
 import { Room } from '_models/Room';
 import { Inputs } from './RowDataInputDialog';
+import { get } from 'lodash';
 
 type RoomInputFieldsProps = {
   control: Control<Inputs, object>;
@@ -22,7 +23,7 @@ export function RoomInputFields(props: RoomInputFieldsProps) {
   const [disabledTeaSupply, setDisabledTeaSupply] = useState(false);
 
   // 給茶選択の制御用に会議室選択を監視
-  const roomWatch = useWatch({ control, name: `resourcies.${roomId}.room` });
+  const roomWatch = useWatch({ control, name: `resourcies.${roomId}.roomForEdit` });
 
   // 給茶選択のエフェクト
   useEffect(() => {
@@ -48,6 +49,11 @@ export function RoomInputFields(props: RoomInputFieldsProps) {
     setDisabledTeaMember(!teaWatch);
   }, [teaWatch, setValue, roomId]);
 
+  // 多階層になっている場合の取得回避策
+  const getNestedError = (name: string): FieldError => {
+    return get(errors, `resourcies.${roomId}.${name}`) as FieldError;
+  };
+
   return (
     <Box px={2}>
       <Controller
@@ -59,8 +65,8 @@ export function RoomInputFields(props: RoomInputFieldsProps) {
             {...field}
             select
             label={t('visittable.header.event-room')}
-            error={!!errors.resourcies![roomId].roomForEdit}
-            helperText={errors.resourcies![roomId].roomForEdit && errors.resourcies![roomId].roomForEdit!.message}
+            error={!!getNestedError('roomForEdit')}
+            helperText={!!getNestedError('roomForEdit') && getNestedError('roomForEdit').message}
           >
             {rooms!.map((option) => (
               <option key={option.id} value={option.id}>
@@ -101,8 +107,8 @@ export function RoomInputFields(props: RoomInputFieldsProps) {
                 {...field}
                 disabled={disabledTeaMember}
                 label={t('visittable.header.number-of-visitor')}
-                error={!!errors.resourcies![roomId].numberOfVisitor}
-                helperText={errors.resourcies![roomId].numberOfVisitor && errors.resourcies![roomId].numberOfVisitor!.message}
+                error={!!getNestedError('numberOfVisitor')}
+                helperText={!!getNestedError('numberOfVisitor') && getNestedError('numberOfVisitor').message}
               />
             )}
           />
@@ -110,7 +116,7 @@ export function RoomInputFields(props: RoomInputFieldsProps) {
 
         <Grid item xs={4}>
           <Controller
-            name={`resourcies.${roomId}numberOfEmployee`}
+            name={`resourcies.${roomId}.numberOfEmployee`}
             control={control}
             rules={{ required: t('common.form.required') as string }}
             render={({ field }) => (
@@ -120,8 +126,8 @@ export function RoomInputFields(props: RoomInputFieldsProps) {
                 {...field}
                 disabled={disabledTeaMember}
                 label={t('visittable.header.number-of-employee')}
-                error={!!errors.resourcies![roomId].numberOfEmployee}
-                helperText={errors.resourcies![roomId].numberOfEmployee && errors.resourcies![roomId].numberOfEmployee!.message}
+                error={!!getNestedError('numberOfEmployee')}
+                helperText={!!getNestedError('numberOfEmployee') && getNestedError('numberOfEmployee').message}
               />
             )}
           />

@@ -16,10 +16,11 @@ export const strRoomStatus = (status: string | undefined) => {
 
 type RoomReadFieldsProps = {
   data: VisitorInfoResourcies & ResourciesReadOnly;
+  hiddenTeaSupply?: boolean;
 };
 
 export function RoomReadFields(props: RoomReadFieldsProps) {
-  const { data } = props;
+  const { data, hiddenTeaSupply } = props;
 
   const { t } = useTranslation();
   const classes = useRowDataDialogStyles();
@@ -39,18 +40,32 @@ export function RoomReadFields(props: RoomReadFieldsProps) {
           <div className={classes.title}>{t('visittable.header.resource-status')}</div>
           <div className={classes.field}>{t(strRoomStatus(data.roomStatus))}</div>
         </li>
-        <li key="tea-supply" className={classes.list}>
-          <div className={classes.title}>{t('visittable.header.tea-supply')}</div>
-          <div className={classes.field}>{data.teaSupply ? t('visitdialog.form.tea-supply-yes') : t('visitdialog.form.tea-supply-no')}</div>
-        </li>
-        <li key="number-of-visitor" className={classes.list}>
-          <div className={classes.title}>{t('visittable.header.number-of-visitor')}</div>
-          <div className={classes.field}>{data.numberOfVisitor}</div>
-        </li>
-        <li key="number-of-employee" className={classes.list}>
-          <div className={classes.title}>{t('visittable.header.number-of-employee')}</div>
-          <div className={classes.field}>{data.numberOfEmployee}</div>
-        </li>
+
+        {!hiddenTeaSupply && (
+          <>
+            <li key="tea-supply" className={classes.list}>
+              <div className={classes.title}>{t('visittable.header.tea-supply')}</div>
+              <div className={classes.field}>{data.teaSupply ? t('visitdialog.form.tea-supply-yes') : t('visitdialog.form.tea-supply-no')}</div>
+            </li>
+
+            {data.teaSupply && (
+              <>
+                <li key="number-of-visitor" className={classes.list}>
+                  <div className={classes.title}>{t('visittable.header.number-of-visitor')}</div>
+                  <div className={classes.field} style={{ flexBasis: '25%', borderRight: 'none' }}>
+                    {data.numberOfVisitor}
+                  </div>
+                  <div className={classes.title} style={{ flexBasis: '25%', borderLeft: 'none' }}>
+                    {t('visittable.header.number-of-employee')}
+                  </div>
+                  <div className={classes.field} style={{ flexBasis: '25%' }}>
+                    {data.numberOfEmployee}
+                  </div>
+                </li>
+              </>
+            )}
+          </>
+        )}
       </List>
     </Box>
   );

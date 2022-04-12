@@ -36,6 +36,9 @@ const useStyles = makeStyles((tableTheme) => {
       marginTop: tableTheme.spacing(1),
       marginBottom: tableTheme.spacing(1),
     },
+    note: {
+      color: 'red',
+    },
   });
 });
 
@@ -67,6 +70,7 @@ export type Inputs = {
 } & VisitorInfo &
   EventInputType;
 
+export const ADD_ROOM_KEY = 'add-room-01';
 // 入力フォームの初期値
 const defaultValues: Inputs = {
   mode: 'ins',
@@ -76,7 +80,7 @@ const defaultValues: Inputs = {
   visitCompany: '',
   visitorName: '',
   resourcies: {
-    key: {
+    [ADD_ROOM_KEY]: {
       roomForEdit: '',
       teaSupply: false,
       numberOfVisitor: 0,
@@ -85,9 +89,10 @@ const defaultValues: Inputs = {
   },
   comment: '',
   contactAddr: '',
-  startTime: addMinutes(change5MinuteIntervals(new Date()), startTimeBufferMinute),
-  endTime: addMinutes(change5MinuteIntervals(new Date()), startTimeBufferMinute + endTimeBufferMinute),
+  startTime: () => addMinutes(change5MinuteIntervals(new Date()), startTimeBufferMinute),
+  endTime: () => addMinutes(change5MinuteIntervals(new Date()), startTimeBufferMinute + endTimeBufferMinute),
 };
+
 type RowDataInputDialogProps = {
   open: boolean;
   onClose: () => void;
@@ -121,30 +126,32 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
 
   // 入力フォームの初期化
   useEffect(() => {
-    if (open && !!data) {
-      reset({
-        mode: 'upd',
-        iCalUId: data.iCalUId,
-        subject: data.subject,
-        visitorId: data.visitorId,
-        visitCompany: data.visitCompany,
-        visitorName: data.visitorName,
-        resourcies: Object.keys(data.resourcies).reduce((newObj, room) => {
-          newObj[room] = {
-            roomForEdit: room,
-            teaSupply: data.resourcies[room].teaSupply,
-            numberOfVisitor: data.resourcies[room].numberOfVisitor,
-            numberOfEmployee: data.resourcies[room].numberOfEmployee,
-          };
-          return newObj;
-        }, {} as RoomInputType),
-        comment: data.comment,
-        contactAddr: data.contactAddr,
-        startTime: new Date(data.startDateTime),
-        endTime: new Date(data.endDateTime),
-      });
-    } else {
-      reset(defaultValues);
+    if (open) {
+      if (!data) {
+        reset(defaultValues);
+      } else {
+        reset({
+          mode: 'upd',
+          iCalUId: data.iCalUId,
+          subject: data.subject,
+          visitorId: data.visitorId,
+          visitCompany: data.visitCompany,
+          visitorName: data.visitorName,
+          resourcies: Object.keys(data.resourcies).reduce((newObj, room) => {
+            newObj[room] = {
+              roomForEdit: room,
+              teaSupply: data.resourcies[room].teaSupply,
+              numberOfVisitor: data.resourcies[room].numberOfVisitor,
+              numberOfEmployee: data.resourcies[room].numberOfEmployee,
+            };
+            return newObj;
+          }, {} as RoomInputType),
+          comment: data.comment,
+          contactAddr: data.contactAddr,
+          startTime: new Date(data.startDateTime),
+          endTime: new Date(data.endDateTime),
+        });
+      }
     }
   }, [data, open, reset]);
 
@@ -277,10 +284,10 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
               let result = <></>;
               if (!data) {
                 /* mode=ins */
-                result = <RoomInputFields control={control} setValue={setValue} rooms={rooms} roomId="" errors={errors} />;
+                result = <RoomInputFields control={control} setValue={setValue} rooms={rooms} roomId={ADD_ROOM_KEY} errors={errors} />;
               } else {
                 /* mode=upd */
-                if (Object.keys(data.resourcies).length === 1) {
+                if (!data.isMSMultipleLocations) {
                   /* 単一会議室 */
                   result = (
                     <RoomInputFields control={control} setValue={setValue} rooms={rooms} roomId={Object.keys(data.resourcies)[0]} errors={errors} />
@@ -288,9 +295,16 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
                 } else {
                   /* 複数会議室 */
                   const nested = Object.keys(data.resourcies).map((roomId) => {
-                    return <RoomReadFields data={data.resourcies[roomId]} />;
+                    return <RoomReadFields key={roomId} data={data.resourcies[roomId]} hiddenTeaSupply={true} />;
                   });
-                  result = <ThemeProvider theme={tableTheme}>{nested}</ThemeProvider>;
+                  result = (
+                    <ThemeProvider theme={tableTheme}>
+                      <Box px={2} className={classes.note}>
+                        {t('visitdialog.notes.multiple-locations')}
+                      </Box>
+                      {nested}
+                    </ThemeProvider>
+                  );
                 }
               }
               return result;
