@@ -2,6 +2,7 @@
 export type VisitorInfo = {
   iCalUId: string;
   subject: string;
+  mailto: Address[];
   visitorId: string;
   visitCompany: string;
   visitorName: string;
@@ -11,6 +12,7 @@ export type VisitorInfo = {
   comment: string;
   contactAddr: string;
 };
+export type Address = { name: string; email: string };
 export type VisitorInfoResourcies = {
   teaSupply: boolean;
   numberOfVisitor: number;

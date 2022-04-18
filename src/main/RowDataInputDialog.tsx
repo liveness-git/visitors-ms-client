@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from 'react';
 import { useRouteMatch } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Controller, useForm } from 'react-hook-form';
+import { Controller, NestedValue, SubmitHandler, useForm } from 'react-hook-form';
 
 import { Box, Grid, TextField, Button } from '@material-ui/core';
 import { makeStyles, createStyles, createTheme, ThemeProvider } from '@material-ui/core/styles';
@@ -14,7 +14,7 @@ import { DateTimePicker } from '@material-ui/pickers';
 
 import { addMinutes } from 'date-fns';
 
-import { VisitorInfo, EventInputType, RoomInputType } from '_models/VisitorInfo';
+import { VisitorInfo, EventInputType, RoomInputType, Address } from '_models/VisitorInfo';
 import { Room } from '_models/Room';
 import { LocationParams } from '_models/Location';
 
@@ -29,6 +29,7 @@ import { RowDataBaseDialog, useRowDataDialogStyles } from './RowDataBaseDialog';
 import { DeleteConfirmDialog } from './DeleteConfirmDialog';
 import { RoomInputFields } from './RoomInputFields';
 import { RoomReadFields } from './RoomReadFields';
+import { AddrBookAutoComplete } from './AddrBookAutoComplete';
 
 const useStyles = makeStyles((tableTheme) => {
   return createStyles({
@@ -67,8 +68,12 @@ const change5MinuteIntervals = (date: Date) => Math.ceil(date.getTime() / 1000 /
 
 export type Inputs = {
   mode: 'ins' | 'upd' | 'del';
-} & VisitorInfo &
+} & WrapNestedValue<VisitorInfo> &
+  // } & VisitorInfo &
   EventInputType;
+
+type WrapNestedValue<T> = { [P in keyof T]: TmpNestedValue<T[P]> };
+type TmpNestedValue<T> = T extends any[] ? NestedValue<T> : T;
 
 export const ADD_ROOM_KEY = 'add-room-01';
 // 入力フォームの初期値
@@ -76,6 +81,7 @@ const defaultValues: Inputs = {
   mode: 'ins',
   iCalUId: '',
   subject: '',
+  mailto: [{ name: '', email: '' }] as NestedValue<Address[]>,
   visitorId: '',
   visitCompany: '',
   visitorName: '',
@@ -134,6 +140,7 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
           mode: 'upd',
           iCalUId: data.iCalUId,
           subject: data.subject,
+          mailto: data.mailto as NestedValue<Address[]>,
           visitorId: data.visitorId,
           visitCompany: data.visitCompany,
           visitorName: data.visitorName,
@@ -170,7 +177,7 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
   };
 
   // データ送信submit
-  const onSubmit = async (formData: Inputs) => {
+  const onSubmit: SubmitHandler<Inputs> = async (formData) => {
     try {
       let url = '';
       switch (formData.mode) {
@@ -235,6 +242,8 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
                   />
                 )}
               />
+
+              <Controller name="mailto" control={control} render={(props) => <AddrBookAutoComplete autoCompProps={props} errors={errors} />} />
 
               <Grid container spacing={1}>
                 <Grid item xs={6}>

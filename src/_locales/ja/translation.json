@@ -28,6 +28,7 @@
 	"visittable.header.check-out":"アウト",
 	"visittable.header.resource-status":"会議室状態",
 	"visittable.header.event-subject":"件名",
+	"visittable.header.event-mailto":"通知メンバー",
 	"visittable.header.event-room":"会議室",
 	"visittable.header.event-start-time":"開始時刻",
 	"visittable.header.event-end-time":"終了時刻",
