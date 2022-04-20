@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from 'react';
 import { useRouteMatch } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Controller, NestedValue, SubmitHandler, useForm } from 'react-hook-form';
+import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 
 import { Box, Grid, TextField, Button } from '@material-ui/core';
 import { makeStyles, createStyles, createTheme, ThemeProvider } from '@material-ui/core/styles';
@@ -13,8 +13,9 @@ import SaveIcon from '@material-ui/icons/Save';
 import { DateTimePicker } from '@material-ui/pickers';
 
 import { addMinutes } from 'date-fns';
+import _ from 'lodash';
 
-import { VisitorInfo, EventInputType, RoomInputType, Address } from '_models/VisitorInfo';
+import { VisitorInfo, EventInputType, RoomInputType } from '_models/VisitorInfo';
 import { Room } from '_models/Room';
 import { LocationParams } from '_models/Location';
 
@@ -68,35 +69,33 @@ const change5MinuteIntervals = (date: Date) => Math.ceil(date.getTime() / 1000 /
 
 export type Inputs = {
   mode: 'ins' | 'upd' | 'del';
-} & WrapNestedValue<VisitorInfo> &
-  // } & VisitorInfo &
+} & VisitorInfo &
   EventInputType;
-
-type WrapNestedValue<T> = { [P in keyof T]: TmpNestedValue<T[P]> };
-type TmpNestedValue<T> = T extends any[] ? NestedValue<T> : T;
 
 export const ADD_ROOM_KEY = 'add-room-01';
 // 入力フォームの初期値
-const defaultValues: Inputs = {
-  mode: 'ins',
-  iCalUId: '',
-  subject: '',
-  mailto: [{ name: '', email: '' }] as NestedValue<Address[]>,
-  visitorId: '',
-  visitCompany: '',
-  visitorName: '',
-  resourcies: {
-    [ADD_ROOM_KEY]: {
-      roomForEdit: '',
-      teaSupply: false,
-      numberOfVisitor: 0,
-      numberOfEmployee: 0,
+const getDefaultValues = () => {
+  return {
+    mode: 'ins',
+    iCalUId: '',
+    subject: '',
+    visitorId: '',
+    visitCompany: '',
+    visitorName: '',
+    mailto: [],
+    resourcies: {
+      [ADD_ROOM_KEY]: {
+        roomForEdit: '',
+        teaSupply: false,
+        numberOfVisitor: 0,
+        numberOfEmployee: 0,
+      },
     },
-  },
-  comment: '',
-  contactAddr: '',
-  startTime: () => addMinutes(change5MinuteIntervals(new Date()), startTimeBufferMinute),
-  endTime: () => addMinutes(change5MinuteIntervals(new Date()), startTimeBufferMinute + endTimeBufferMinute),
+    comment: '',
+    contactAddr: '',
+    startTime: addMinutes(change5MinuteIntervals(new Date()), startTimeBufferMinute),
+    endTime: addMinutes(change5MinuteIntervals(new Date()), startTimeBufferMinute + endTimeBufferMinute),
+  } as Inputs;
 };
 
 type RowDataInputDialogProps = {
@@ -121,6 +120,7 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
   const [delConfOpen, setDelConfOpen] = useState(false);
 
   // 入力フォームの登録
+  const defaultValues = getDefaultValues();
   const {
     control,
     handleSubmit,
@@ -132,33 +132,31 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
 
   // 入力フォームの初期化
   useEffect(() => {
-    if (open) {
-      if (!data) {
-        reset(defaultValues);
-      } else {
-        reset({
-          mode: 'upd',
-          iCalUId: data.iCalUId,
-          subject: data.subject,
-          mailto: data.mailto as NestedValue<Address[]>,
-          visitorId: data.visitorId,
-          visitCompany: data.visitCompany,
-          visitorName: data.visitorName,
-          resourcies: Object.keys(data.resourcies).reduce((newObj, room) => {
-            newObj[room] = {
-              roomForEdit: room,
-              teaSupply: data.resourcies[room].teaSupply,
-              numberOfVisitor: data.resourcies[room].numberOfVisitor,
-              numberOfEmployee: data.resourcies[room].numberOfEmployee,
-            };
-            return newObj;
-          }, {} as RoomInputType),
-          comment: data.comment,
-          contactAddr: data.contactAddr,
-          startTime: new Date(data.startDateTime),
-          endTime: new Date(data.endDateTime),
-        });
-      }
+    if (open && !!data) {
+      reset({
+        mode: 'upd',
+        iCalUId: data.iCalUId,
+        subject: data.subject,
+        visitorId: data.visitorId,
+        visitCompany: data.visitCompany,
+        visitorName: data.visitorName,
+        mailto: data.mailto,
+        resourcies: Object.keys(data.resourcies).reduce((newObj, room) => {
+          newObj[room] = {
+            roomForEdit: room,
+            teaSupply: data.resourcies[room].teaSupply,
+            numberOfVisitor: data.resourcies[room].numberOfVisitor,
+            numberOfEmployee: data.resourcies[room].numberOfEmployee,
+          };
+          return newObj;
+        }, {} as RoomInputType),
+        comment: data.comment,
+        contactAddr: data.contactAddr,
+        startTime: new Date(data.startDateTime),
+        endTime: new Date(data.endDateTime),
+      });
+    } else {
+      reset(_.cloneDeep(getDefaultValues()));
     }
   }, [data, open, reset]);
 
@@ -243,7 +241,7 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
                 )}
               />
 
-              <Controller name="mailto" control={control} render={(props) => <AddrBookAutoComplete autoCompProps={props} errors={errors} />} />
+              <AddrBookAutoComplete control={control} errors={errors} />
 
               <Grid container spacing={1}>
                 <Grid item xs={6}>
@@ -260,7 +258,7 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
                         minutesStep={5}
                         label={t('visittable.header.event-start-time')}
                         error={!!errors.startTime}
-                        helperText={errors.startTime && errors.startTime.message}
+                        helperText={errors.startTime && (errors.startTime as any).message}
                         ref={null}
                       />
                     )}
@@ -280,7 +278,7 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
                         minutesStep={5}
                         label={t('visittable.header.event-end-time')}
                         error={!!errors.endTime}
-                        helperText={errors.endTime && errors.endTime.message}
+                        helperText={errors.endTime && (errors.endTime as any).message}
                         ref={null}
                       />
                     )}

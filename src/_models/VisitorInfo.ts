@@ -2,17 +2,17 @@
 export type VisitorInfo = {
   iCalUId: string;
   subject: string;
-  mailto: Address[];
   visitorId: string;
   visitCompany: string;
   visitorName: string;
+  mailto: EmailAddress[];
   resourcies: {
     [room: string]: VisitorInfoResourcies;
   };
   comment: string;
   contactAddr: string;
 };
-export type Address = { name: string; email: string };
+export type EmailAddress = { name: string; address: string };
 export type VisitorInfoResourcies = {
   teaSupply: boolean;
   numberOfVisitor: number;
@@ -41,8 +41,8 @@ export type ResourciesReadOnly = {
 
 // 編集画面で型が変更になる項目
 export type EventInputType = {
-  startTime: Date | (() => Date);
-  endTime: Date | (() => Date);
+  startTime: Date;
+  endTime: Date;
   resourcies: {
     [room: string]: ResourciesInputType;
   };
