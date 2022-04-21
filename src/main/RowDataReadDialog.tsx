@@ -38,7 +38,7 @@ export function RowDataReadDialog(props: RowDataReadDialogProps) {
       </Box>
 
       {Object.keys(data.resourcies).map((roomId) => {
-        return <RoomReadFields key={roomId} data={data.resourcies[roomId]} hiddenTeaSupply={data.isMSMultipleLocations} />;
+        return <RoomReadFields key={roomId} data={data.resourcies[roomId]} /*hiddenTeaSupply={data.isMSMultipleLocations}*/ />;
       })}
 
       <Box p={2}>

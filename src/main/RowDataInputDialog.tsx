@@ -84,7 +84,7 @@ const getDefaultValues = () => {
     visitorId: '',
     visitCompany: '',
     visitorName: '',
-    mailto: [],
+    mailto: { required: [], optional: [] },
     resourcies: {
       [ADD_ROOM_KEY]: {
         roomForEdit: '',
@@ -263,7 +263,8 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
                 )}
               />
 
-              <AddrBookAutoComplete control={control} errors={errors} disabled={data?.isMSMultipleLocations ? true : false} />
+              <AddrBookAutoComplete control={control} type="required" errors={errors} disabled={data?.isMSMultipleLocations} />
+              <AddrBookAutoComplete control={control} type="optional" errors={errors} disabled={data?.isMSMultipleLocations} />
 
               <Grid container spacing={1}>
                 <Grid item xs={6}>
@@ -321,7 +322,7 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
                   /* mode=upd & 複数会議室 */
                   <ThemeProvider theme={tableTheme}>
                     {Object.keys(data.resourcies).map((roomId) => {
-                      return <RoomReadFields key={roomId} data={data.resourcies[roomId]} hiddenTeaSupply={true} />;
+                      return <RoomReadFields key={roomId} data={data.resourcies[roomId]} /*hiddenTeaSupply={true}*/ />;
                     })}
                   </ThemeProvider>
                 )}

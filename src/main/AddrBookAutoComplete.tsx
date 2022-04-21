@@ -13,12 +13,13 @@ import { Inputs } from './RowDataInputDialog';
 
 type AddrBookAutoCompleteType = {
   control: Control<Inputs, object>;
+  type: 'required' | 'optional';
   errors: DeepMap<DeepPartial<Inputs>, FieldError>;
-  disabled: boolean;
+  disabled?: boolean;
 };
 
 export function AddrBookAutoComplete(props: AddrBookAutoCompleteType) {
-  const { control, errors, disabled } = props;
+  const { control, type, errors, disabled } = props;
 
   const { t } = useTranslation();
 
@@ -43,14 +44,14 @@ export function AddrBookAutoComplete(props: AddrBookAutoCompleteType) {
 
   return (
     <Controller
-      name="mailto"
+      name={`mailto.${type}`}
       control={control}
       render={({ field }) => (
         <Autocomplete
           {...field}
           disabled={disabled}
           multiple
-          limitTags={2}
+          limitTags={disabled ? undefined : 2}
           size="small"
           open={open}
           onOpen={() => {
@@ -69,7 +70,7 @@ export function AddrBookAutoComplete(props: AddrBookAutoCompleteType) {
           renderInput={(params) => (
             <TextField
               {...params}
-              label={t('visittable.header.event-mailto')}
+              label={t(`visittable.header.event-mailto-${type}`)}
               error={!!errors.mailto}
               helperText={errors.mailto && (errors.mailto as any).message}
               InputProps={{
