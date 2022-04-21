@@ -36,7 +36,7 @@
 	"visitdialog.view.resource-status-accepted":"承諾",
 	"visitdialog.view.resource-status-declined":"辞退",
 	"visitdialog.title":"予約情報",
-	"visitdialog.notes.multiple-locations":"この予定は、複数の場所(会議室)が登録されているため一部編集できません",
+	"visitdialog.notes.multiple-locations":"※複数の場所(会議室以外含む)が登録されているため一部機能は編集できません",
 	"visitdialog.button.cancel":"キャンセル",
 	"visitdialog.button.check-in":"チェックイン",
 	"visitdialog.button.check-out":"チェックアウト",

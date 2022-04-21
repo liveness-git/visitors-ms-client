@@ -3,7 +3,7 @@ import { useRouteMatch } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 
-import { Box, Grid, TextField, Button } from '@material-ui/core';
+import { Box, Grid, TextField, Button, List } from '@material-ui/core';
 import { makeStyles, createStyles, createTheme, ThemeProvider } from '@material-ui/core/styles';
 import { grey, purple } from '@material-ui/core/colors';
 
@@ -29,7 +29,7 @@ import { RowDataType, tableTheme } from './DataTableBase';
 import { RowDataBaseDialog, useRowDataDialogStyles } from './RowDataBaseDialog';
 import { DeleteConfirmDialog } from './DeleteConfirmDialog';
 import { RoomInputFields } from './RoomInputFields';
-import { RoomReadFields } from './RoomReadFields';
+import { RoomReadFields, strRoomStatus } from './RoomReadFields';
 import { AddrBookAutoComplete } from './AddrBookAutoComplete';
 
 const useStyles = makeStyles((tableTheme) => {
@@ -40,6 +40,8 @@ const useStyles = makeStyles((tableTheme) => {
     },
     note: {
       color: 'red',
+      fontSize: '0.9em',
+      margin: 0,
     },
   });
 });
@@ -225,6 +227,26 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
       <Spinner open={isSubmitting} />
       <RowDataBaseDialog open={open} onClose={onClose} data={data}>
         <ThemeProvider theme={inputformTheme}>
+          {!!data && (
+            <Box px={2}>
+              {(() => {
+                if (data.isMSMultipleLocations) {
+                  /* mode=upd & 複数会議室 */
+                  return <p className={classes.note}>{t('visitdialog.notes.multiple-locations')}</p>;
+                } else {
+                  /* mode=upd & 単一会議室 */
+                  return (
+                    <List disablePadding={true}>
+                      <li key="resource-status" className={classes.list}>
+                        <div className={classes.title}>{t('visittable.header.resource-status')}</div>
+                        <div className={classes.field}>{t(strRoomStatus(data.roomStatus))}</div>
+                      </li>
+                    </List>
+                  );
+                }
+              })()}
+            </Box>
+          )}
           <form>
             <Box p={2}>
               <Controller
@@ -241,7 +263,7 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
                 )}
               />
 
-              <AddrBookAutoComplete control={control} errors={errors} />
+              <AddrBookAutoComplete control={control} errors={errors} disabled={data?.isMSMultipleLocations ? true : false} />
 
               <Grid container spacing={1}>
                 <Grid item xs={6}>
@@ -287,35 +309,24 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
               </Grid>
             </Box>
 
-            {(() => {
-              let result = <></>;
-              if (!data) {
-                /* mode=ins */
-                result = <RoomInputFields control={control} setValue={setValue} rooms={rooms} roomId={ADD_ROOM_KEY} errors={errors} />;
-              } else {
-                /* mode=upd */
-                if (!data.isMSMultipleLocations) {
-                  /* 単一会議室 */
-                  result = (
-                    <RoomInputFields control={control} setValue={setValue} rooms={rooms} roomId={Object.keys(data.resourcies)[0]} errors={errors} />
-                  );
-                } else {
-                  /* 複数会議室 */
-                  const nested = Object.keys(data.resourcies).map((roomId) => {
-                    return <RoomReadFields key={roomId} data={data.resourcies[roomId]} hiddenTeaSupply={true} />;
-                  });
-                  result = (
-                    <ThemeProvider theme={tableTheme}>
-                      <Box px={2} className={classes.note}>
-                        {t('visitdialog.notes.multiple-locations')}
-                      </Box>
-                      {nested}
-                    </ThemeProvider>
-                  );
-                }
-              }
-              return result;
-            })()}
+            {!data ? (
+              /* 新規作成 */
+              <RoomInputFields control={control} setValue={setValue} rooms={rooms} roomId={ADD_ROOM_KEY} errors={errors} />
+            ) : (
+              <>
+                {!data.isMSMultipleLocations ? (
+                  /* mode=upd & 単一会議室 */
+                  <RoomInputFields control={control} setValue={setValue} rooms={rooms} roomId={Object.keys(data.resourcies)[0]} errors={errors} />
+                ) : (
+                  /* mode=upd & 複数会議室 */
+                  <ThemeProvider theme={tableTheme}>
+                    {Object.keys(data.resourcies).map((roomId) => {
+                      return <RoomReadFields key={roomId} data={data.resourcies[roomId]} hiddenTeaSupply={true} />;
+                    })}
+                  </ThemeProvider>
+                )}
+              </>
+            )}
 
             <Box p={2}>
               <Controller

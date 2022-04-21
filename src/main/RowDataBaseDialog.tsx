@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 
-import { Box, List, Button } from '@material-ui/core';
+import { Button } from '@material-ui/core';
 import { makeStyles, createStyles } from '@material-ui/core/styles';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -8,7 +8,6 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 
 import { RowDataType } from './DataTableBase';
-import { strRoomStatus } from './RoomReadFields';
 
 export const useRowDataDialogStyles = makeStyles((tableTheme) => {
   const border = 'thin solid rgba(0, 0, 0, 0.12)';
@@ -49,10 +48,9 @@ type RowDataBaseDialogProps = {
 };
 
 export function RowDataBaseDialog(props: RowDataBaseDialogProps) {
-  const { open, onClose, data, children } = props;
+  const { open, onClose, children } = props;
 
   const { t } = useTranslation();
-  const classes = useRowDataDialogStyles();
 
   const handleCancel = () => {
     onClose();
@@ -62,19 +60,7 @@ export function RowDataBaseDialog(props: RowDataBaseDialogProps) {
     <>
       <Dialog open={open} onClose={onClose} fullWidth={true} maxWidth="sm" aria-labelledby="form-dialog-title">
         <DialogTitle id="form-dialog-title">{t('visitdialog.title')}</DialogTitle>
-        <DialogContent dividers>
-          {!!data && data.isAuthor && !data.isMSMultipleLocations && (
-            <Box p={2}>
-              <List disablePadding={true}>
-                <li key="resource-status" className={classes.list}>
-                  <div className={classes.title}>{t('visittable.header.resource-status')}</div>
-                  <div className={classes.field}>{t(strRoomStatus(data.roomStatus))}</div>
-                </li>
-              </List>
-            </Box>
-          )}
-          {children}
-        </DialogContent>
+        <DialogContent dividers>{children}</DialogContent>
         <DialogActions>
           <Button onClick={handleCancel}>{t('visitdialog.button.cancel')}</Button>
         </DialogActions>

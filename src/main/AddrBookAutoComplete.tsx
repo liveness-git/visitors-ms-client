@@ -14,10 +14,11 @@ import { Inputs } from './RowDataInputDialog';
 type AddrBookAutoCompleteType = {
   control: Control<Inputs, object>;
   errors: DeepMap<DeepPartial<Inputs>, FieldError>;
+  disabled: boolean;
 };
 
 export function AddrBookAutoComplete(props: AddrBookAutoCompleteType) {
-  const { control, errors } = props;
+  const { control, errors, disabled } = props;
 
   const { t } = useTranslation();
 
@@ -47,6 +48,7 @@ export function AddrBookAutoComplete(props: AddrBookAutoCompleteType) {
       render={({ field }) => (
         <Autocomplete
           {...field}
+          disabled={disabled}
           multiple
           limitTags={2}
           size="small"
