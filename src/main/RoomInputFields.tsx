@@ -32,6 +32,9 @@ export function RoomInputFields(props: RoomInputFieldsProps) {
       const result = rooms.some((room) => room.id === roomWatch && room.teaSupply);
       if (!result) setValue(`resourcies.${roomId}.teaSupply`, false);
       setDisabledTeaSupply(!result);
+    } else {
+      setValue(`resourcies.${roomId}.teaSupply`, false);
+      setDisabledTeaSupply(true);
     }
   }, [roomId, roomWatch, rooms, setValue]);
 

@@ -1,16 +1,14 @@
 import { useCallback, useContext, useEffect, useState } from 'react';
 import { useRouteMatch } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Controller, SubmitHandler, useForm } from 'react-hook-form';
+import { SubmitHandler, useForm } from 'react-hook-form';
 
-import { Box, Grid, TextField, Button, List } from '@material-ui/core';
+import { Box, Grid, Button, List } from '@material-ui/core';
 import { makeStyles, createStyles, createTheme, ThemeProvider } from '@material-ui/core/styles';
 import { grey, purple } from '@material-ui/core/colors';
 
 import DeleteIcon from '@material-ui/icons/Delete';
 import SaveIcon from '@material-ui/icons/Save';
-
-import { DateTimePicker } from '@material-ui/pickers';
 
 import { addMinutes } from 'date-fns';
 import _ from 'lodash';
@@ -31,6 +29,8 @@ import { DeleteConfirmDialog } from './DeleteConfirmDialog';
 import { RoomInputFields } from './RoomInputFields';
 import { RoomReadFields, strRoomStatus } from './RoomReadFields';
 import { AddrBookAutoComplete } from './AddrBookAutoComplete';
+import { ControllerTextField } from './ControllerTextField';
+import { ControllerDateTimePicker } from './ControllerDateTimePicker';
 
 const useStyles = makeStyles((tableTheme) => {
   return createStyles({
@@ -66,8 +66,8 @@ const inputformTheme = createTheme({
 });
 
 const startTimeBufferMinute = 0;
-const endTimeBufferMinute = 30;
-const change5MinuteIntervals = (date: Date) => Math.ceil(date.getTime() / 1000 / 60 / 5) * 1000 * 60 * 5;
+const endTimeBufferMinute = 30; //TODO: Interval config化？
+const change5MinuteIntervals = (date: Date) => Math.ceil(date.getTime() / 1000 / 60 / 5) * 1000 * 60 * 5; //TODO: Interval config化？
 
 export type Inputs = {
   mode: 'ins' | 'upd' | 'del';
@@ -76,7 +76,7 @@ export type Inputs = {
 
 export const ADD_ROOM_KEY = 'add-room-01';
 // 入力フォームの初期値
-const getDefaultValues = () => {
+const getDefaultValues = (start: Date | null = null, end: Date | null = null) => {
   return {
     mode: 'ins',
     iCalUId: '',
@@ -95,8 +95,8 @@ const getDefaultValues = () => {
     },
     comment: '',
     contactAddr: '',
-    startTime: addMinutes(change5MinuteIntervals(new Date()), startTimeBufferMinute),
-    endTime: addMinutes(change5MinuteIntervals(new Date()), startTimeBufferMinute + endTimeBufferMinute),
+    startTime: start ? start : addMinutes(change5MinuteIntervals(new Date()), startTimeBufferMinute),
+    endTime: end ? end : addMinutes(change5MinuteIntervals(new Date()), startTimeBufferMinute + endTimeBufferMinute),
   } as Inputs;
 };
 
@@ -153,8 +153,9 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
     buildRoomsUrl();
     setHiddenRooms(false);
   };
-
+  // 検索ボタン活性化アクション
   const handleDateTimeChange = () => {
+    if (getValues('mode') === 'upd') return;
     if (!hiddenRooms) {
       // TODO:値の変更までは見ていない。ダイアログでOKクリックしたらリセット対象になる
       setHiddenRooms(true);
@@ -288,80 +289,33 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
               })()}
             </Box>
           )}
+
           <form>
             <Box p={2}>
-              <Controller
-                name="subject"
-                control={control}
-                rules={{ required: t('common.form.required') as string }}
-                render={({ field }) => (
-                  <TextField
-                    {...field}
-                    label={t('visittable.header.event-subject')}
-                    error={!!errors.subject}
-                    helperText={errors.subject && errors.subject.message}
-                  />
-                )}
-              />
+              <ControllerTextField name="subject" control={control} label={t('visittable.header.event-subject')} required errors={errors} />
 
               <AddrBookAutoComplete control={control} type="required" errors={errors} disabled={data?.isMSMultipleLocations} />
               <AddrBookAutoComplete control={control} type="optional" errors={errors} disabled={data?.isMSMultipleLocations} />
 
               <Grid container spacing={1}>
                 <Grid item xs={5}>
-                  <Controller
+                  <ControllerDateTimePicker
                     name="startTime"
                     control={control}
-                    rules={{
-                      required: t('common.form.required') as string,
-                      validate: () =>
-                        getValues('startTime').getTime() < getValues('endTime').getTime() || (t('visitdialog.form.error.event-time') as string),
-                    }}
-                    render={({ field }) => (
-                      <DateTimePicker
-                        {...field}
-                        onChange={(e) => {
-                          field.onChange(e);
-                          handleDateTimeChange();
-                        }}
-                        ampm={false}
-                        format="yyyy/MM/dd HH:mm"
-                        disablePast
-                        minutesStep={5}
-                        label={t('visittable.header.event-start-time')}
-                        error={!!errors.startTime}
-                        helperText={errors.startTime && (errors.startTime as any).message}
-                        ref={null}
-                      />
-                    )}
+                    getValues={getValues}
+                    label={t('visittable.header.event-start-time')}
+                    handleDateTimeChange={handleDateTimeChange}
+                    errors={errors}
                   />
                 </Grid>
                 <Grid item xs={5}>
-                  <Controller
+                  <ControllerDateTimePicker
                     name="endTime"
                     control={control}
-                    rules={{
-                      required: t('common.form.required') as string,
-                      validate: () =>
-                        getValues('startTime').getTime() < getValues('endTime').getTime() || (t('visitdialog.form.error.event-time') as string),
-                    }}
-                    render={({ field }) => (
-                      <DateTimePicker
-                        {...field}
-                        onChange={(e) => {
-                          field.onChange(e);
-                          handleDateTimeChange();
-                        }}
-                        ampm={false}
-                        format="yyyy/MM/dd HH:mm"
-                        disablePast
-                        minutesStep={5}
-                        label={t('visittable.header.event-end-time')}
-                        error={!!errors.endTime}
-                        helperText={errors.endTime && (errors.endTime as any).message}
-                        ref={null}
-                      />
-                    )}
+                    getValues={getValues}
+                    label={t('visittable.header.event-end-time')}
+                    handleDateTimeChange={handleDateTimeChange}
+                    errors={errors}
                   />
                 </Grid>
                 <Grid item xs={2} style={{ margin: 'auto' }}>
@@ -401,63 +355,10 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
             )}
 
             <Box p={2}>
-              <Controller
-                name="visitCompany"
-                control={control}
-                rules={{ required: t('common.form.required') as string }}
-                render={({ field }) => (
-                  <TextField
-                    {...field}
-                    label={t('visittable.header.visit-company')}
-                    error={!!errors.visitCompany}
-                    helperText={errors.visitCompany && errors.visitCompany.message}
-                  />
-                )}
-              />
-
-              <Controller
-                name="visitorName"
-                control={control}
-                // rules={{ required: t('common.form.required') as string }}
-                render={({ field }) => (
-                  <TextField
-                    multiline
-                    {...field}
-                    label={t('visittable.header.visitor-name')}
-                    error={!!errors.visitorName}
-                    helperText={errors.visitorName && errors.visitorName.message}
-                  />
-                )}
-              />
-
-              <Controller
-                name="comment"
-                control={control}
-                // rules={{ required: t('common.form.required') as string }}
-                render={({ field }) => (
-                  <TextField
-                    multiline
-                    {...field}
-                    label={t('visittable.header.comment')}
-                    error={!!errors.comment}
-                    helperText={errors.comment && errors.comment.message}
-                  />
-                )}
-              />
-
-              <Controller
-                name="contactAddr"
-                control={control}
-                // rules={{ required: t('common.form.required') as string }}
-                render={({ field }) => (
-                  <TextField
-                    {...field}
-                    label={t('visittable.header.contact-addr')}
-                    error={!!errors.contactAddr}
-                    helperText={errors.contactAddr && errors.contactAddr.message}
-                  />
-                )}
-              />
+              <ControllerTextField name="visitCompany" control={control} label={t('visittable.header.visit-company')} required errors={errors} />
+              <ControllerTextField name="visitorName" control={control} label={t('visittable.header.visitor-name')} errors={errors} />
+              <ControllerTextField name="comment" control={control} label={t('visittable.header.comment')} multiline errors={errors} />
+              <ControllerTextField name="contactAddr" control={control} label={t('visittable.header.contact-addr')} errors={errors} />
             </Box>
 
             <Box px={2}>
