@@ -11,11 +11,12 @@ type RoomInputFieldsProps = {
   setValue: UseFormSetValue<Inputs>;
   rooms: Room[] | undefined;
   roomId: string;
+  disabledRoom?: boolean;
   errors: DeepMap<DeepPartial<Inputs>, FieldError>;
 };
 
 export function RoomInputFields(props: RoomInputFieldsProps) {
-  const { control, setValue, rooms, roomId, errors } = props;
+  const { control, setValue, rooms, roomId, disabledRoom, errors } = props;
 
   const { t } = useTranslation();
 
@@ -54,6 +55,14 @@ export function RoomInputFields(props: RoomInputFieldsProps) {
     return get(errors, `resourcies.${roomId}.${name}`) as FieldError;
   };
 
+  if (rooms?.length === 0) {
+    return (
+      <Box px={2} style={{ textAlign: 'center', color: 'red' }}>
+        {t('visitdialog.notes.no-relevant-rooms')}
+      </Box>
+    );
+  }
+
   return (
     <Box px={2}>
       <Controller
@@ -64,6 +73,7 @@ export function RoomInputFields(props: RoomInputFieldsProps) {
           <TextField
             {...field}
             select
+            disabled={disabledRoom}
             label={t('visittable.header.event-room')}
             error={!!getNestedError('roomForEdit')}
             helperText={!!getNestedError('roomForEdit') && getNestedError('roomForEdit').message}

@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react';
+import { useCallback, useContext, useEffect, useState } from 'react';
 import { useRouteMatch } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
@@ -115,9 +115,6 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
   const snackberContext = useContext(MySnackberContext); // スナックバー取得用
   const match = useRouteMatch<LocationParams>();
 
-  // 会議室一覧の取得
-  const [{ data: rooms }] = useLoadData<Room[]>(`/room/choices?location=${match.params.location}`, []);
-
   // 削除確認メッセージの状態
   const [delConfOpen, setDelConfOpen] = useState(false);
 
@@ -125,12 +122,44 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
   const defaultValues = getDefaultValues();
   const {
     control,
+    getValues,
     handleSubmit,
     reset,
     setValue,
+    trigger,
     setError,
     formState: { errors, isDirty, isSubmitting, dirtyFields },
   } = useForm<Inputs>({ defaultValues });
+
+  // 会議室コンポーネントの表示状態
+  const [hiddenRooms, setHiddenRooms] = useState(false);
+
+  // 空き会議室一覧の取得
+  const [roomsUrl, setRoomsUrl] = useState('');
+  const [{ data: rooms }] = useLoadData<Room[]>(roomsUrl, []);
+
+  // 空き会議室一覧のURL更新
+  const buildRoomsUrl = useCallback(() => {
+    const modeUpd = getValues('mode') === 'upd' ? '&all=1' : '';
+    setRoomsUrl(
+      `/room/choices?location=${match.params.location}&start=${getValues('startTime').getTime()}&end=${getValues('endTime').getTime()}${modeUpd}`
+    );
+  }, [getValues, match.params.location]);
+
+  // 検索ボタンアクション
+  const handleSearch = async () => {
+    const result = await trigger(['startTime', 'endTime']); //validate
+    if (!result) return;
+    buildRoomsUrl();
+    setHiddenRooms(false);
+  };
+
+  const handleDateTimeChange = () => {
+    if (!hiddenRooms) {
+      // TODO:値の変更までは見ていない。ダイアログでOKクリックしたらリセット対象になる
+      setHiddenRooms(true);
+    }
+  };
 
   // 入力フォームの初期化
   useEffect(() => {
@@ -161,6 +190,18 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
       reset(_.cloneDeep(getDefaultValues()));
     }
   }, [data, open, reset]);
+
+  useEffect(() => {
+    if (open) {
+      buildRoomsUrl();
+    } else {
+      setRoomsUrl('');
+    }
+  }, [buildRoomsUrl, open]);
+
+  useEffect(() => {
+    if (!open) setHiddenRooms(false);
+  }, [open]);
 
   // 保存アクション
   const handleSave = () => {
@@ -267,14 +308,22 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
               <AddrBookAutoComplete control={control} type="optional" errors={errors} disabled={data?.isMSMultipleLocations} />
 
               <Grid container spacing={1}>
-                <Grid item xs={6}>
+                <Grid item xs={5}>
                   <Controller
                     name="startTime"
                     control={control}
-                    rules={{ required: t('common.form.required') as string }}
+                    rules={{
+                      required: t('common.form.required') as string,
+                      validate: () =>
+                        getValues('startTime').getTime() < getValues('endTime').getTime() || (t('visitdialog.form.error.event-time') as string),
+                    }}
                     render={({ field }) => (
                       <DateTimePicker
                         {...field}
+                        onChange={(e) => {
+                          field.onChange(e);
+                          handleDateTimeChange();
+                        }}
                         ampm={false}
                         format="yyyy/MM/dd HH:mm"
                         disablePast
@@ -287,14 +336,22 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
                     )}
                   />
                 </Grid>
-                <Grid item xs={6}>
+                <Grid item xs={5}>
                   <Controller
                     name="endTime"
                     control={control}
-                    rules={{ required: t('common.form.required') as string }}
+                    rules={{
+                      required: t('common.form.required') as string,
+                      validate: () =>
+                        getValues('startTime').getTime() < getValues('endTime').getTime() || (t('visitdialog.form.error.event-time') as string),
+                    }}
                     render={({ field }) => (
                       <DateTimePicker
                         {...field}
+                        onChange={(e) => {
+                          field.onChange(e);
+                          handleDateTimeChange();
+                        }}
                         ampm={false}
                         format="yyyy/MM/dd HH:mm"
                         disablePast
@@ -307,17 +364,31 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
                     )}
                   />
                 </Grid>
+                <Grid item xs={2} style={{ margin: 'auto' }}>
+                  <Button onClick={handleSearch} variant="contained" color="primary" fullWidth disabled={data?.isMSMultipleLocations || !hiddenRooms}>
+                    {t('visitorinfoform.form.search')}
+                  </Button>
+                </Grid>
               </Grid>
             </Box>
 
             {!data ? (
               /* 新規作成 */
-              <RoomInputFields control={control} setValue={setValue} rooms={rooms} roomId={ADD_ROOM_KEY} errors={errors} />
+              !hiddenRooms && <RoomInputFields control={control} setValue={setValue} rooms={rooms} roomId={ADD_ROOM_KEY} errors={errors} />
             ) : (
               <>
                 {!data.isMSMultipleLocations ? (
                   /* mode=upd & 単一会議室 */
-                  <RoomInputFields control={control} setValue={setValue} rooms={rooms} roomId={Object.keys(data.resourcies)[0]} errors={errors} />
+                  !hiddenRooms && (
+                    <RoomInputFields
+                      control={control}
+                      setValue={setValue}
+                      rooms={rooms}
+                      roomId={Object.keys(data.resourcies)[0]}
+                      disabledRoom={true}
+                      errors={errors}
+                    />
+                  )
                 ) : (
                   /* mode=upd & 複数会議室 */
                   <ThemeProvider theme={tableTheme}>
