@@ -47,6 +47,7 @@
 	"visitdialog.form.visitor-card-number":"カード番号",
 	"visitdialog.form.visitor-card-number-placeholder":"カード番号を入力してください",
 	"visitdialog.form.error.event-time":"日付の関係性に誤りがあります",
+	"visitdialog.form.error.available-time":"会議室が空いていません",
 	"visitorinfoform.title":"来訪情報",
 	"visitorinfoform.form.search":"検索",
 	"visitorinfoform.form.save":"保存する",

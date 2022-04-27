@@ -131,37 +131,6 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
     formState: { errors, isDirty, isSubmitting, dirtyFields },
   } = useForm<Inputs>({ defaultValues });
 
-  // 会議室コンポーネントの表示状態
-  const [hiddenRooms, setHiddenRooms] = useState(false);
-
-  // 空き会議室一覧の取得
-  const [roomsUrl, setRoomsUrl] = useState('');
-  const [{ data: rooms }] = useLoadData<Room[]>(roomsUrl, []);
-
-  // 空き会議室一覧のURL更新
-  const buildRoomsUrl = useCallback(() => {
-    const modeUpd = getValues('mode') === 'upd' ? '&all=1' : '';
-    setRoomsUrl(
-      `/room/choices?location=${match.params.location}&start=${getValues('startTime').getTime()}&end=${getValues('endTime').getTime()}${modeUpd}`
-    );
-  }, [getValues, match.params.location]);
-
-  // 検索ボタンアクション
-  const handleSearch = async () => {
-    const result = await trigger(['startTime', 'endTime']); //validate
-    if (!result) return;
-    buildRoomsUrl();
-    setHiddenRooms(false);
-  };
-  // 検索ボタン活性化アクション
-  const handleDateTimeChange = () => {
-    if (getValues('mode') === 'upd') return;
-    if (!hiddenRooms) {
-      // TODO:値の変更までは見ていない。ダイアログでOKクリックしたらリセット対象になる
-      setHiddenRooms(true);
-    }
-  };
-
   // 入力フォームの初期化
   useEffect(() => {
     if (open && !!data) {
@@ -192,17 +161,37 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
     }
   }, [data, open, reset]);
 
+  // ::空き会議室の制御関連 start -------------------------->
+  // 会議室コンポーネントの表示状態
+  const [hiddenRooms, setHiddenRooms] = useState(false);
+
+  // 空き会議室一覧の取得
+  const defaultRoomsUrl = `/room/choices?location=${match.params.location}`;
+  const [roomsUrl, setRoomsUrl] = useState(defaultRoomsUrl);
+  const [{ data: rooms }] = useLoadData<Room[]>(roomsUrl, []);
+
+  // 空き会議室一覧のURL更新
+  const buildRoomsUrl = useCallback(() => {
+    if (getValues('mode') === 'upd') {
+      //TODO: 更新時、空き会議室検索は未対応
+      setRoomsUrl(defaultRoomsUrl);
+    } else {
+      setRoomsUrl(defaultRoomsUrl + `&start=${getValues('startTime').getTime()}&end=${getValues('endTime').getTime()}`);
+    }
+  }, [defaultRoomsUrl, getValues]);
+
+  // 空き会議室一覧のURLリセット
   useEffect(() => {
     if (open) {
       buildRoomsUrl();
-    } else {
-      setRoomsUrl('');
     }
   }, [buildRoomsUrl, open]);
 
+  // 会議室コンポーネントの表示リセット
   useEffect(() => {
     if (!open) setHiddenRooms(false);
   }, [open]);
+  // ::空き会議室の制御関連 end --------------------------<
 
   // 保存アクション
   const handleSave = () => {
@@ -257,6 +246,23 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
     }
   };
 
+  // 検索ボタンアクション
+  const handleSearch = async () => {
+    const result = await trigger(['startTime', 'endTime']); //validate
+    if (!result) return;
+    buildRoomsUrl();
+    setHiddenRooms(false);
+  };
+
+  // 検索ボタン活性化アクション
+  const handleDateTimeChange = () => {
+    if (getValues('mode') === 'upd') return; //TODO: 更新時、空き会議室検索は未対応
+    if (!hiddenRooms) {
+      setHiddenRooms(true);
+    }
+  };
+
+  // 削除確認アクション
   const handleDelConfClose = (deleteOk: boolean) => {
     setDelConfOpen(false);
     if (deleteOk) {
@@ -364,7 +370,14 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
             <Box px={2}>
               <Grid container justifyContent="space-between" spacing={2} className={classes.formAction}>
                 <Grid item xs={!data ? 12 : 6}>
-                  <Button onClick={handleSave} variant="contained" color="primary" disabled={!isDirty} startIcon={<SaveIcon />} fullWidth>
+                  <Button
+                    onClick={handleSave}
+                    variant="contained"
+                    color="primary"
+                    disabled={!isDirty || hiddenRooms}
+                    startIcon={<SaveIcon />}
+                    fullWidth
+                  >
                     {t('visitorinfoform.form.save')}
                   </Button>
                 </Grid>
