@@ -1,8 +1,8 @@
-import { Fragment, useEffect, useState } from 'react';
+import { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
 import { makeStyles, createStyles, withStyles } from '@material-ui/core/styles';
 
 import _ from 'lodash';
-import { differenceInMinutes, startOfDay } from 'date-fns';
+import { differenceInMinutes, endOfDay, isAfter, isBefore, isSameDay, startOfDay } from 'date-fns';
 import { Tooltip, Typography } from '@material-ui/core';
 import { Schedule, ScheduleItem } from '_models/Schedule';
 import { DataDialogAction, DataDialogState, RowDataType } from 'main/DataTableBase';
@@ -48,12 +48,9 @@ const viewBox = `0 0 ${viewWidthWrap} ${viewHeight}`;
 const fontHeight = 30;
 const fontMargin = 5;
 
-const timeToPoint = (zero: Date, time: Date, boxStyle: BoxStyle) => {
-  // // 前日の予約があってもオフセット計算で当日に表示しないようにする。
-  // const todayZero = startOfDay(new Date());
-  // const offset differenceInMinutes(zero, todayZero);
-  const offset = 0;
-  return (differenceInMinutes(time, zero) + offset) * boxStyle.scale;
+const timeToPoint = (time: Date, boxStyle: BoxStyle) => {
+  const zero = startOfDay(time);
+  return differenceInMinutes(time, zero) * boxStyle.scale;
 };
 
 const pointToTime = (point: number, boxStyle: BoxStyle) => {
@@ -63,15 +60,27 @@ const pointToTime = (point: number, boxStyle: BoxStyle) => {
   // return new Date(timestamp);
 };
 
-const getBoxData = (item: ScheduleItem, boxStyle: BoxStyle): BoxData => {
+const getBoxData = (item: ScheduleItem, boxStyle: BoxStyle, currentDate: Date): BoxData => {
   const start = new Date(item.start);
   const end = new Date(item.end);
-  const startDay = startOfDay(start);
-  const endDay = startOfDay(end);
-  const x = timeToPoint(startDay, start, boxStyle);
+  let x = timeToPoint(start, boxStyle);
+  let x2 = timeToPoint(end, boxStyle);
+  // 日を跨ぐ場合
+  if (!isSameDay(start, end)) {
+    const startOfCurrent = startOfDay(currentDate);
+    const endOfCurrent = endOfDay(currentDate);
+    // 翌日に続く
+    if (isBefore(endOfCurrent, end)) {
+      x2 = timeToPoint(endOfCurrent, boxStyle);
+    }
+    // 前日から続いている
+    if (isAfter(startOfCurrent, start)) {
+      x = timeToPoint(startOfCurrent, boxStyle);
+    }
+  }
   return {
     x: x,
-    width: timeToPoint(endDay, end, boxStyle) - x,
+    width: x2 - x,
     className: item.status,
   };
 };
@@ -163,7 +172,7 @@ export function TimeBar(props: TimeBarProps) {
   const { currentDate, dataDialogHook, schedule, events, onClickCallback } = props;
   const classes = useStyles();
 
-  const [boxStyle, setBoxStyle] = useState(shortStyle);
+  const [boxStyle, setBoxStyle] = useState(longStyle);
   const [transform, setTransform] = useState(createTransform(boxStyle));
 
   // useEffect(() => {
@@ -179,54 +188,60 @@ export function TimeBar(props: TimeBarProps) {
   const rectHeight = (viewHeight - fontHeight) * hRatio - 1;
 
   // スケジュール枠の作成
-  const createScheduleBox = (item: ScheduleItem, index: number) => {
-    const boxData = getBoxData(item, boxStyle);
-    return (
-      <rect
-        key={`${schedule.roomEmail}-sc-${index}`}
-        className={boxData.className}
-        x={boxData.x}
-        y={rectY}
-        width={boxData.width}
-        height={rectHeight}
-        rx={3}
-        ry={5}
-      ></rect>
-    );
-  };
+  const createScheduleBox = useCallback(
+    (item: ScheduleItem, index: number, roomEmail: string) => {
+      const boxData = getBoxData(item, boxStyle, currentDate);
+      return (
+        <rect
+          key={`${roomEmail}-sc-${index}`}
+          className={boxData.className}
+          x={boxData.x}
+          y={rectY}
+          width={boxData.width}
+          height={rectHeight}
+          rx={3}
+          ry={5}
+        ></rect>
+      );
+    },
+    [boxStyle, rectHeight, rectY, currentDate]
+  );
 
   // イベント枠の作成 (textのoverflow:hiddenっぽくするためにsvgの入れ子で作成)
-  const createEventBox = (event: RowDataType, index: number) => {
-    const item: ScheduleItem = { status: 'event', start: event.startDateTime, end: event.endDateTime };
-    const boxData = getBoxData(item, boxStyle);
-    const x = boxData.x;
-    const y = rectY;
-    const width = boxData.width;
-    const height = rectHeight;
-    return (
-      <HtmlTooltip
-        key={`${schedule.roomEmail}-ev-${index}`}
-        title={
-          <>
-            <Typography variant="body2">{event.subject}</Typography>
-            <em>{event.apptTime}</em> <b>{event.reservationName}</b>
-          </>
-        }
-        onClick={() => {
-          onClickCallback(event);
-        }}
-      >
-        <svg x={x} y={y} width={width} height={height} viewBox={`0 0 ${width} ${height}`}>
-          <g>
-            <rect className={boxData.className} x={0} y={0} width={width} height={height} rx={3} ry={5}></rect>
-            <text className="subject" x={3} y={'50%'}>
-              {event.subject}
-            </text>
-          </g>
-        </svg>
-      </HtmlTooltip>
-    );
-  };
+  const createEventBox = useCallback(
+    (event: RowDataType, index: number, roomEmail: string) => {
+      const item: ScheduleItem = { status: 'event', start: event.startDateTime, end: event.endDateTime };
+      const boxData = getBoxData(item, boxStyle, currentDate);
+      const x = boxData.x;
+      const y = rectY;
+      const width = boxData.width;
+      const height = rectHeight;
+      return (
+        <HtmlTooltip
+          key={`${roomEmail}-ev-${index}`}
+          title={
+            <>
+              <Typography variant="body2">{event.subject}</Typography>
+              <em>{event.apptTime}</em> <b>{event.reservationName}</b>
+            </>
+          }
+          onClick={() => {
+            onClickCallback(event);
+          }}
+        >
+          <svg x={x} y={y} width={width} height={height} viewBox={`0 0 ${width} ${height}`}>
+            <g>
+              <rect className={boxData.className} x={0} y={0} width={width} height={height} rx={3} ry={5}></rect>
+              <text className="subject" x={3} y={'50%'}>
+                {event.subject}
+              </text>
+            </g>
+          </svg>
+        </HtmlTooltip>
+      );
+    },
+    [boxStyle, onClickCallback, rectHeight, rectY, currentDate]
+  );
 
   // 新規作成ボタン(開始時間の指定あり)
   const handleCreateClick = (event: React.MouseEvent<SVGRectElement, MouseEvent>, roomId: string) => {
@@ -246,6 +261,16 @@ export function TimeBar(props: TimeBarProps) {
 
     dataDialogHook.dispatch({ type: 'addDataOpen', addDefault: { start: start, roomId: roomId } });
   };
+
+  // スケジュール枠の表示（不要レンダリングが起きるためメモ化）
+  const rectSchedules = useMemo(() => {
+    return <>{schedule.scheduleItems.map((item, index) => createScheduleBox(item, index, schedule.roomEmail))}</>;
+  }, [createScheduleBox, schedule]);
+
+  // イベント枠の表示（不要レンダリングが起きるためメモ化）
+  const rectEvents = useMemo(() => {
+    return <>{events.map((event, index) => createEventBox(event, index, schedule.roomEmail))}</>;
+  }, [createEventBox, events, schedule]);
 
   return (
     <>
@@ -277,8 +302,8 @@ export function TimeBar(props: TimeBarProps) {
               height={rectHeight}
               onClick={(e) => handleCreateClick(e, schedule.roomId)}
             ></rect>
-            {schedule.scheduleItems.map((item, index) => createScheduleBox(item, index))}
-            {events.map((event, index) => createEventBox(event, index))}
+            {rectSchedules}
+            {rectEvents}
           </g>
         </svg>
       </div>

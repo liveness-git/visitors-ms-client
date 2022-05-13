@@ -52,7 +52,7 @@ export function DataTable(props: DataTableProps) {
     [dataDialogHook]
   );
 
-  // タイムバーの表示（再レンダリングが起きるためメモ化）
+  // タイムバーの表示（不要レンダリングが起きるためメモ化）
   const timeBars = useMemo(() => {
     if (!data) return <></>;
     return (
