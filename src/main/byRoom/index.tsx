@@ -112,10 +112,10 @@ export function ByRoom() {
             </TabList>
           </AppBar>
           <TabPanel value="1">
-            <DataTable currentDate={selectedDate!} dataDialogHook={{ state: dataDialogState, dispatch: dataDialogDispatch }} />
+            <DataTable currentDate={selectedDate!} dataDialogHook={{ state: dataDialogState, dispatch: dataDialogDispatch }} type="rooms" />
           </TabPanel>
           <TabPanel value="2">
-            <DataTable currentDate={selectedDate!} dataDialogHook={{ state: dataDialogState, dispatch: dataDialogDispatch }} />
+            <DataTable currentDate={selectedDate!} dataDialogHook={{ state: dataDialogState, dispatch: dataDialogDispatch }} type="free" />
           </TabPanel>
         </TabContext>
       </Paper>

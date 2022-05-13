@@ -75,8 +75,16 @@ export type Inputs = {
   EventInputType;
 
 export const ADD_ROOM_KEY = 'add-room-01';
+
+export type AddDefaultType = {
+  start: Date;
+  roomId: string;
+};
+
 // 入力フォームの初期値
-const getDefaultValues = (start: Date | null = null, end: Date | null = null) => {
+const getDefaultValues = (start?: Date, roomId?: string) => {
+  const startDate = start ? start : new Date();
+  const room = roomId ? roomId : '';
   return {
     mode: 'ins',
     iCalUId: '',
@@ -87,7 +95,7 @@ const getDefaultValues = (start: Date | null = null, end: Date | null = null) =>
     mailto: { required: [], optional: [] },
     resourcies: {
       [ADD_ROOM_KEY]: {
-        roomForEdit: '',
+        roomForEdit: room,
         teaSupply: false,
         numberOfVisitor: 0,
         numberOfEmployee: 0,
@@ -95,8 +103,8 @@ const getDefaultValues = (start: Date | null = null, end: Date | null = null) =>
     },
     comment: '',
     contactAddr: '',
-    startTime: start ? start : addMinutes(change5MinuteIntervals(new Date()), startTimeBufferMinute),
-    endTime: end ? end : addMinutes(change5MinuteIntervals(new Date()), startTimeBufferMinute + endTimeBufferMinute),
+    startTime: addMinutes(change5MinuteIntervals(startDate), startTimeBufferMinute),
+    endTime: addMinutes(change5MinuteIntervals(startDate), startTimeBufferMinute + endTimeBufferMinute),
   } as Inputs;
 };
 
@@ -105,10 +113,11 @@ type RowDataInputDialogProps = {
   onClose: () => void;
   data: RowDataType | null;
   reload: () => void;
+  addDefault?: AddDefaultType;
 };
 
 export function RowDataInputDialog(props: RowDataInputDialogProps) {
-  const { open, onClose, data, reload } = props;
+  const { open, onClose, data, reload, addDefault } = props;
 
   const { t } = useTranslation();
   const classes = { ...useRowDataDialogStyles(), ...useStyles() };
@@ -157,9 +166,9 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
         endTime: new Date(data.endDateTime),
       });
     } else {
-      reset(_.cloneDeep(getDefaultValues()));
+      reset(_.cloneDeep(getDefaultValues(addDefault?.start, addDefault?.roomId)));
     }
-  }, [data, open, reset]);
+  }, [data, open, reset, addDefault]);
 
   // ::空き会議室の制御関連 start -------------------------->
   // 会議室コンポーネントの表示状態
@@ -191,6 +200,7 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
   useEffect(() => {
     if (!open) setHiddenRooms(false);
   }, [open]);
+
   // ::空き会議室の制御関連 end --------------------------<
 
   // 保存アクション

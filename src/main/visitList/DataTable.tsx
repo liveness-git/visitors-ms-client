@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useRouteMatch } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
@@ -68,14 +68,17 @@ export function DataTable(props: DataTableProps) {
   const [currentRow, setCurrentRow] = useState<RowDataType | null>(null);
 
   // ダイアログを開く
-  const handleDialogOpen = (selectedRow: RowDataType) => {
-    if (selectedRow.isAuthor) {
-      dataDialogHook.dispatch({ type: 'inputOpen' });
-    } else {
-      dataDialogHook.dispatch({ type: 'readOpen' });
-    }
-    setCurrentRow(selectedRow);
-  };
+  const handleDialogOpen = useCallback(
+    (selectedRow: RowDataType) => {
+      if (selectedRow.isAuthor) {
+        dataDialogHook.dispatch({ type: 'inputOpen' });
+      } else {
+        dataDialogHook.dispatch({ type: 'readOpen' });
+      }
+      setCurrentRow(selectedRow);
+    },
+    [dataDialogHook]
+  );
 
   const columns: Columns[] = [
     { title: t('visittable.header.appt-time'), field: 'apptTime' },

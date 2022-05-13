@@ -1,16 +1,18 @@
-import { useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRouteMatch } from 'react-router-dom';
+
 import { LocationParams } from '_models/Location';
+import { Schedule } from '_models/Schedule';
 
 import { useLoadData } from '_utils/useLoadData';
 
 import { DataDialogAction, DataDialogState, DataTableBase, RowDataType } from '../DataTableBase';
+import { TimeBar } from './TimeBar';
 
-export type Columns = {
-  title: string;
-  field: string;
-  hidden?: boolean; // テーブルに表示するか否か
+type TimeBarDataType = {
+  events: RowDataType[];
+  schedules: Schedule[];
 };
 
 type DataTableProps = {
@@ -19,32 +21,55 @@ type DataTableProps = {
     state: DataDialogState;
     dispatch: React.Dispatch<DataDialogAction>;
   };
+  type: 'rooms' | 'free';
 };
 
 export function DataTable(props: DataTableProps) {
-  const { currentDate, dataDialogHook } = props;
+  const { currentDate, dataDialogHook, type } = props;
 
   const { t } = useTranslation();
   const match = useRouteMatch<LocationParams>();
 
   // データ取得
-  const [{ data, isLoading, isError }, reload] = useLoadData<RowDataType[]>(
-    `/event/byroom?timestamp=${currentDate!.getTime()}&location=${match.params.location}`,
-    []
+  const [{ data, isLoading, isError }, reload] = useLoadData<TimeBarDataType>(
+    `/event/byroom?timestamp=${currentDate!.getTime()}&location=${match.params.location}&type=${type}`,
+    undefined
   );
 
   // 選択行の状態
   const [currentRow, setCurrentRow] = useState<RowDataType | null>(null);
 
   // ダイアログを開く
-  const handleDialogOpen = (selectedRow: RowDataType) => {
-    if (selectedRow.isAuthor) {
-      dataDialogHook.dispatch({ type: 'inputOpen' });
-    } else {
-      dataDialogHook.dispatch({ type: 'readOpen' });
-    }
-    setCurrentRow(selectedRow);
-  };
+  const handleDialogOpen = useCallback(
+    (selectedRow: RowDataType) => {
+      if (selectedRow.isAuthor) {
+        dataDialogHook.dispatch({ type: 'inputOpen' });
+      } else {
+        dataDialogHook.dispatch({ type: 'readOpen' });
+      }
+      setCurrentRow(selectedRow);
+    },
+    [dataDialogHook]
+  );
+
+  // タイムバーの表示（再レンダリングが起きるためメモ化）
+  const timeBars = useMemo(() => {
+    if (!data) return <></>;
+    return (
+      <>
+        {data.schedules.map((schedule, sIdx) => (
+          <TimeBar
+            key={sIdx}
+            currentDate={currentDate}
+            dataDialogHook={dataDialogHook}
+            schedule={schedule}
+            events={data!.events.filter((_event, eIdx) => schedule.eventsIndex.some((num: number) => num === eIdx))}
+            onClickCallback={handleDialogOpen}
+          ></TimeBar>
+        ))}
+      </>
+    );
+  }, [currentDate, data, dataDialogHook, handleDialogOpen]);
 
   // データ取得失敗した場合
   if (isError) {
@@ -53,7 +78,7 @@ export function DataTable(props: DataTableProps) {
 
   return (
     <DataTableBase currentRow={currentRow} dataDialogHook={dataDialogHook} isLoading={isLoading} reload={reload}>
-      <>test</>
+      {timeBars}
     </DataTableBase>
   );
 }

@@ -5,7 +5,7 @@ import { VisitorInfo, VisitorInfoReadOnly } from '_models/VisitorInfo';
 
 import { Spinner } from '_components/Spinner';
 
-import { RowDataInputDialog } from './RowDataInputDialog';
+import { AddDefaultType, RowDataInputDialog } from './RowDataInputDialog';
 import { RowDataReadDialog } from './RowDataReadDialog';
 
 export const tableTheme = createTheme({
@@ -38,18 +38,21 @@ export type DataDialogState = {
   mode: 'rowData' | 'addData';
   inputOpen: boolean;
   readOpen: boolean;
+  addDefault?: AddDefaultType;
 };
 
-export type DataDialogAction = {
-  type: 'inputOpen' | 'addDataOpen' | 'inputClose' | 'readOpen' | 'readClose';
-};
+export type DataDialogAction =
+  | {
+      type: 'inputOpen' | 'readOpen' | 'inputClose' | 'readClose';
+    }
+  | { type: 'addDataOpen'; addDefault?: AddDefaultType };
 
 export const dataDialogReducer = (state: DataDialogState, action: DataDialogAction): DataDialogState => {
   switch (action.type) {
     case 'inputOpen':
       return { mode: 'rowData', inputOpen: true, readOpen: false };
     case 'addDataOpen':
-      return { mode: 'addData', inputOpen: true, readOpen: false };
+      return { mode: 'addData', inputOpen: true, readOpen: false, addDefault: action.addDefault };
     case 'inputClose':
       return { ...state, inputOpen: false };
     case 'readOpen':
@@ -93,6 +96,7 @@ export function DataTableBase(props: DataTableBaseProps) {
         onClose={handleInputDialogClose}
         data={dataDialogHook.state.mode === 'addData' ? null : currentRow}
         reload={reload}
+        addDefault={dataDialogHook.state.addDefault}
       />
       {!!currentRow && <RowDataReadDialog open={dataDialogHook.state.readOpen} onClose={handleReadDialogClose} data={currentRow} />}
     </ThemeProvider>
