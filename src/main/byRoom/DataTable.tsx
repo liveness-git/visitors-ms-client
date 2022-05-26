@@ -21,18 +21,18 @@ type DataTableProps = {
     state: DataDialogState;
     dispatch: React.Dispatch<DataDialogAction>;
   };
-  type: 'rooms' | 'free';
+  category: string;
 };
 
 export function DataTable(props: DataTableProps) {
-  const { currentDate, dataDialogHook, type } = props;
+  const { currentDate, dataDialogHook, category } = props;
 
   const { t } = useTranslation();
   const match = useRouteMatch<LocationParams>();
 
   // データ取得
   const [{ data, isLoading, isError }, reload] = useLoadData<TimeBarDataType>(
-    `/event/byroom?timestamp=${currentDate!.getTime()}&location=${match.params.location}&type=${type}`,
+    `/event/byroom?timestamp=${currentDate!.getTime()}&location=${match.params.location}&category=${category}`,
     undefined
   );
 

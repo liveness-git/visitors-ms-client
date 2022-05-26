@@ -13,6 +13,8 @@ import { useTranslation } from 'react-i18next';
 import BaseTemplate from '../BaseTemplate';
 import { DataTable } from './DataTable';
 import { dataDialogReducer, DataDialogState } from '../DataTableBase';
+import { useLoadData } from '_utils/useLoadData';
+import { Category } from '_models/Category';
 
 const useStyles = makeStyles((theme) => {
   return createStyles({
@@ -47,10 +49,13 @@ export function ByRoom() {
   };
 
   // タブ切り替え
-  const [value, setTabValue] = useState('1');
+  const [value, setTabValue] = useState('0');
   const handleTabChange = (_event: React.ChangeEvent<{}>, newValue: string) => {
     setTabValue(newValue);
   };
+
+  // カテゴリ取得
+  const [{ data: categories }] = useLoadData<Category[]>(`/category/choices`, []);
 
   // ダイアログの初期値
   const initialState: DataDialogState = {
@@ -107,16 +112,24 @@ export function ByRoom() {
         <TabContext value={value}>
           <AppBar position="static" color="default">
             <TabList indicatorColor="primary" textColor="primary" variant="fullWidth" onChange={handleTabChange} aria-label="view tabs">
-              <Tab label={t('visitlist.tab.conference-rooms')} value="1" />
-              <Tab label={t('visitlist.tab.free-space')} value="2" />
+              {/* <Tab label={t('visitlist.tab.conference-rooms')} value="0" />
+              <Tab label={t('visitlist.tab.free-space')} value="1" /> */}
+              {categories?.map((cate, index) => (
+                <Tab key={`tab-${index}`} label={cate.name} value={`${index}`} />
+              ))}
             </TabList>
           </AppBar>
-          <TabPanel value="1">
+          {/* <TabPanel value="0">
             <DataTable currentDate={selectedDate!} dataDialogHook={{ state: dataDialogState, dispatch: dataDialogDispatch }} type="rooms" />
           </TabPanel>
-          <TabPanel value="2">
+          <TabPanel value="1">
             <DataTable currentDate={selectedDate!} dataDialogHook={{ state: dataDialogState, dispatch: dataDialogDispatch }} type="free" />
-          </TabPanel>
+          </TabPanel> */}
+          {categories?.map((cate, index) => (
+            <TabPanel key={`tab-panel-${index}`} value={`${index}`}>
+              <DataTable currentDate={selectedDate!} dataDialogHook={{ state: dataDialogState, dispatch: dataDialogDispatch }} category={cate.id} />
+            </TabPanel>
+          ))}
         </TabContext>
       </Paper>
     </BaseTemplate>

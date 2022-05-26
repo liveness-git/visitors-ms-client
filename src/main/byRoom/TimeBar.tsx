@@ -172,7 +172,7 @@ export function TimeBar(props: TimeBarProps) {
   const { currentDate, dataDialogHook, schedule, events, onClickCallback } = props;
   const classes = useStyles();
 
-  const [boxStyle, setBoxStyle] = useState(longStyle);
+  const [boxStyle, setBoxStyle] = useState(shortStyle);
   const [transform, setTransform] = useState(createTransform(boxStyle));
 
   // useEffect(() => {
