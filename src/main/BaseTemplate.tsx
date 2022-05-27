@@ -21,6 +21,7 @@ import { AccountCircle } from '@material-ui/icons';
 import MenuIcon from '@material-ui/icons/Menu';
 import EditIcon from '@material-ui/icons/Edit';
 import MeetingRoomIcon from '@material-ui/icons/MeetingRoom';
+import PeopleIcon from '@material-ui/icons/People';
 import RefreshIcon from '@material-ui/icons/Refresh';
 
 import { get } from '_utils/Http';
@@ -297,6 +298,16 @@ const BaseTemplate = ({ children }: BaseTemplateProps) => {
                   </ListItemIcon>
                 </Tooltip>
                 <ListItemText primary={t('main.menu.by-meeting-room')} />
+              </ListItem>
+            </Link>
+            <Link to={`/${match.params.location}/front`} className={classes.link}>
+              <ListItem button>
+                <Tooltip title={t('main.menu.front') as string}>
+                  <ListItemIcon>
+                    <PeopleIcon />
+                  </ListItemIcon>
+                </Tooltip>
+                <ListItemText primary={t('main.menu.front')} />
               </ListItem>
             </Link>
             <ListItem button onClick={refreshPage}>
