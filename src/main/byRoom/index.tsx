@@ -1,4 +1,4 @@
-import React, { useReducer, useState } from 'react';
+import React, { useMemo, useReducer, useState } from 'react';
 
 import { AppBar, Box, Button, createStyles, Grid, makeStyles, Paper, Typography } from '@material-ui/core';
 import Tab from '@material-ui/core/Tab';
@@ -49,7 +49,7 @@ export function ByRoom() {
   };
 
   // タブ切り替え
-  const [value, setTabValue] = useState('0');
+  const [tabValue, setTabValue] = useState('0');
   const handleTabChange = (_event: React.ChangeEvent<{}>, newValue: string) => {
     setTabValue(newValue);
   };
@@ -70,6 +70,32 @@ export function ByRoom() {
   const handleCreateClick = (_event: React.ChangeEvent<{}>) => {
     dataDialogDispatch({ type: 'addDataOpen' });
   };
+
+  // タブリストの表示（不要レンダリングが起きるためメモ化）
+  const tabList = useMemo(() => {
+    return (
+      <TabList indicatorColor="primary" textColor="primary" variant="fullWidth" onChange={handleTabChange} aria-label="view tabs">
+        {categories?.map((cate, index) => (
+          <Tab key={`tab-${index}`} label={cate.name} value={`${index}`} />
+        ))}
+      </TabList>
+    );
+  }, [categories]);
+
+  // タブパネルの表示（不要レンダリングが起きるためメモ化）
+  const tabPanels = useMemo(() => {
+    return (
+      <>
+        {categories?.map((cate, index) => {
+          return (
+            <TabPanel key={`tab-panel-${index}`} value={`${index}`}>
+              <DataTable currentDate={selectedDate!} dataDialogHook={{ state: dataDialogState, dispatch: dataDialogDispatch }} category={cate.id} />
+            </TabPanel>
+          );
+        })}
+      </>
+    );
+  }, [categories, dataDialogState, selectedDate]);
 
   return (
     <BaseTemplate>
@@ -109,15 +135,13 @@ export function ByRoom() {
             </Grid>
           </Grid>
         </Box>
-        <TabContext value={value}>
+        <TabContext value={tabValue}>
           <AppBar position="static" color="default">
-            <TabList indicatorColor="primary" textColor="primary" variant="fullWidth" onChange={handleTabChange} aria-label="view tabs">
-              {/* <Tab label={t('visitlist.tab.conference-rooms')} value="0" />
-              <Tab label={t('visitlist.tab.free-space')} value="1" /> */}
-              {categories?.map((cate, index) => (
-                <Tab key={`tab-${index}`} label={cate.name} value={`${index}`} />
-              ))}
-            </TabList>
+            {/* <TabList indicatorColor="primary" textColor="primary" variant="fullWidth" onChange={handleTabChange} aria-label="view tabs">
+              <Tab label={t('visitlist.tab.conference-rooms')} value="0" />
+              <Tab label={t('visitlist.tab.free-space')} value="1" />
+            </TabList> */}
+            {tabList}
           </AppBar>
           {/* <TabPanel value="0">
             <DataTable currentDate={selectedDate!} dataDialogHook={{ state: dataDialogState, dispatch: dataDialogDispatch }} type="rooms" />
@@ -125,11 +149,7 @@ export function ByRoom() {
           <TabPanel value="1">
             <DataTable currentDate={selectedDate!} dataDialogHook={{ state: dataDialogState, dispatch: dataDialogDispatch }} type="free" />
           </TabPanel> */}
-          {categories?.map((cate, index) => (
-            <TabPanel key={`tab-panel-${index}`} value={`${index}`}>
-              <DataTable currentDate={selectedDate!} dataDialogHook={{ state: dataDialogState, dispatch: dataDialogDispatch }} category={cate.id} />
-            </TabPanel>
-          ))}
+          {tabPanels}
         </TabContext>
       </Paper>
     </BaseTemplate>

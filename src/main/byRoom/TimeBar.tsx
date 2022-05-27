@@ -256,7 +256,8 @@ export function TimeBar(props: TimeBarProps) {
 
     const svgP = pt.matrixTransform(ctm.inverse());
     const rectX = svgP.x - boxStyle.transform.x + viewWidthMargin;
-    const time = pointToTime(rectX, boxStyle);
+    const $time = pointToTime(rectX, boxStyle);
+    const time = Math.floor($time / 1000 / 60 / 30) * 1000 * 60 * 30; //TODO: Interval config化？
     const start = new Date(startOfDay(currentDate).getTime() + time);
 
     dataDialogHook.dispatch({ type: 'addDataOpen', addDefault: { start: start, roomId: roomId } });
