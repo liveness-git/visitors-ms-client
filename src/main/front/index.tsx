@@ -3,15 +3,16 @@ import React, { useMemo, useReducer, useState } from 'react';
 import { AppBar, Box, Button, createStyles, Grid, makeStyles, Paper, Tab, Typography } from '@material-ui/core';
 import { KeyboardDatePicker } from '@material-ui/pickers';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
+import { TabContext, TabList, TabPanel } from '@material-ui/lab';
 
 import { useTranslation } from 'react-i18next';
 
 import BaseTemplate from '../BaseTemplate';
-import { DataTable } from './DataTable';
 import { dataDialogReducer, DataDialogState } from '../DataTableBase';
+import { DataTable } from './DataTable';
+
 import { useLoadData } from '_utils/useLoadData';
 import { Category } from '_models/Category';
-import { TabContext, TabList, TabPanel } from '@material-ui/lab';
 
 const useStyles = makeStyles((theme) => {
   return createStyles({

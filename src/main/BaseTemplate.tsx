@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useReducer, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useRouteMatch } from 'react-router-dom';
 import clsx from 'clsx';
@@ -128,6 +128,9 @@ const useStyles = makeStyles((theme) => {
   });
 });
 
+type UserStorageState = { signedIn: boolean } & User;
+type UserStorageAction = { type: 'signedIn'; user: User } | { type: 'signedOut' };
+
 type BaseTemplateProps = {
   children: React.ReactNode;
 };
@@ -167,9 +170,27 @@ const BaseTemplate = ({ children }: BaseTemplateProps) => {
     }
   };
 
-  // MS認証の状態
-  const [signedIn, setSignedIn] = useState(false);
-  const [email, setEmail] = useState('');
+  // ストレージの状態初期値
+  const initialState: UserStorageState = {
+    signedIn: false,
+    email: '',
+    name: '',
+    isAdmin: false,
+    isFront: false,
+  };
+  // ストレージの状態設定
+  const userStorageReducer = (state: UserStorageState, action: UserStorageAction) => {
+    switch (action.type) {
+      case 'signedIn':
+        return { signedIn: true, email: action.user.email, name: action.user.name, isAdmin: action.user.isAdmin, isFront: action.user.isFront };
+      case 'signedOut':
+        return initialState;
+      default:
+        return state;
+    }
+  };
+  // ストレージの状態管理
+  const [userStorage, dispatch] = useReducer(userStorageReducer, initialState);
 
   // MS認証状態の確認
   const checkAuth = useCallback(async () => {
@@ -178,20 +199,18 @@ const BaseTemplate = ({ children }: BaseTemplateProps) => {
       if (data) {
         // sessionStrageから復元
         const user = JSON.parse(data) as User;
-        setEmail(user.email);
-        setSignedIn(true);
+        dispatch({ type: 'signedIn', user: user });
       } else {
         // サーバーのセッションにユーザー情報が登録されているか確認
         const result = await get<User>('/user/me');
         if (result.parsedBody) {
           const user = result.parsedBody;
           saveUserInfo(JSON.stringify(user)); //sessionStrageにUser情報を格納
-          setEmail(user.email);
-          setSignedIn(true);
+          dispatch({ type: 'signedIn', user: user });
         } else {
           // TODO: ここに遷移することってある？？？
           removeUserInfo();
-          setSignedIn(false);
+          dispatch({ type: 'signedOut' });
           console.log('Failed to retrieve email');
         }
       }
@@ -211,7 +230,7 @@ const BaseTemplate = ({ children }: BaseTemplateProps) => {
     checkAuth();
   }, [checkAuth]);
 
-  if (!signedIn) {
+  if (!userStorage.signedIn) {
     return <></>;
   }
 
@@ -260,7 +279,7 @@ const BaseTemplate = ({ children }: BaseTemplateProps) => {
                 open={accountIconOpen}
                 onClose={handleMenuClose}
               >
-                <MenuItem onClick={handleMenuClose}>{email}</MenuItem>
+                <MenuItem onClick={handleMenuClose}>{userStorage.email}</MenuItem>
                 <MenuItem onClick={handleSignOut}>{t('main.menu.logout')}</MenuItem>
               </Menu>
             </div>
@@ -300,16 +319,18 @@ const BaseTemplate = ({ children }: BaseTemplateProps) => {
                 <ListItemText primary={t('main.menu.by-meeting-room')} />
               </ListItem>
             </Link>
-            <Link to={`/${match.params.location}/front`} className={classes.link}>
-              <ListItem button>
-                <Tooltip title={t('main.menu.front') as string}>
-                  <ListItemIcon>
-                    <PeopleIcon />
-                  </ListItemIcon>
-                </Tooltip>
-                <ListItemText primary={t('main.menu.front')} />
-              </ListItem>
-            </Link>
+            {userStorage.isFront && (
+              <Link to={`/${match.params.location}/front`} className={classes.link}>
+                <ListItem button>
+                  <Tooltip title={t('main.menu.front') as string}>
+                    <ListItemIcon>
+                      <PeopleIcon />
+                    </ListItemIcon>
+                  </Tooltip>
+                  <ListItemText primary={t('main.menu.front')} />
+                </ListItem>
+              </Link>
+            )}
             <ListItem button onClick={refreshPage}>
               <Tooltip title={t('main.menu.refresh') as string}>
                 <ListItemIcon>

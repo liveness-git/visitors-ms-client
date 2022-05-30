@@ -63,14 +63,13 @@ type Inputs = VisitorInfoFront & FrontInputType;
 type RowDataDialogProps = {
   open: boolean;
   onClose: () => void;
-  currentDate: Date;
   data: FrontRowData;
   columns: Columns[];
   reload: () => void;
 };
 
 export function RowDataDialog(props: RowDataDialogProps) {
-  const { open, onClose, currentDate, data, columns, reload } = props;
+  const { open, onClose, data, columns, reload } = props;
 
   const { t } = useTranslation();
   const classes = useStyles();
@@ -137,10 +136,6 @@ export function RowDataDialog(props: RowDataDialogProps) {
   // const setField = (field: string, value: string | boolean | number) => {// TODO:複数会議室が未対応
   const setField = (field: string, value: any) => {
     switch (field) {
-      // 予約時間
-      case 'apptTime':
-        const date = format(currentDate, 'yyyy/MM/dd', { locale: muiPickContext?.locale });
-        return date + ' ' + value;
       case 'teaSupply':
         return value ? t('visitdialog.form.tea-supply-yes') : t('visitdialog.form.tea-supply-no');
       // その他

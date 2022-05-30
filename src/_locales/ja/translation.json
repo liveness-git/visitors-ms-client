@@ -34,6 +34,7 @@
 	"visittable.header.event-start-time":"開始時刻",
 	"visittable.header.event-end-time":"終了時刻",
 	"visittable.header.visitor-card-number":"カード番号",
+	"visittable.header.edit-action":"編集",
 	"visitdialog.view.resource-status-accepted":"承諾",
 	"visitdialog.view.resource-status-declined":"辞退",
 	"visitdialog.title":"予約情報",

@@ -8,10 +8,14 @@ import { createStyles, makeStyles, Theme } from '@material-ui/core';
 import MaterialTable, { Column, MTableCell } from '@material-table/core';
 import { ClassNameMap } from '@material-ui/core/styles/withStyles';
 
+import BorderColorIcon from '@material-ui/icons/BorderColor';
+
 import { tableIcons } from '_utils/MaterialTableIcons';
 import { useLoadData } from '_utils/useLoadData';
 
 import { DataDialogAction, DataDialogState, DataTableBase, RowDataType, tableTheme } from '../DataTableBase';
+import { RowDataDialog } from './RowDataDialog';
+
 import { LocationParams } from '_models/Location';
 import { VisitorInfoFront } from '_models/VisitorInfo';
 
@@ -71,6 +75,9 @@ export function DataTable(props: DataTableProps) {
     []
   );
 
+  // フロント用ダイアログの状態
+  const [frontDialogOpen, setFrontDialogOpen] = useState(false);
+
   // 選択行の状態
   const [currentRow, setCurrentRow] = useState<FrontRowData | null>(null);
 
@@ -86,6 +93,16 @@ export function DataTable(props: DataTableProps) {
     },
     [dataDialogHook]
   );
+
+  // フロント用ダイアログを開く
+  const handleFrontDialogOpen = useCallback((selectedRow: FrontRowData) => {
+    setFrontDialogOpen(true);
+    setCurrentRow(selectedRow);
+  }, []);
+  // フロント用ダイアログを閉じる
+  const handleFrontDialogClose = async () => {
+    setFrontDialogOpen(false);
+  };
 
   const columns: Columns[] = [
     { title: t('visittable.header.appt-time'), field: 'apptTime', sort: 1 },
@@ -121,20 +138,31 @@ export function DataTable(props: DataTableProps) {
       <MaterialTable
         columns={columns as Column<FrontRowData>[]}
         components={{
-          // Row: (props) => <MTableBodyRow {...props} className={rowStyle(props.data)} />,
           Cell: (props) => <MTableCell {...props} className={cellStyle(props.columnDef.field, props.rowData)} />,
         }}
         data={data!}
-        onRowClick={(_event, selectedRow?) => !!selectedRow && handleDialogOpen(selectedRow)}
+        onRowClick={(_event, selectedRow?) => !!selectedRow && handleFrontDialogOpen(selectedRow)}
+        actions={[
+          {
+            icon: () => <BorderColorIcon />,
+            tooltip: t('visittable.header.edit-action'),
+            onClick: (_, rowData) => !!rowData && handleDialogOpen(rowData as FrontRowData),
+          },
+        ]}
+        localization={{
+          header: { actions: '' },
+        }}
         options={{
           showTitle: false,
           toolbar: false,
           search: false,
           headerStyle: { backgroundColor: tableTheme.palette.primary.light },
           tableLayout: 'fixed',
+          // actionsColumnIndex: -1,
         }}
         icons={tableIcons}
       />
+      {currentRow && <RowDataDialog open={frontDialogOpen} onClose={handleFrontDialogClose} data={currentRow} columns={columns} reload={reload} />}
     </DataTableBase>
   );
 }
