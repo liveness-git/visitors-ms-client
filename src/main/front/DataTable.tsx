@@ -14,7 +14,7 @@ import { tableIcons } from '_utils/MaterialTableIcons';
 import { useLoadData } from '_utils/useLoadData';
 
 import { DataDialogAction, DataDialogState, DataTableBase, RowDataType, tableTheme } from '../DataTableBase';
-import { RowDataDialog } from './RowDataDialog';
+import { RowDataFrontDialog } from './RowDataFrontDialog';
 
 import { LocationParams } from '_models/Location';
 import { VisitorInfoFront } from '_models/VisitorInfo';
@@ -47,8 +47,6 @@ export type Columns = {
   title: string;
   field: string;
   type?: string;
-  hidden?: boolean; // テーブルに表示するか否か
-  sort: number; // ダイアログの表に表示する順番
 };
 
 export type FrontRowData = RowDataType & VisitorInfoFront;
@@ -71,7 +69,7 @@ export function DataTable(props: DataTableProps) {
 
   // データ取得
   const [{ data, isLoading, isError }, reload] = useLoadData<FrontRowData[]>(
-    `/event/visitlist?timestamp=${currentDate!.getTime()}&location=${match.params.location}&category=${category}`,
+    `/front/visitlist?timestamp=${currentDate!.getTime()}&location=${match.params.location}&category=${category}`,
     []
   );
 
@@ -105,19 +103,13 @@ export function DataTable(props: DataTableProps) {
   };
 
   const columns: Columns[] = [
-    { title: t('visittable.header.appt-time'), field: 'apptTime', sort: 1 },
-    { title: t('visittable.header.room-name'), field: 'roomName', sort: 4 },
-    { title: t('visittable.header.visit-company'), field: 'visitCompany', sort: 5 },
-    { title: t('visittable.header.visitor-name'), field: 'visitorName', hidden: true, sort: 6 },
-    { title: t('visittable.header.tea-supply'), field: 'teaSupply', hidden: true, sort: 7 },
-    { title: t('visittable.header.number-of-visitor'), field: 'numberOfVisitor', hidden: true, sort: 8 },
-    { title: t('visittable.header.number-of-employee'), field: 'numberOfEmployee', hidden: true, sort: 9 },
-    { title: t('visittable.header.comment'), field: 'comment', hidden: true, sort: 10 },
-    { title: t('visittable.header.reservation-name'), field: 'reservationName', sort: 11 },
-    { title: t('visittable.header.contact-addr'), field: 'contactAddr', sort: 12 },
-    { title: t('visittable.header.check-in'), field: 'checkIn', type: 'boolean', sort: 2 },
-    { title: t('visittable.header.check-out'), field: 'checkOut', type: 'boolean', sort: 3 },
-    { title: t('visittable.header.visitor-card-number'), field: 'visitorCardNumber', hidden: true, sort: 13 },
+    { title: t('visittable.header.appt-time'), field: 'apptTime' },
+    { title: t('visittable.header.room-name'), field: 'roomName' },
+    { title: t('visittable.header.visit-company'), field: 'visitCompany' },
+    { title: t('visittable.header.reservation-name'), field: 'reservationName' },
+    { title: t('visittable.header.contact-addr'), field: 'contactAddr' },
+    { title: t('visittable.header.check-in'), field: 'checkIn', type: 'boolean' },
+    { title: t('visittable.header.check-out'), field: 'checkOut', type: 'boolean' },
   ];
 
   const cellStyle = (field: String, rowData: FrontRowData) => {
@@ -162,7 +154,7 @@ export function DataTable(props: DataTableProps) {
         }}
         icons={tableIcons}
       />
-      {currentRow && <RowDataDialog open={frontDialogOpen} onClose={handleFrontDialogClose} data={currentRow} columns={columns} reload={reload} />}
+      {currentRow && <RowDataFrontDialog open={frontDialogOpen} onClose={handleFrontDialogClose} data={currentRow} reload={reload} />}
     </DataTableBase>
   );
 }

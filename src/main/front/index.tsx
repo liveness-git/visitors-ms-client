@@ -96,7 +96,7 @@ export function Front() {
   }, [categories, dataDialogState, selectedDate]);
 
   return (
-    <BaseTemplate>
+    <BaseTemplate frontMode>
       <Paper square>
         <Box px={2} py={1}>
           <Grid container alignItems="stretch" justifyContent="space-between">

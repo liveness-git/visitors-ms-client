@@ -133,9 +133,11 @@ type UserStorageAction = { type: 'signedIn'; user: User } | { type: 'signedOut' 
 
 type BaseTemplateProps = {
   children: React.ReactNode;
+  adminMode?: true;
+  frontMode?: true;
 };
 
-const BaseTemplate = ({ children }: BaseTemplateProps) => {
+const BaseTemplate = ({ children, adminMode, frontMode }: BaseTemplateProps) => {
   const { t } = useTranslation();
   const classes = useStyles();
   const match = useRouteMatch<LocationParams>();
@@ -158,6 +160,8 @@ const BaseTemplate = ({ children }: BaseTemplateProps) => {
   const handleMenuClose = () => {
     setAnchorEl(null);
   };
+
+  // ログアウトアクション
   const handleSignOut = async () => {
     try {
       const result = await get<string | undefined>('/oauth/signout');
@@ -229,6 +233,16 @@ const BaseTemplate = ({ children }: BaseTemplateProps) => {
   useEffect(() => {
     checkAuth();
   }, [checkAuth]);
+
+  // 権限制御をつけてchildrenを表示する
+  let conditionalChildren = children;
+  const error = <>{t('common.msg.authority-error')}</>;
+  if (adminMode && !userStorage.isAdmin) {
+    conditionalChildren = error; // 管理者Roleエラー
+  }
+  if (frontMode && !userStorage.isFront) {
+    conditionalChildren = error; // フロントRoleエラー
+  }
 
   if (!userStorage.signedIn) {
     return <></>;
@@ -347,7 +361,7 @@ const BaseTemplate = ({ children }: BaseTemplateProps) => {
             {/* <Typography component="h2" variant="h5" color="inherit" noWrap className={classes.pageTitle}>
               {title}
             </Typography> */}
-            {children}
+            {conditionalChildren}
             <Box pt={4}>
               <Copyright />
             </Box>

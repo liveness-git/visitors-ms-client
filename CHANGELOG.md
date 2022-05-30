@@ -1,5 +1,11 @@
 # visitors-ms client
 
+## 0.0.0.44-2022-05-30
+
+- フロントデータの取得
+- フロント用ダイアログ画面の改修
+- BaseTemplate に Admin/Front のモード追加(権限による表示制御)
+
 ## 0.0.0.43-2022-05-30
 
 - BaseTemplate に Role 情報管理できるよう改修。(ストレージ情報を useReducer で扱えるように変更)
