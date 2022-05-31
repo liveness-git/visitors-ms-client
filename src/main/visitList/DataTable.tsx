@@ -1,42 +1,17 @@
 import { useCallback, useState } from 'react';
 import { useRouteMatch } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import i18next from 'i18next';
-import clsx from 'clsx';
 
-import { createStyles, makeStyles, Theme } from '@material-ui/core';
 import MaterialTable, { Column, MTableCell } from '@material-table/core';
-import { ClassNameMap } from '@material-ui/core/styles/withStyles';
 
 import { tableIcons } from '_utils/MaterialTableIcons';
 import { useLoadData } from '_utils/useLoadData';
 
 import { DataDialogAction, DataDialogState, DataTableBase, RowDataType, tableTheme } from '../DataTableBase';
 import { LocationParams } from '_models/Location';
+import { cellStyle, makeDataTableStyles } from '_styles/DataTableStyle';
 
-const useStyles = makeStyles<Theme>(() => {
-  return createStyles({
-    //cell default
-    cellApptTime: {},
-    cellRoomName: {},
-    cellRoomStatus: {},
-    cellReservationName: {},
-    cellVisitCompany: {},
-    cellSubject: {},
-    // 会議室状態が辞退の場合
-    declinedApptTime: { textDecoration: 'line-through 2px solid red' },
-    declinedRoomName: {
-      '&::after': {
-        wordBreak: 'keep-all',
-        marginLeft: 5,
-        padding: '1px 5px',
-        color: 'red',
-        border: '1px solid red',
-        content: `"${i18next.t('visitdialog.view.resource-status-declined')}"`,
-      },
-    },
-  });
-});
+const useStyles = makeDataTableStyles();
 
 export type Columns = {
   title: string;
@@ -88,14 +63,6 @@ export function DataTable(props: DataTableProps) {
     { title: t('visittable.header.event-subject'), field: 'subject' },
   ];
 
-  const cellStyle = (field: String, rowData: RowDataType) => {
-    const className = field.charAt(0).toUpperCase() + field.slice(1);
-    return clsx(
-      classes[`cell${className}` as keyof ClassNameMap],
-      rowData.roomStatus === 'declined' && classes[`declined${className}` as keyof ClassNameMap]
-    );
-  };
-
   // データ取得失敗した場合
   if (isError) {
     return <div>{t('common.msg.fetch-failed')}</div>;
@@ -107,7 +74,7 @@ export function DataTable(props: DataTableProps) {
         columns={columns as Column<RowDataType>[]}
         components={{
           // Row: (props) => <MTableBodyRow {...props} className={rowStyle(props.data)} />,
-          Cell: (props) => <MTableCell {...props} className={cellStyle(props.columnDef.field, props.rowData)} />,
+          Cell: (props) => <MTableCell {...props} className={cellStyle(props.columnDef.field, props.rowData, classes)} />,
         }}
         data={data!}
         onRowClick={(_event, selectedRow?) => !!selectedRow && handleDialogOpen(selectedRow)}

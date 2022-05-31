@@ -182,7 +182,7 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
   // 空き会議室一覧のURL更新
   const buildRoomsUrl = useCallback(() => {
     if (getValues('mode') === 'upd') {
-      //TODO: 更新時、空き会議室検索は未対応
+      // 更新時、会議室変更は出来ないためデフォルト値
       setRoomsUrl(defaultRoomsUrl);
     } else {
       setRoomsUrl(defaultRoomsUrl + `&start=${getValues('startTime').getTime()}&end=${getValues('endTime').getTime()}`);
