@@ -16,17 +16,15 @@ import { Spinner } from '_components/Spinner';
 
 import { FrontInputType, VisitorInfoFront } from '_models/VisitorInfo';
 
-const useStyles = makeStyles(() => {
-  return createStyles({
-    checkAction: {
-      textAlign: 'center',
-      marginBottom: '10px',
-      '& Button': {
-        margin: '0 5%',
-        width: '40%',
-      },
+const useStyles = makeStyles({
+  checkAction: {
+    textAlign: 'center',
+    marginBottom: '10px',
+    '& Button': {
+      margin: '0 5%',
+      width: '40%',
     },
-  });
+  },
 });
 
 type Inputs = VisitorInfoFront & FrontInputType;

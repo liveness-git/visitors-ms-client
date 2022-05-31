@@ -1,5 +1,10 @@
 # visitors-ms client
 
+## 0.0.0.46-2022-05-31
+
+- makeStyle で Theme 引数が無い場合、createStyles の削除
+- 旧フロントコンポーネントの削除
+
 ## 0.0.0.45-2022-05-31
 
 - 一覧のテーブル style を外部化

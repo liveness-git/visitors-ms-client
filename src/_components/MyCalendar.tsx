@@ -1,12 +1,10 @@
-import { createStyles, makeStyles } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core';
 import { KeyboardDatePicker } from '@material-ui/pickers';
 
-const useStyles = makeStyles(() => {
-  return createStyles({
-    keyboardDatePicker: {
-      '& .MuiOutlinedInput-adornedEnd': { paddingRight: 0 },
-    },
-  });
+const useStyles = makeStyles({
+  keyboardDatePicker: {
+    '& .MuiOutlinedInput-adornedEnd': { paddingRight: 0 },
+  },
 });
 
 type MyCalendarProps = {
