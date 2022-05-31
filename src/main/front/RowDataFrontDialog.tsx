@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useForm } from 'react-hook-form';
 import { format } from 'date-fns';
 
-import { Box, Button, createStyles, List, makeStyles, TextField } from '@material-ui/core';
+import { Box, Button, List, makeStyles, TextField } from '@material-ui/core';
 import { MuiPickersContext } from '@material-ui/pickers';
 
 import { FrontRowData } from './DataTable';
