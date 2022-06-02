@@ -27,7 +27,10 @@ const useStyles = makeStyles({
   },
 });
 
-type Inputs = VisitorInfoFront & FrontInputType;
+type Inputs = {
+  mode: 'checkin' | 'checkout';
+} & VisitorInfoFront &
+  FrontInputType;
 
 type RowDataReadDialogProps = {
   open: boolean;
@@ -72,11 +75,13 @@ export function RowDataFrontDialog(props: RowDataReadDialogProps) {
 
   // チェックインaction
   const handleCheckIn = () => {
+    setValue('mode', 'checkin');
     setValue('checkIn', timestamp());
     handleSubmit(onSubmit)();
   };
   // チェックアウトaction
   const handleCheckOut = () => {
+    setValue('mode', 'checkout');
     setValue('checkOut', timestamp());
     handleSubmit(onSubmit)();
   };
@@ -84,7 +89,7 @@ export function RowDataFrontDialog(props: RowDataReadDialogProps) {
   // データ送信submit
   const onSubmit = async (formData: Inputs) => {
     try {
-      const result = await fetchPostData('/test/testdata2.json', { inputs: formData, dirtyFields: dirtyFields }); // TODO: urlの変更
+      const result = await fetchPostData(`/front/${formData.mode}`, { inputs: formData, dirtyFields: dirtyFields });
       if (result!.success) {
         await reload();
         onClose();

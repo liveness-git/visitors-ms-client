@@ -115,6 +115,7 @@ export function DataTable(props: DataTableProps) {
           showTitle: false,
           toolbar: false,
           search: false,
+          filtering: true,
           headerStyle: { backgroundColor: tableTheme.palette.primary.light },
           tableLayout: 'fixed',
           // actionsColumnIndex: -1,

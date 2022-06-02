@@ -14,6 +14,9 @@ export const makeDataTableStyles = () => {
     cellReservationName: {},
     cellVisitCompany: {},
     cellSubject: {},
+    cellContactAddr: {},
+    cellCheckIn: {},
+    cellCheckOut: {},
     // 会議室状態が辞退の場合
     declinedApptTime: { textDecoration: 'line-through 2px solid red' },
     declinedRoomName: {
