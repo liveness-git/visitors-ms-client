@@ -5,7 +5,7 @@ export type VisitorInfo = {
   visitorId: string;
   visitCompany: string;
   visitorName: string;
-  mailto: { required: EmailAddress[]; optional: EmailAddress[] };
+  mailto: { authors: EmailAddress[]; required: EmailAddress[]; optional: EmailAddress[] };
   resourcies: {
     [room: string]: VisitorInfoResourcies;
   };

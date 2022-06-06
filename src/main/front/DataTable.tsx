@@ -81,10 +81,10 @@ export function DataTable(props: DataTableProps) {
     { title: t('visittable.header.appt-time'), field: 'apptTime' },
     { title: t('visittable.header.room-name'), field: 'roomName' },
     { title: t('visittable.header.visit-company'), field: 'visitCompany' },
-    { title: t('visittable.header.reservation-name'), field: 'reservationName' },
-    { title: t('visittable.header.contact-addr'), field: 'contactAddr' },
+    { title: t('visittable.header.visitor-name'), field: 'visitorName' },
     { title: t('visittable.header.check-in'), field: 'checkIn', type: 'boolean' },
     { title: t('visittable.header.check-out'), field: 'checkOut', type: 'boolean' },
+    { title: t('visittable.header.reservation-name'), field: 'reservationName' },
   ];
 
   // データ取得失敗した場合

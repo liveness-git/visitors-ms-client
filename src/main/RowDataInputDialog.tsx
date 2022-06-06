@@ -92,7 +92,7 @@ const getDefaultValues = (start?: Date, roomId?: string) => {
     visitorId: '',
     visitCompany: '',
     visitorName: '',
-    mailto: { required: [], optional: [] },
+    mailto: { authors: [], required: [], optional: [] },
     resourcies: {
       [ADD_ROOM_KEY]: {
         roomForEdit: room,
@@ -299,6 +299,10 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
                         <div className={classes.title}>{t('visittable.header.resource-status')}</div>
                         <div className={classes.field}>{t(strRoomStatus(data.roomStatus))}</div>
                       </li>
+                      <li key="reservation-name" className={classes.list}>
+                        <div className={classes.title}>{t('visittable.header.reservation-name')}</div>
+                        <div className={classes.field}>{data.reservationName}</div>
+                      </li>
                     </List>
                   );
                 }
@@ -310,6 +314,7 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
             <Box p={2}>
               <ControllerTextField name="subject" control={control} label={t('visittable.header.event-subject')} required errors={errors} />
 
+              <AddrBookAutoComplete control={control} type="authors" errors={errors} disabled={true} style={{ display: 'none' }} />
               <AddrBookAutoComplete control={control} type="required" errors={errors} disabled={data?.isMSMultipleLocations} />
               <AddrBookAutoComplete control={control} type="optional" errors={errors} disabled={data?.isMSMultipleLocations} />
 

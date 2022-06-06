@@ -4,22 +4,23 @@ import { Control, Controller, DeepMap, DeepPartial, FieldError } from 'react-hoo
 
 import { Autocomplete } from '@material-ui/lab';
 import { Chip, CircularProgress, TextField } from '@material-ui/core';
+import { CSSProperties } from '@material-ui/styles';
 
 import { EmailAddress } from '_models/VisitorInfo';
-
 import { useLoadData } from '_utils/useLoadData';
 
 import { Inputs } from './RowDataInputDialog';
 
 type AddrBookAutoCompleteType = {
   control: Control<Inputs, object>;
-  type: 'required' | 'optional';
+  type: 'authors' | 'required' | 'optional';
   errors: DeepMap<DeepPartial<Inputs>, FieldError>;
   disabled?: boolean;
+  style?: CSSProperties;
 };
 
 export function AddrBookAutoComplete(props: AddrBookAutoCompleteType) {
-  const { control, type, errors, disabled } = props;
+  const { control, type, errors, disabled, style } = props;
 
   const { t } = useTranslation();
 
@@ -50,6 +51,7 @@ export function AddrBookAutoComplete(props: AddrBookAutoCompleteType) {
         <Autocomplete
           {...field}
           disabled={disabled}
+          style={style}
           multiple
           limitTags={disabled ? undefined : 2}
           size="small"
