@@ -62,7 +62,8 @@ export function AddrBookAutoComplete(props: AddrBookAutoCompleteType) {
           onClose={() => {
             setOpen(false);
           }}
-          options={addressbook ? addressbook : []}
+          options={!!addressbook && !!filter ? addressbook : []}
+          noOptionsText={t('auto-complete.no-options-text')}
           loading={loading}
           getOptionLabel={(option) => `${option.name} <${option.address}>`}
           renderTags={(tagValue, getTagProps) =>

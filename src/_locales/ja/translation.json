@@ -51,6 +51,7 @@
 	"visitdialog.form.visitor-card-number-placeholder":"カード番号を入力してください",
 	"visitdialog.form.error.event-time":"日付の関係性に誤りがあります",
 	"visitdialog.form.error.available-time":"会議室が空いていません",
+	"auto-complete.no-options-text":"メールアドレスまたは名前を入力してください",
 	"visitorinfoform.title":"来訪情報",
 	"visitorinfoform.form.search":"検索",
 	"visitorinfoform.form.save":"保存する",
@@ -62,6 +63,11 @@
 	"main.menu.created-visit-info":"自分の会議予約",
 	"main.menu.by-meeting-room":"会議室別",
 	"main.menu.front":"受付",
+	"main.menu.settings":"設定",
+	"main.menu.settings.role":"ロール",
+	"main.menu.settings.location":"ロケーション",
+	"main.menu.settings.category":"カテゴリ",
+	"main.menu.settings.room":"会議室",	
 	"main.menu.refresh":"refresh",
 	"main.menu.logout":"ログアウト",
 	"main.visitlist.title":"から１か月間の来訪情報",
@@ -72,5 +78,10 @@
 	"main.byroom.add-event":"新規作成",
 	"main.front.title":"の受付情報",
 	"main.front.picker-label":"選択日",
-	"main.front.add-event":"新規作成"
+	"main.front.add-event":"新規作成",
+	"settings.title.role":"ロール設定",
+	"settings.title.location":"ロケーション設定",
+	"settings.title.category":"カテゴリ設定",
+	"settings.title.room":"会議室設定",
+	"settings.add-master":"新規作成"
 }

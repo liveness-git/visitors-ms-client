@@ -16,12 +16,16 @@ import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import IconButton from '@material-ui/core/IconButton';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
+import Collapse from '@material-ui/core/Collapse';
 import { ListItemText, Menu, MenuItem, Tooltip } from '@material-ui/core';
 import { AccountCircle } from '@material-ui/icons';
 import MenuIcon from '@material-ui/icons/Menu';
 import EditIcon from '@material-ui/icons/Edit';
 import MeetingRoomIcon from '@material-ui/icons/MeetingRoom';
 import PeopleIcon from '@material-ui/icons/People';
+import SettingsIcon from '@material-ui/icons/Settings';
+import ExpandLess from '@material-ui/icons/ExpandLess';
+import ExpandMore from '@material-ui/icons/ExpandMore';
 import RefreshIcon from '@material-ui/icons/Refresh';
 
 import { get } from '_utils/Http';
@@ -35,7 +39,7 @@ import { User } from '_models/User';
 import { LocationParams } from '_models/Location';
 
 const useStyles = makeStyles((theme) => {
-  const drawerWidth = 315;
+  const drawerWidth = 230;
 
   return createStyles({
     root: {
@@ -125,6 +129,10 @@ const useStyles = makeStyles((theme) => {
       // color: theme.palette.text.secondary,
       color: 'rgba(0, 0, 0, 0.87)',
     },
+    nested: {
+      // paddingLeft: theme.spacing(4),
+      paddingLeft: theme.spacing(10),
+    },
   });
 });
 
@@ -135,20 +143,37 @@ type BaseTemplateProps = {
   children: React.ReactNode;
   adminMode?: true;
   frontMode?: true;
+  menuOpen?: true;
 };
 
-const BaseTemplate = ({ children, adminMode, frontMode }: BaseTemplateProps) => {
+const BaseTemplate = ({ children, adminMode, frontMode, menuOpen }: BaseTemplateProps) => {
   const { t } = useTranslation();
   const classes = useStyles();
   const match = useRouteMatch<LocationParams>();
 
   // 左メニューエリアの開閉
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(menuOpen ? true : false);
+
+  // 左メニュー：設定の詳細開閉
+  const [settingsOpen, setSettingsOpen] = useState(true);
+
+  useEffect(() => {
+    if (!open) {
+      setSettingsOpen(false);
+    }
+  }, [open]);
+
   const handleDrawerOpen = () => {
     setOpen(true);
   };
   const handleDrawerClose = () => {
     setOpen(false);
+  };
+  const handleSettingsClick = () => {
+    if (!open) {
+      setOpen(true);
+    }
+    setSettingsOpen(!settingsOpen);
   };
 
   // アカウントアイコンの制御
@@ -344,6 +369,39 @@ const BaseTemplate = ({ children, adminMode, frontMode }: BaseTemplateProps) => 
                   <ListItemText primary={t('main.menu.front')} />
                 </ListItem>
               </Link>
+            )}
+            {userStorage.isAdmin && (
+              <>
+                <ListItem button onClick={handleSettingsClick}>
+                  <ListItemIcon>
+                    <SettingsIcon />
+                  </ListItemIcon>
+                  <ListItemText primary={t('main.menu.settings')} />
+                  {settingsOpen ? <ExpandLess /> : <ExpandMore />}
+                </ListItem>
+                <Collapse in={settingsOpen} timeout="auto" unmountOnExit>
+                  <Link to={`/${match.params.location}/settings/role`} className={classes.link}>
+                    <ListItem button className={classes.nested}>
+                      <ListItemText primary={t('main.menu.settings.role')} />
+                    </ListItem>
+                  </Link>
+                  <Link to={`/${match.params.location}/settings/location`} className={classes.link}>
+                    <ListItem button className={classes.nested}>
+                      <ListItemText primary={t('main.menu.settings.location')} />
+                    </ListItem>
+                  </Link>
+                  <Link to={`/${match.params.location}/settings/category`} className={classes.link}>
+                    <ListItem button className={classes.nested}>
+                      <ListItemText primary={t('main.menu.settings.category')} />
+                    </ListItem>
+                  </Link>
+                  <Link to={`/${match.params.location}/settings/room`} className={classes.link}>
+                    <ListItem button className={classes.nested}>
+                      <ListItemText primary={t('main.menu.settings.room')} />
+                    </ListItem>
+                  </Link>
+                </Collapse>
+              </>
             )}
             <ListItem button onClick={refreshPage}>
               <Tooltip title={t('main.menu.refresh') as string}>
