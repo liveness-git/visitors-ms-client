@@ -1,5 +1,7 @@
 {
 	"common.form.required":"必須入力です。",
+	"common.button.ok":"OK",
+	"common.button.cancel":"キャンセル",
 	"common.msg.login-success":"ログインしました。しばらくお待ちください。",
 	"common.msg.login-failed":"ログインに失敗しました。",
 	"common.msg.no-data":"該当データがありません。",
@@ -42,7 +44,6 @@
 	"visitdialog.title":"予約情報",
 	"visitdialog.notes.multiple-locations":"※複数の場所(会議室以外含む)が登録されているため一部機能は編集できません",
 	"visitdialog.notes.no-relevant-rooms":"予約可能な会議室がありません",
-	"visitdialog.button.cancel":"キャンセル",
 	"visitdialog.button.check-in":"チェックイン",
 	"visitdialog.button.check-out":"チェックアウト",
 	"visitdialog.form.tea-supply-yes":"あり",

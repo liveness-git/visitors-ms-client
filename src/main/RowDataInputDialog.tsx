@@ -17,20 +17,24 @@ import { VisitorInfo, EventInputType, RoomInputType } from '_models/VisitorInfo'
 import { Room } from '_models/Room';
 import { LocationParams } from '_models/Location';
 
+import { tableTheme, makeTableDialogStyle } from '_styles/TableTheme';
+
 import { fetchPostData } from '_utils/FetchPostData';
 import { useLoadData } from '_utils/useLoadData';
 
 import { MySnackberContext } from '_components/MySnackbarContext';
 import { Spinner } from '_components/Spinner';
+import { ControllerTextField } from '_components/ControllerTextField';
+import { MyDialog } from '_components/MyDialog';
 
-import { RowDataType, tableTheme } from './DataTableBase';
-import { RowDataBaseDialog, useRowDataDialogStyles } from './RowDataBaseDialog';
+import { RowDataType } from './DataTableBase';
 import { DeleteConfirmDialog } from './DeleteConfirmDialog';
 import { RoomInputFields } from './RoomInputFields';
 import { RoomReadFields, strRoomStatus } from './RoomReadFields';
 import { AddrBookAutoComplete } from './AddrBookAutoComplete';
-import { ControllerTextField } from './ControllerTextField';
 import { ControllerDateTimePicker } from './ControllerDateTimePicker';
+
+const useRowDataDialogStyles = makeTableDialogStyle();
 
 const useStyles = makeStyles((tableTheme) => {
   return createStyles({
@@ -283,7 +287,7 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
   return (
     <>
       <Spinner open={isSubmitting} />
-      <RowDataBaseDialog open={open} onClose={onClose} data={data}>
+      <MyDialog open={open} onClose={onClose} title={t('visitdialog.title')}>
         <ThemeProvider theme={inputformTheme}>
           {!!data && (
             <Box px={2}>
@@ -405,7 +409,7 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
             </Box>
           </form>
         </ThemeProvider>
-      </RowDataBaseDialog>
+      </MyDialog>
       <DeleteConfirmDialog open={delConfOpen} onClose={handleDelConfClose}></DeleteConfirmDialog>
     </>
   );

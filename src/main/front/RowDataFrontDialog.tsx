@@ -7,14 +7,18 @@ import { Box, Button, List, makeStyles, TextField } from '@material-ui/core';
 import { MuiPickersContext } from '@material-ui/pickers';
 
 import { FrontRowData } from './DataTable';
-import { RowDataBaseDialog, useRowDataDialogStyles } from 'main/RowDataBaseDialog';
+
 import { RoomReadFields } from 'main/RoomReadFields';
 
 import { fetchPostData } from '_utils/FetchPostData';
 import { MySnackberContext } from '_components/MySnackbarContext';
 import { Spinner } from '_components/Spinner';
+import { MyDialog } from '_components/MyDialog';
 
 import { FrontInputType, VisitorInfoFront } from '_models/VisitorInfo';
+import { makeTableDialogStyle } from '_styles/TableTheme';
+
+const useRowDataDialogStyles = makeTableDialogStyle();
 
 const useStyles = makeStyles({
   checkAction: {
@@ -105,7 +109,7 @@ export function RowDataFrontDialog(props: RowDataReadDialogProps) {
   return (
     <>
       <Spinner open={isSubmitting} />
-      <RowDataBaseDialog open={open} onClose={onClose} data={data}>
+      <MyDialog open={open} onClose={onClose} title={t('visitdialog.title')}>
         <Box p={2}>
           <form>
             <div className={frontClasses.checkAction}>
@@ -185,7 +189,7 @@ export function RowDataFrontDialog(props: RowDataReadDialogProps) {
             </li>
           </List>
         </Box>
-      </RowDataBaseDialog>
+      </MyDialog>
     </>
   );
 }

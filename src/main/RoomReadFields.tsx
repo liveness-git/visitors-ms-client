@@ -1,7 +1,9 @@
 import { useTranslation } from 'react-i18next';
 import { Box, List } from '@material-ui/core';
 import { ResourciesReadOnly, VisitorInfoResourcies } from '_models/VisitorInfo';
-import { useRowDataDialogStyles } from './RowDataBaseDialog';
+import { makeTableDialogStyle } from '_styles/TableTheme';
+
+const useRowDataDialogStyles = makeTableDialogStyle();
 
 export const strRoomStatus = (status: string | undefined) => {
   switch (status) {

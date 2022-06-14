@@ -9,14 +9,15 @@ import BorderColorIcon from '@material-ui/icons/BorderColor';
 import { tableIcons } from '_utils/MaterialTableIcons';
 import { useLoadData } from '_utils/useLoadData';
 
-import { DataDialogAction, DataDialogState, DataTableBase, RowDataType, tableTheme } from '../DataTableBase';
+import { DataDialogAction, DataDialogState, DataTableBase, RowDataType } from '../DataTableBase';
 import { RowDataFrontDialog } from './RowDataFrontDialog';
 
 import { LocationParams } from '_models/Location';
 import { VisitorInfoFront } from '_models/VisitorInfo';
-import { cellStyle, makeDataTableStyles } from '_styles/DataTableStyle';
+import { cellStyle, makeVisitorTableStyles } from '_styles/VisitorTableStyle';
+import { tableTheme } from '_styles/TableTheme';
 
-const useStyles = makeDataTableStyles();
+const useStyles = makeVisitorTableStyles();
 
 export type Columns = {
   title: string;

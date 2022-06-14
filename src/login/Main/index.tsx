@@ -7,7 +7,7 @@ import { LockOutlined as LockOutlinedIcon } from '@material-ui/icons';
 
 import { Copyright } from '../../_components/Copyright';
 import { Spinner } from '../../_components/Spinner';
-import { makeLoginStyles } from '_styles/MakeLoginStyles';
+import { makeLoginStyles } from '_styles/LoginStyles';
 import { get } from '_utils/Http';
 import { saveTempLocation } from '_utils/SessionStrage';
 import { LocationParams } from '_models/Location';

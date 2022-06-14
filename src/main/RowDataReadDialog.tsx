@@ -2,9 +2,14 @@ import { useTranslation } from 'react-i18next';
 
 import { Box, List } from '@material-ui/core';
 
+import { makeTableDialogStyle } from '_styles/TableTheme';
+
+import { MyDialog } from '_components/MyDialog';
+
 import { RowDataType } from './DataTableBase';
-import { RowDataBaseDialog, useRowDataDialogStyles } from './RowDataBaseDialog';
 import { RoomReadFields } from './RoomReadFields';
+
+const useRowDataDialogStyles = makeTableDialogStyle();
 
 type RowDataReadDialogProps = {
   open: boolean;
@@ -19,7 +24,7 @@ export function RowDataReadDialog(props: RowDataReadDialogProps) {
   const classes = useRowDataDialogStyles();
 
   return (
-    <RowDataBaseDialog open={open} onClose={onClose} data={data}>
+    <MyDialog open={open} onClose={onClose} title={t('visitdialog.title')}>
       <Box px={2} pt={2}>
         <List disablePadding={true}>
           <li key="event-subject" className={classes.list}>
@@ -61,6 +66,6 @@ export function RowDataReadDialog(props: RowDataReadDialogProps) {
           </li>
         </List>
       </Box>
-    </RowDataBaseDialog>
+    </MyDialog>
   );
 }

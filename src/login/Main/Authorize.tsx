@@ -3,7 +3,7 @@ import { LockOutlined as LockOutlinedIcon } from '@material-ui/icons';
 import { Copyright } from '../../_components/Copyright';
 import { Spinner } from '../../_components/Spinner';
 import { MySnackberContext, MySnackberProvider } from '_components/MySnackbarContext';
-import { makeLoginStyles } from '_styles/MakeLoginStyles';
+import { makeLoginStyles } from '_styles/LoginStyles';
 import { useContext, useEffect, useState } from 'react';
 import { get } from '_utils/Http';
 import { useTranslation } from 'react-i18next';

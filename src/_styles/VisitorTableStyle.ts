@@ -5,7 +5,7 @@ import clsx from 'clsx';
 import { FrontRowData } from 'main/front/DataTable';
 import { RowDataType } from 'main/DataTableBase';
 
-export const makeDataTableStyles = () => {
+export const makeVisitorTableStyles = () => {
   return makeStyles(() => ({
     //cell default
     cellApptTime: {},

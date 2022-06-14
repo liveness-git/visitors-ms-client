@@ -7,11 +7,13 @@ import MaterialTable, { Column, MTableCell } from '@material-table/core';
 import { tableIcons } from '_utils/MaterialTableIcons';
 import { useLoadData } from '_utils/useLoadData';
 
-import { DataDialogAction, DataDialogState, DataTableBase, RowDataType, tableTheme } from '../DataTableBase';
 import { LocationParams } from '_models/Location';
-import { cellStyle, makeDataTableStyles } from '_styles/DataTableStyle';
+import { cellStyle, makeVisitorTableStyles } from '_styles/VisitorTableStyle';
+import { tableTheme } from '_styles/TableTheme';
 
-const useStyles = makeDataTableStyles();
+import { DataDialogAction, DataDialogState, DataTableBase, RowDataType } from '../DataTableBase';
+
+const useStyles = makeVisitorTableStyles();
 
 export type Columns = {
   title: string;

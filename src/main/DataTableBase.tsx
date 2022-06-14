@@ -1,36 +1,11 @@
-import { createTheme, ThemeProvider } from '@material-ui/core/styles';
-import { grey, purple } from '@material-ui/core/colors';
+import { ThemeProvider } from '@material-ui/core/styles';
 
 import { VisitorInfo, VisitorInfoReadOnly } from '_models/VisitorInfo';
-
+import { tableTheme } from '_styles/TableTheme';
 import { Spinner } from '_components/Spinner';
 
 import { AddDefaultType, RowDataInputDialog } from './RowDataInputDialog';
 import { RowDataReadDialog } from './RowDataReadDialog';
-
-export const tableTheme = createTheme({
-  palette: {
-    primary: {
-      main: grey[300],
-    },
-    secondary: {
-      main: purple[500],
-    },
-  },
-  props: {
-    MuiTableRow: {
-      // hover: true,
-      // selected: true,
-    },
-  },
-  overrides: {
-    MuiTable: {
-      root: {
-        borderCollapse: 'separate',
-      },
-    },
-  },
-});
 
 export type RowDataType = VisitorInfo & VisitorInfoReadOnly;
 
