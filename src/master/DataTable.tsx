@@ -11,7 +11,7 @@ import { LocationParams } from '_models/Location';
 import { cellStyle, makeVisitorTableStyles } from '_styles/VisitorTableStyle';
 import { tableTheme } from '_styles/TableTheme';
 
-import { DataDialogAction, DataDialogState, DataTableBase, RowDataType } from '../DataTableBase';
+import { DataDialogAction, DataDialogState, DataTableBase } from './DataTableBase';
 
 const useStyles = makeVisitorTableStyles();
 
@@ -21,49 +21,37 @@ export type Columns = {
 };
 
 type DataTableProps = {
-  currentDate: Date;
+  columns: Columns[];
   dataDialogHook: {
     state: DataDialogState;
     dispatch: React.Dispatch<DataDialogAction>;
   };
 };
 
-export function DataTable(props: DataTableProps) {
-  const { currentDate, dataDialogHook } = props;
+export function DataTable<RowData extends object>(props: DataTableProps) {
+  const { columns, dataDialogHook } = props;
 
   const { t } = useTranslation();
   const classes = useStyles();
   const match = useRouteMatch<LocationParams>();
 
   // データ取得
-  const [{ data, isLoading, isError }, reload] = useLoadData<RowDataType[]>(
-    `/event/visitlist?timestamp=${currentDate!.getTime()}&location=${match.params.location}`,
+  const [{ data, isLoading, isError }, reload] = useLoadData<RowData[]>(
+    `/event/visitlist?timestamp=${new Date('2022-06-01').getTime()}&location=${match.params.location}`,
     []
   );
 
   // 選択行の状態
-  const [currentRow, setCurrentRow] = useState<RowDataType | null>(null);
+  const [currentRow, setCurrentRow] = useState<RowData | null>(null);
 
   // ダイアログを開く
   const handleDialogOpen = useCallback(
-    (selectedRow: RowDataType) => {
-      if (selectedRow.isAuthor) {
-        dataDialogHook.dispatch({ type: 'inputOpen' });
-      } else {
-        dataDialogHook.dispatch({ type: 'readOpen' });
-      }
+    (selectedRow: RowData) => {
+      dataDialogHook.dispatch({ type: 'inputOpen' });
       setCurrentRow(selectedRow);
     },
     [dataDialogHook]
   );
-
-  const columns: Columns[] = [
-    { title: t('visittable.header.appt-time'), field: 'apptTime' },
-    { title: t('visittable.header.room-name'), field: 'roomName' },
-    { title: t('visittable.header.visit-company'), field: 'visitCompany' },
-    { title: t('visittable.header.reservation-name'), field: 'reservationName' },
-    { title: t('visittable.header.event-subject'), field: 'subject' },
-  ];
 
   // データ取得失敗した場合
   if (isError) {

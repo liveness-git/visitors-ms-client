@@ -1,11 +1,11 @@
 import { BrowserRouter, Redirect, Route, Switch } from 'react-router-dom';
 
-import { SignIn } from './login/Main';
-import { AuthorizeWrapper } from 'login/Main/Authorize';
+import { SignIn } from './login';
+import { AuthorizeWrapper } from 'login/Authorize';
 import { VisitList } from './main/visitList';
 import { ByRoom } from './main/byRoom';
 import { Front } from './main/front';
-import { Location } from 'main/settings';
+import { Role } from 'master/role';
 
 export function Routes() {
   return (
@@ -16,10 +16,10 @@ export function Routes() {
         <Route exact path="/:location/main" component={VisitList} />
         <Route exact path="/:location/main/byroom" component={ByRoom} />
         <Route exact path="/:location/front" component={Front} />
-        <Route exact path="/:location/settings/role" component={Location} />
-        <Route exact path="/:location/settings/location" component={Location} />
-        <Route exact path="/:location/settings/category" component={Location} />
-        <Route exact path="/:location/settings/room" component={Location} />
+        <Route exact path="/:location/settings/role" component={Role} />
+        <Route exact path="/:location/settings/location" component={Role} />
+        <Route exact path="/:location/settings/category" component={Role} />
+        <Route exact path="/:location/settings/room" component={Role} />
         {/*** リダイレクト ***/}
         <Redirect from="/" to="/login" />
       </Switch>

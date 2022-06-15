@@ -31,8 +31,8 @@ import RefreshIcon from '@material-ui/icons/Refresh';
 import { get } from '_utils/Http';
 import { getUserInfo, removeUserInfo, saveUserInfo } from '_utils/SessionStrage';
 
-import { Copyright } from '../_components/Copyright';
-import { MySnackberProvider } from '../_components/MySnackbarContext';
+import { Copyright } from './Copyright';
+import { MySnackberProvider } from './MySnackbarContext';
 import { MyLocation } from '_components/MyLocation';
 
 import { User } from '_models/User';

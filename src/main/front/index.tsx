@@ -5,7 +5,7 @@ import AddCircleIcon from '@material-ui/icons/AddCircle';
 
 import { useTranslation } from 'react-i18next';
 
-import BaseTemplate from '../BaseTemplate';
+import BaseTemplate from '../../_components/BaseTemplate';
 import { dataDialogReducer, DataDialogState } from '../DataTableBase';
 import { DataTable } from './DataTable';
 import { CategoryTabContext } from 'main/CategoryTabContext';

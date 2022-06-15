@@ -5,8 +5,8 @@ import { useRouteMatch } from 'react-router-dom';
 import { Avatar, Box, Button, Container, Typography } from '@material-ui/core';
 import { LockOutlined as LockOutlinedIcon } from '@material-ui/icons';
 
-import { Copyright } from '../../_components/Copyright';
-import { Spinner } from '../../_components/Spinner';
+import { Copyright } from '../_components/Copyright';
+import { Spinner } from '../_components/Spinner';
 import { makeLoginStyles } from '_styles/LoginStyles';
 import { get } from '_utils/Http';
 import { saveTempLocation } from '_utils/SessionStrage';
