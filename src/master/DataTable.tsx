@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import MaterialTable, { MTableCell } from '@material-table/core';
+import MaterialTable, { Column, MTableCell } from '@material-table/core';
 
 import { tableIcons } from '_utils/MaterialTableIcons';
 import { useLoadData } from '_utils/useLoadData';
@@ -17,6 +17,8 @@ const useStyles = makeVisitorTableStyles();
 export type Columns = {
   title: string;
   field: string;
+  type?: string;
+  cellStyle?: object | void;
 };
 
 type DataTableProps<RowData> = {
@@ -65,7 +67,7 @@ export function DataTable<RowData extends object>(props: DataTableProps<RowData>
       reload={reload}
     >
       <MaterialTable
-        columns={columns}
+        columns={columns as Column<RowData>[]}
         components={{
           // Row: (props) => <MTableBodyRow {...props} className={rowStyle(props.data)} />,
           Cell: (props) => <MTableCell {...props} className={cellStyle(props.columnDef.field, props.rowData, classes)} />,

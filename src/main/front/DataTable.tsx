@@ -23,6 +23,7 @@ export type Columns = {
   title: string;
   field: string;
   type?: string;
+  cellStyle?: object | void;
 };
 
 export type FrontRowData = RowDataType & VisitorInfoFront;
@@ -81,11 +82,13 @@ export function DataTable(props: DataTableProps) {
   const columns: Columns[] = [
     { title: t('visittable.header.appt-time'), field: 'apptTime' },
     { title: t('visittable.header.room-name'), field: 'roomName' },
+    { title: t('visittable.header.tea-supply'), field: 'teaSupply', type: 'boolean' },
     { title: t('visittable.header.visit-company'), field: 'visitCompany' },
     { title: t('visittable.header.visitor-name'), field: 'visitorName' },
     { title: t('visittable.header.check-in'), field: 'checkIn', type: 'boolean' },
     { title: t('visittable.header.check-out'), field: 'checkOut', type: 'boolean' },
     { title: t('visittable.header.reservation-name'), field: 'reservationName' },
+    { title: t('visittable.header.comment'), field: 'comment' },
   ];
 
   // データ取得失敗した場合
@@ -116,7 +119,6 @@ export function DataTable(props: DataTableProps) {
           showTitle: false,
           toolbar: false,
           search: false,
-          filtering: true,
           headerStyle: { backgroundColor: tableTheme.palette.primary.light },
           tableLayout: 'fixed',
           // actionsColumnIndex: -1,

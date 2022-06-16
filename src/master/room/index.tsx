@@ -27,7 +27,7 @@ export function RoomSettings() {
     { title: t('settings.header.room.email'), field: 'email' },
     { title: t('settings.header.room.type'), field: 'type' },
     { title: t('settings.header.room.sort'), field: 'sort' },
-    { title: t('settings.header.room.tea-supply'), field: 'teaSupply' },
+    { title: t('settings.header.room.tea-supply'), field: 'teaSupply', type: 'boolean' },
     { title: t('settings.header.room.location'), field: 'location' },
     { title: t('settings.header.room.category'), field: 'category' },
   ];
