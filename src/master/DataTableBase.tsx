@@ -3,27 +3,24 @@ import { ThemeProvider } from '@material-ui/core/styles';
 import { tableTheme } from '_styles/TableTheme';
 import { Spinner } from '_components/Spinner';
 
-import { AddDefaultType, RowDataInputDialog } from './RowDataInputDialog';
+import { DefaultValuesType, Mastertype, RowDataInputDialog } from './RowDataInputDialog';
 
 export type DataDialogState = {
   mode: 'rowData' | 'addData';
   inputOpen: boolean;
   readOpen: boolean;
-  addDefault?: AddDefaultType;
 };
 
-export type DataDialogAction =
-  | {
-      type: 'inputOpen' | 'inputClose';
-    }
-  | { type: 'addDataOpen'; addDefault?: AddDefaultType };
+export type DataDialogAction = {
+  type: 'inputOpen' | 'addDataOpen' | 'inputClose';
+};
 
 export const dataDialogReducer = (state: DataDialogState, action: DataDialogAction): DataDialogState => {
   switch (action.type) {
     case 'inputOpen':
       return { mode: 'rowData', inputOpen: true, readOpen: false };
     case 'addDataOpen':
-      return { mode: 'addData', inputOpen: true, readOpen: false, addDefault: action.addDefault };
+      return { mode: 'addData', inputOpen: true, readOpen: false };
     case 'inputClose':
       return { ...state, inputOpen: false };
     default:
@@ -32,6 +29,8 @@ export const dataDialogReducer = (state: DataDialogState, action: DataDialogActi
 };
 
 type DataTableBaseProps<RowData> = {
+  master: Mastertype;
+  defaultValues: DefaultValuesType<RowData>;
   currentRow: RowData | null;
   dataDialogHook: {
     state: DataDialogState;
@@ -43,7 +42,7 @@ type DataTableBaseProps<RowData> = {
 };
 
 export function DataTableBase<RowData>(props: DataTableBaseProps<RowData>) {
-  const { dataDialogHook, isLoading, reload, currentRow, children } = props;
+  const { master, defaultValues, dataDialogHook, isLoading, reload, currentRow, children } = props;
 
   // ダイアログを閉じる(input)
   const handleInputDialogClose = async () => {
@@ -54,12 +53,13 @@ export function DataTableBase<RowData>(props: DataTableBaseProps<RowData>) {
     <ThemeProvider theme={tableTheme}>
       <Spinner open={isLoading} />
       {children}
-      <RowDataInputDialog
+      <RowDataInputDialog<RowData>
+        defaultValues={defaultValues}
+        master={master}
         open={dataDialogHook.state.inputOpen}
         onClose={handleInputDialogClose}
         data={dataDialogHook.state.mode === 'addData' ? null : currentRow}
         reload={reload}
-        addDefault={dataDialogHook.state.addDefault}
       />
     </ThemeProvider>
   );

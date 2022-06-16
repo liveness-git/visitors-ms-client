@@ -9,6 +9,7 @@
 	"common.msg.update-success":"更新しました。",
 	"common.msg.update-failed":"更新に失敗しました。",
 	"common.msg.authority-error":"権限がありません。",
+	"common.msg.delete-confirm":"削除しますか？",
 	"login.form.email":"メールアドレス",
 	"login.form.password":"パスワード",
 	"login.form.submit":"ログイン",
@@ -84,5 +85,7 @@
 	"settings.title.location":"ロケーション設定",
 	"settings.title.category":"カテゴリ設定",
 	"settings.title.room":"会議室設定",
-	"settings.add-master":"新規作成"
+	"settings.add-master":"新規作成",
+	"settings.header.role.name":"ロール名",
+	"settings.header.role.members":"メンバー"
 }

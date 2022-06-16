@@ -5,7 +5,7 @@ import { AuthorizeWrapper } from 'login/Authorize';
 import { VisitList } from './main/visitList';
 import { ByRoom } from './main/byRoom';
 import { Front } from './main/front';
-import { Role } from 'master/role';
+import { RoleSettings } from 'master/role';
 
 export function Routes() {
   return (
@@ -16,10 +16,10 @@ export function Routes() {
         <Route exact path="/:location/main" component={VisitList} />
         <Route exact path="/:location/main/byroom" component={ByRoom} />
         <Route exact path="/:location/front" component={Front} />
-        <Route exact path="/:location/settings/role" component={Role} />
-        <Route exact path="/:location/settings/location" component={Role} />
-        <Route exact path="/:location/settings/category" component={Role} />
-        <Route exact path="/:location/settings/room" component={Role} />
+        <Route exact path="/:location/settings/role" component={RoleSettings} />
+        <Route exact path="/:location/settings/location" component={RoleSettings} />
+        <Route exact path="/:location/settings/category" component={RoleSettings} />
+        <Route exact path="/:location/settings/room" component={RoleSettings} />
         {/*** リダイレクト ***/}
         <Redirect from="/" to="/login" />
       </Switch>

@@ -1,0 +1,29 @@
+import { useTranslation } from 'react-i18next';
+import { Control, DeepMap, DeepPartial, FieldError, FieldValues, Path } from 'react-hook-form';
+
+import { ControllerTextField } from '_components/ControllerTextField';
+
+type DataInputsProps<TFieldValues extends FieldValues> = {
+  control: Control<TFieldValues>;
+  errors: DeepMap<DeepPartial<TFieldValues>, FieldError>;
+};
+
+export function DataInputs<TFieldValues extends FieldValues>(props: DataInputsProps<TFieldValues>) {
+  const { control, errors } = props;
+
+  const { t } = useTranslation();
+
+  return (
+    <>
+      <ControllerTextField name={'name' as Path<TFieldValues>} control={control} label={t('settings.header.role.name')} required errors={errors} />
+      <ControllerTextField
+        name={'members' as Path<TFieldValues>}
+        control={control}
+        label={t('settings.header.role.members')}
+        required
+        multiline
+        errors={errors}
+      />
+    </>
+  );
+}

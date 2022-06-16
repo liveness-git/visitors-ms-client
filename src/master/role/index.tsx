@@ -9,8 +9,8 @@ import BaseTemplate from '../../_components/BaseTemplate';
 import { Columns, DataTable } from '../DataTable';
 import { dataDialogReducer, DataDialogState } from '../DataTableBase';
 
-import { VisitorInfo, VisitorInfoReadOnly } from '_models/VisitorInfo';
-export type RowDataType = VisitorInfo & VisitorInfoReadOnly;
+import { Role } from '_models/Role';
+import { Inputs } from 'master/RowDataInputDialog';
 
 const useStyles = makeStyles(() => ({
   actionButtonArea: {
@@ -19,7 +19,7 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-export function Role() {
+export function RoleSettings() {
   const { t } = useTranslation();
   const classes = useStyles();
 
@@ -33,12 +33,16 @@ export function Role() {
   const [dataDialogState, dataDialogDispatch] = useReducer(dataDialogReducer, initialState);
 
   const columns: Columns[] = [
-    { title: t('visittable.header.appt-time'), field: 'apptTime' },
-    { title: t('visittable.header.room-name'), field: 'roomName' },
-    { title: t('visittable.header.visit-company'), field: 'visitCompany' },
-    { title: t('visittable.header.reservation-name'), field: 'reservationName' },
-    { title: t('visittable.header.event-subject'), field: 'subject' },
+    { title: t('settings.header.role.name'), field: 'name' },
+    { title: t('settings.header.role.members'), field: 'members' },
   ];
+
+  const defaultValues: Inputs<Role> = {
+    mode: 'ins',
+    id: '',
+    name: 'admin',
+    members: [],
+  };
 
   return (
     <BaseTemplate adminMode menuOpen>
@@ -58,7 +62,12 @@ export function Role() {
           </Grid>
         </Box>
         <Box p={2}>
-          <DataTable columns={columns} dataDialogHook={{ state: dataDialogState, dispatch: dataDialogDispatch }} />
+          <DataTable<Role>
+            master="role"
+            columns={columns}
+            defaultValues={defaultValues}
+            dataDialogHook={{ state: dataDialogState, dispatch: dataDialogDispatch }}
+          />
         </Box>
       </Paper>
     </BaseTemplate>

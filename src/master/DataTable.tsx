@@ -1,5 +1,4 @@
 import { useCallback, useState } from 'react';
-import { useRouteMatch } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
 import MaterialTable, { MTableCell } from '@material-table/core';
@@ -7,11 +6,11 @@ import MaterialTable, { MTableCell } from '@material-table/core';
 import { tableIcons } from '_utils/MaterialTableIcons';
 import { useLoadData } from '_utils/useLoadData';
 
-import { LocationParams } from '_models/Location';
 import { cellStyle, makeVisitorTableStyles } from '_styles/VisitorTableStyle';
 import { tableTheme } from '_styles/TableTheme';
 
 import { DataDialogAction, DataDialogState, DataTableBase } from './DataTableBase';
+import { DefaultValuesType, Mastertype } from './RowDataInputDialog';
 
 const useStyles = makeVisitorTableStyles();
 
@@ -20,26 +19,24 @@ export type Columns = {
   field: string;
 };
 
-type DataTableProps = {
+type DataTableProps<RowData> = {
+  master: Mastertype;
   columns: Columns[];
+  defaultValues: DefaultValuesType<RowData>;
   dataDialogHook: {
     state: DataDialogState;
     dispatch: React.Dispatch<DataDialogAction>;
   };
 };
 
-export function DataTable<RowData extends object>(props: DataTableProps) {
-  const { columns, dataDialogHook } = props;
+export function DataTable<RowData extends object>(props: DataTableProps<RowData>) {
+  const { master, columns, defaultValues, dataDialogHook } = props;
 
   const { t } = useTranslation();
   const classes = useStyles();
-  const match = useRouteMatch<LocationParams>();
 
   // データ取得
-  const [{ data, isLoading, isError }, reload] = useLoadData<RowData[]>(
-    `/event/visitlist?timestamp=${new Date('2022-06-01').getTime()}&location=${match.params.location}`,
-    []
-  );
+  const [{ data, isLoading, isError }, reload] = useLoadData<RowData[]>(`/${master}/list`, []);
 
   // 選択行の状態
   const [currentRow, setCurrentRow] = useState<RowData | null>(null);
@@ -59,7 +56,14 @@ export function DataTable<RowData extends object>(props: DataTableProps) {
   }
 
   return (
-    <DataTableBase currentRow={currentRow} dataDialogHook={dataDialogHook} isLoading={isLoading} reload={reload}>
+    <DataTableBase<RowData>
+      master={master}
+      defaultValues={defaultValues}
+      currentRow={currentRow}
+      dataDialogHook={dataDialogHook}
+      isLoading={isLoading}
+      reload={reload}
+    >
       <MaterialTable
         columns={columns}
         components={{

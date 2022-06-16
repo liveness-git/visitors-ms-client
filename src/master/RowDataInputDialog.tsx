@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { SubmitHandler, useForm } from 'react-hook-form';
+import { DeepPartial, Path, PathValue, SubmitHandler, UnpackNestedValue, useForm } from 'react-hook-form';
 
 import { Box, Grid, Button } from '@material-ui/core';
 import { makeStyles, createStyles, createTheme, ThemeProvider } from '@material-ui/core/styles';
@@ -9,19 +9,16 @@ import { grey, purple } from '@material-ui/core/colors';
 import DeleteIcon from '@material-ui/icons/Delete';
 import SaveIcon from '@material-ui/icons/Save';
 
-import { addMinutes } from 'date-fns';
 import _ from 'lodash';
-
-import { VisitorInfo, EventInputType } from '_models/VisitorInfo';
 
 import { fetchPostData } from '_utils/FetchPostData';
 
 import { MySnackberContext } from '_components/MySnackbarContext';
 import { Spinner } from '_components/Spinner';
-import { ControllerTextField } from '_components/ControllerTextField';
 import { MyDialog } from '_components/MyDialog';
 
 import { DeleteConfirmDialog } from './DeleteConfirmDialog';
+import { DataInputs as RoleDataInputs } from './role/DataInputs';
 
 const useStyles = makeStyles((tableTheme) => {
   return createStyles({
@@ -56,59 +53,33 @@ const inputformTheme = createTheme({
   },
 });
 
-const startTimeBufferMinute = 0;
-const endTimeBufferMinute = 30; //TODO: Interval config化？
-const change5MinuteIntervals = (date: Date) => Math.ceil(date.getTime() / 1000 / 60 / 5) * 1000 * 60 * 5; //TODO: Interval config化？
+export type Mastertype = 'role' | 'location' | 'category' | 'room';
 
-export type Inputs = {
-  mode: 'ins' | 'upd' | 'del';
-} & VisitorInfo &
-  EventInputType;
+type InputMode = { mode: 'ins' | 'upd' | 'del' };
+export type Inputs<RowData> = InputMode & RowData;
 
-export const ADD_ROOM_KEY = 'add-room-01';
+export type DefaultValuesType<RowData> = UnpackNestedValue<DeepPartial<Inputs<RowData>>>;
 
-export type AddDefaultType = {
-  start: Date;
-  roomId: string;
+// TS7053 Element implicitly has an 'any' type の回避用
+type ObjType = {
+  [key: string]: any;
 };
 
-// 入力フォームの初期値
-const getDefaultValues = (start?: Date, roomId?: string) => {
-  const startDate = start ? start : new Date();
-  const room = roomId ? roomId : '';
-  return {
-    mode: 'ins',
-    iCalUId: '',
-    subject: '',
-    visitorId: '',
-    visitCompany: '',
-    visitorName: '',
-    mailto: { authors: [], required: [], optional: [] },
-    resourcies: {
-      [ADD_ROOM_KEY]: {
-        roomForEdit: room,
-        teaSupply: false,
-        numberOfVisitor: 0,
-        numberOfEmployee: 0,
-      },
-    },
-    comment: '',
-    contactAddr: '',
-    startTime: addMinutes(change5MinuteIntervals(startDate), startTimeBufferMinute),
-    endTime: addMinutes(change5MinuteIntervals(startDate), startTimeBufferMinute + endTimeBufferMinute),
-  } as Inputs;
-};
+// react-hook-formのsetValue。型定義が長いのでショートカット用
+type RHFSetValueP1<RowData> = Path<Inputs<RowData>>;
+type RHFSetValueP2<RowData> = UnpackNestedValue<PathValue<Inputs<RowData>, Path<Inputs<RowData>>>>;
 
-type RowDataInputDialogProps<TRowData> = {
+type RowDataInputDialogProps<RowData> = {
+  master: Mastertype;
+  defaultValues: DefaultValuesType<RowData>;
   open: boolean;
   onClose: () => void;
-  data: TRowData | null;
+  data: RowData | null;
   reload: () => void;
-  addDefault?: AddDefaultType;
 };
 
-export function RowDataInputDialog<TRowData>(props: RowDataInputDialogProps<TRowData>) {
-  const { open, onClose, data, reload, addDefault } = props;
+export function RowDataInputDialog<RowData>(props: RowDataInputDialogProps<RowData>) {
+  const { master, defaultValues, open, onClose, data, reload } = props;
 
   const { t } = useTranslation();
   const classes = useStyles();
@@ -118,7 +89,6 @@ export function RowDataInputDialog<TRowData>(props: RowDataInputDialogProps<TRow
   const [delConfOpen, setDelConfOpen] = useState(false);
 
   // 入力フォームの登録
-  const defaultValues = getDefaultValues();
   const {
     control,
     handleSubmit,
@@ -126,20 +96,24 @@ export function RowDataInputDialog<TRowData>(props: RowDataInputDialogProps<TRow
     setValue,
     setError,
     formState: { errors, isDirty, isSubmitting, dirtyFields },
-  } = useForm<Inputs>({ defaultValues });
+  } = useForm({ defaultValues });
 
   // 入力フォームの初期化
   useEffect(() => {
     if (open && !!data) {
-      reset({
-        mode: 'upd',
-        // comment: data.comment,
-        // contactAddr: data.contactAddr,
-      });
+      const values = Object.keys(defaultValues).reduce((newObj: ObjType, key) => {
+        if (key === 'mode') {
+          newObj['mode'] = 'upd';
+        } else {
+          newObj[key] = (data as ObjType)[key];
+        }
+        return newObj;
+      }, {});
+      reset(_.cloneDeep(values as DefaultValuesType<RowData>));
     } else {
-      reset(_.cloneDeep(getDefaultValues(addDefault?.start, addDefault?.roomId)));
+      reset(_.cloneDeep(defaultValues));
     }
-  }, [data, open, reset, addDefault]);
+  }, [data, defaultValues, open, reset]);
 
   // 保存アクション
   const handleSave = () => {
@@ -151,25 +125,23 @@ export function RowDataInputDialog<TRowData>(props: RowDataInputDialogProps<TRow
   };
   // 削除アクション
   const deleteAction = () => {
-    setValue('mode', 'del');
+    setValue('mode' as RHFSetValueP1<RowData>, 'del' as RHFSetValueP2<RowData>);
     handleSubmit(onSubmit)();
   };
 
   // データ送信submit
-  const onSubmit: SubmitHandler<Inputs> = async (formData) => {
+  const onSubmit: SubmitHandler<Inputs<RowData>> = async (formData) => {
     try {
       let url = '';
       switch (formData.mode) {
         case 'ins':
-          url = '/event/create';
+          url = `/${master}/create`;
           break;
         case 'upd':
-          url = '/event/update';
-          // url = !data?.visitorId ? '/visitor/create' : '/visitor/update';
+          url = `/${master}/update`;
           break;
         case 'del':
-          url = '/event/delete';
-          // url = '/visitor/delete';
+          url = `/${master}/delete`;
           break;
       }
       const result = await fetchPostData(url, { inputs: formData, dirtyFields: dirtyFields });
@@ -183,7 +155,7 @@ export function RowDataInputDialog<TRowData>(props: RowDataInputDialogProps<TRow
         if (result!.errors) {
           const errors = result!.errors;
           for (let key in errors) {
-            let name = key as keyof Inputs;
+            let name = key as keyof Inputs<RowData> as Path<Inputs<RowData>>;
             setError(name, { message: t(errors[name]![0]) });
           }
         }
@@ -209,10 +181,7 @@ export function RowDataInputDialog<TRowData>(props: RowDataInputDialogProps<TRow
         <ThemeProvider theme={inputformTheme}>
           <form>
             <Box p={2}>
-              <ControllerTextField name="visitCompany" control={control} label={t('visittable.header.visit-company')} required errors={errors} />
-              <ControllerTextField name="visitorName" control={control} label={t('visittable.header.visitor-name')} errors={errors} />
-              <ControllerTextField name="comment" control={control} label={t('visittable.header.comment')} multiline errors={errors} />
-              <ControllerTextField name="contactAddr" control={control} label={t('visittable.header.contact-addr')} errors={errors} />
+              <RoleDataInputs control={control} errors={errors} />
             </Box>
 
             <Box px={2}>
