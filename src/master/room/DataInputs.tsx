@@ -18,20 +18,12 @@ export function DataInputs<TFieldValues extends FieldValues>(props: DataInputsPr
       <ControllerTextField name={'name' as Path<TFieldValues>} control={control} label={t('settings.header.room.name')} required errors={errors} />
       <ControllerTextField name={'email' as Path<TFieldValues>} control={control} label={t('settings.header.room.email')} required errors={errors} />
       <ControllerTextField name={'type' as Path<TFieldValues>} control={control} label={t('settings.header.room.type')} required errors={errors} />
-      <ControllerTextField name={'sort' as Path<TFieldValues>} control={control} label={t('settings.header.room.sort')} required errors={errors} />
+      <ControllerTextField name={'sort' as Path<TFieldValues>} control={control} label={t('settings.header.room.sort')} errors={errors} />
       <ControllerTextField
         name={'tea-supply' as Path<TFieldValues>}
         control={control}
         label={t('settings.header.room.tea-supply')}
         required
-        errors={errors}
-      />
-      <ControllerTextField
-        name={'members' as Path<TFieldValues>}
-        control={control}
-        label={t('settings.header.room.members')}
-        required
-        multiline
         errors={errors}
       />
       <ControllerTextField

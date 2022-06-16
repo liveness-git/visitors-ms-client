@@ -8,7 +8,6 @@ import { DefaultValuesType, Mastertype, RowDataInputDialog } from './RowDataInpu
 export type DataDialogState = {
   mode: 'rowData' | 'addData';
   inputOpen: boolean;
-  readOpen: boolean;
 };
 
 export type DataDialogAction = {
@@ -18,9 +17,9 @@ export type DataDialogAction = {
 export const dataDialogReducer = (state: DataDialogState, action: DataDialogAction): DataDialogState => {
   switch (action.type) {
     case 'inputOpen':
-      return { mode: 'rowData', inputOpen: true, readOpen: false };
+      return { mode: 'rowData', inputOpen: true };
     case 'addDataOpen':
-      return { mode: 'addData', inputOpen: true, readOpen: false };
+      return { mode: 'addData', inputOpen: true };
     case 'inputClose':
       return { ...state, inputOpen: false };
     default:

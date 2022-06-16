@@ -23,13 +23,7 @@ export function DataInputs<TFieldValues extends FieldValues>(props: DataInputsPr
         errors={errors}
       />
       <ControllerTextField name={'url' as Path<TFieldValues>} control={control} label={t('settings.header.location.url')} required errors={errors} />
-      <ControllerTextField
-        name={'sort' as Path<TFieldValues>}
-        control={control}
-        label={t('settings.header.location.sort')}
-        required
-        errors={errors}
-      />
+      <ControllerTextField name={'sort' as Path<TFieldValues>} control={control} label={t('settings.header.location.sort')} errors={errors} />
     </>
   );
 }
