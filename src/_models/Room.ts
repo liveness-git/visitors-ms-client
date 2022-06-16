@@ -6,4 +6,6 @@ export type Room = {
   type: RoomType;
   sort: string;
   teaSupply: boolean;
+  location: string;
+  category: string;
 };

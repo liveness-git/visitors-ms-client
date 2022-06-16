@@ -34,6 +34,20 @@ export function DataInputs<TFieldValues extends FieldValues>(props: DataInputsPr
         multiline
         errors={errors}
       />
+      <ControllerTextField
+        name={'location' as Path<TFieldValues>}
+        control={control}
+        label={t('settings.header.room.location')}
+        required
+        errors={errors}
+      />
+      <ControllerTextField
+        name={'category' as Path<TFieldValues>}
+        control={control}
+        label={t('settings.header.room.category')}
+        required
+        errors={errors}
+      />
     </>
   );
 }

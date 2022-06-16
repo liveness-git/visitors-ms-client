@@ -33,8 +33,8 @@
 	"visittable.header.resource-status":"会議室状態",
 	"visittable.header.event-subject":"件名",
 	"visittable.header.event-mailto-authors":"予約者および管理者",
-	"visittable.header.event-mailto-required":"通知メンバー(必須)",
-	"visittable.header.event-mailto-optional":"通知メンバー(任意)",
+	"visittable.header.event-mailto-required":"必須参加者",
+	"visittable.header.event-mailto-optional":"任意参加者",
 	"visittable.header.event-room":"会議室",
 	"visittable.header.event-start-time":"開始時刻",
 	"visittable.header.event-end-time":"終了時刻",
@@ -99,5 +99,7 @@
 	"settings.header.room.type":"種別",
 	"settings.header.room.sort":"表示順",
 	"settings.header.room.tea-supply":"給茶",
-	"settings.header.room.members":"メンバー"
+	"settings.header.room.members":"メンバー",
+	"settings.header.room.location":"ロケーション",
+	"settings.header.room.category":"カテゴリ"
 }
