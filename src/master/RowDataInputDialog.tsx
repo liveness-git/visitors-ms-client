@@ -18,7 +18,10 @@ import { Spinner } from '_components/Spinner';
 import { MyDialog } from '_components/MyDialog';
 
 import { DeleteConfirmDialog } from './DeleteConfirmDialog';
-import { DataInputs as RoleDataInputs } from './role/DataInputs';
+import { DataInputs as RoleInputs } from './role/DataInputs';
+import { DataInputs as LocationInputs } from './location/DataInputs';
+import { DataInputs as CategoryInputs } from './category/DataInputs';
+import { DataInputs as RoomInputs } from './room/DataInputs';
 
 const useStyles = makeStyles((tableTheme) => {
   return createStyles({
@@ -181,7 +184,10 @@ export function RowDataInputDialog<RowData>(props: RowDataInputDialogProps<RowDa
         <ThemeProvider theme={inputformTheme}>
           <form>
             <Box p={2}>
-              <RoleDataInputs control={control} errors={errors} />
+              {master === 'role' && <RoleInputs control={control} errors={errors} />}
+              {master === 'location' && <LocationInputs control={control} errors={errors} />}
+              {master === 'category' && <CategoryInputs control={control} errors={errors} />}
+              {master === 'room' && <RoomInputs control={control} errors={errors} />}
             </Box>
 
             <Box px={2}>

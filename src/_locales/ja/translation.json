@@ -87,5 +87,17 @@
 	"settings.title.room":"会議室設定",
 	"settings.add-master":"新規作成",
 	"settings.header.role.name":"ロール名",
-	"settings.header.role.members":"メンバー"
+	"settings.header.role.members":"メンバー",
+	"settings.header.location.name":"ロケーション名",
+	"settings.header.location.url":"urlパス名",
+	"settings.header.location.sort":"表示順",
+	"settings.header.category.name":"カテゴリ名",
+	"settings.header.category.sort":"表示順",
+	"settings.header.category.members":"メンバー",
+	"settings.header.room.name":"会議室名",
+	"settings.header.room.email":"メールアドレス",
+	"settings.header.room.type":"種別",
+	"settings.header.room.sort":"表示順",
+	"settings.header.room.tea-supply":"給茶",
+	"settings.header.room.members":"メンバー"
 }
