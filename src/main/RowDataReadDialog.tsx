@@ -23,6 +23,15 @@ export function RowDataReadDialog(props: RowDataReadDialogProps) {
   const { t } = useTranslation();
   const classes = useRowDataDialogStyles();
 
+  // 会議メンバーではない場合、詳細表示NG
+  if (!data.isAttendees) {
+    return (
+      <MyDialog open={open} onClose={onClose} title={t('visitdialog.title')}>
+        {t('common.msg.authority-error')}
+      </MyDialog>
+    );
+  }
+
   return (
     <MyDialog open={open} onClose={onClose} title={t('visitdialog.title')}>
       <Box px={2} pt={2}>

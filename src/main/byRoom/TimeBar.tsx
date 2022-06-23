@@ -3,6 +3,7 @@ import { makeStyles, createStyles, withStyles } from '@material-ui/core/styles';
 
 import _ from 'lodash';
 import { differenceInMinutes, endOfDay, isAfter, isBefore, isSameDay, startOfDay } from 'date-fns';
+import clsx from 'clsx';
 import { Tooltip, Typography } from '@material-ui/core';
 import { Schedule, ScheduleItem } from '_models/Schedule';
 import { DataDialogAction, DataDialogState, RowDataType } from 'main/DataTableBase';
@@ -140,6 +141,10 @@ const useStyles = makeStyles((theme) =>
           fillOpacity: 0.9,
           cursor: 'pointer',
         },
+        '& rect.myOwn': {
+          stroke: theme.palette.info.main,
+          fill: theme.palette.info.light,
+        },
         '& rect.wait': {
           stroke: theme.palette.warning.light,
           fill: theme.palette.warning.main,
@@ -216,6 +221,7 @@ export function TimeBar(props: TimeBarProps) {
       const y = rectY;
       const width = boxData.width;
       const height = rectHeight;
+      const myEvent = event.isAttendees ? 'myOwn' : '';
       return (
         <HtmlTooltip
           key={`${roomEmail}-ev-${index}`}
@@ -231,7 +237,7 @@ export function TimeBar(props: TimeBarProps) {
         >
           <svg x={x} y={y} width={width} height={height} viewBox={`0 0 ${width} ${height}`}>
             <g>
-              <rect className={boxData.className} x={0} y={0} width={width} height={height} rx={3} ry={5}></rect>
+              <rect className={clsx(boxData.className, myEvent)} x={0} y={0} width={width} height={height} rx={3} ry={5}></rect>
               <text className="subject" x={3} y={'50%'}>
                 {event.subject}
               </text>

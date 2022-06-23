@@ -28,6 +28,7 @@ export type VisitorInfoReadOnly = {
   roomStatus: string; // TODO:表での表示用
   reservationName: string;
   isAuthor: boolean;
+  isAttendees: boolean;
   isMSMultipleLocations: boolean; // MSEventに複数の場所(会議室以外も含む)が登録されているか否か
   resourcies: {
     [room: string]: ResourciesReadOnly;
