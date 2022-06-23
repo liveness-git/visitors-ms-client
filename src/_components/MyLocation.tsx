@@ -13,9 +13,9 @@ export function MyLocation() {
   const match = useRouteMatch<LocationParams>();
 
   // ロケーションの状態
-  const [selected, setselected] = useState<string>(match.params.location);
+  const [selected, setSelected] = useState<string>(match.params.location);
   const handleOnChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-    setselected(event.target.value as string);
+    setSelected(event.target.value as string);
     const url = match.path.replace(/:location/i, event.target.value as string);
     history.push(url);
   };
