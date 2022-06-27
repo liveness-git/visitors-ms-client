@@ -318,9 +318,28 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
             <Box p={2}>
               <ControllerTextField name="subject" control={control} label={t('visittable.header.event-subject')} required errors={errors} />
 
-              <AddrBookAutoComplete control={control} type="authors" errors={errors} disabled={true} style={{ display: 'none' }} />
-              <AddrBookAutoComplete control={control} type="required" errors={errors} disabled={data?.isMSMultipleLocations} />
-              <AddrBookAutoComplete control={control} type="optional" errors={errors} disabled={data?.isMSMultipleLocations} />
+              <AddrBookAutoComplete
+                name={'mailto.authors'}
+                control={control}
+                label={t('visittable.header.event-mailto-authors')}
+                errors={errors}
+                disabled={true}
+                style={{ display: 'none' }}
+              />
+              <AddrBookAutoComplete
+                name={'mailto.required'}
+                control={control}
+                label={t('visittable.header.event-mailto-required')}
+                errors={errors}
+                disabled={data?.isMSMultipleLocations}
+              />
+              <AddrBookAutoComplete
+                name={'mailto.optional'}
+                control={control}
+                label={t('visittable.header.event-mailto-optional')}
+                errors={errors}
+                disabled={data?.isMSMultipleLocations}
+              />
 
               <Grid container spacing={1}>
                 <Grid item xs={5}>

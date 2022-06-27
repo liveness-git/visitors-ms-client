@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Control, Controller, DeepMap, DeepPartial, FieldError } from 'react-hook-form';
+import { Control, Controller, DeepMap, DeepPartial, FieldError, FieldValues, Path } from 'react-hook-form';
 
 import { Autocomplete } from '@material-ui/lab';
 import { Chip, CircularProgress, TextField } from '@material-ui/core';
@@ -9,18 +9,19 @@ import { CSSProperties } from '@material-ui/styles';
 import { EmailAddress } from '_models/VisitorInfo';
 import { useLoadData } from '_utils/useLoadData';
 
-import { Inputs } from './RowDataInputDialog';
-
-type AddrBookAutoCompleteType = {
-  control: Control<Inputs, object>;
-  type: 'authors' | 'required' | 'optional';
-  errors: DeepMap<DeepPartial<Inputs>, FieldError>;
+type AddrBookAutoCompleteType<TFieldValues extends FieldValues, TName extends Path<TFieldValues>> = {
+  name: TName;
+  control: Control<TFieldValues>;
+  label: string;
+  errors: DeepMap<DeepPartial<TFieldValues>, FieldError>;
   disabled?: boolean;
   style?: CSSProperties;
 };
 
-export function AddrBookAutoComplete(props: AddrBookAutoCompleteType) {
-  const { control, type, errors, disabled, style } = props;
+export function AddrBookAutoComplete<TFieldValues extends FieldValues, TName extends Path<TFieldValues>>(
+  props: AddrBookAutoCompleteType<TFieldValues, TName>
+) {
+  const { name, control, label, errors, disabled, style } = props;
 
   const { t } = useTranslation();
 
@@ -44,8 +45,8 @@ export function AddrBookAutoComplete(props: AddrBookAutoCompleteType) {
   };
 
   return (
-    <Controller
-      name={`mailto.${type}`}
+    <Controller<TFieldValues, TName>
+      name={name}
       control={control}
       render={({ field }) => (
         <Autocomplete
@@ -73,9 +74,9 @@ export function AddrBookAutoComplete(props: AddrBookAutoCompleteType) {
           renderInput={(params) => (
             <TextField
               {...params}
-              label={t(`visittable.header.event-mailto-${type}`)}
-              error={!!errors.mailto}
-              helperText={errors.mailto && (errors.mailto as any).message}
+              label={label}
+              error={!!errors[name]}
+              helperText={errors[name] && (errors[name] as FieldError).message}
               InputProps={{
                 ...params.InputProps,
                 endAdornment: (
