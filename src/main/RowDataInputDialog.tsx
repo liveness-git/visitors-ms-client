@@ -25,13 +25,13 @@ import { useLoadData } from '_utils/useLoadData';
 import { MySnackberContext } from '_components/MySnackbarContext';
 import { Spinner } from '_components/Spinner';
 import { ControllerTextField } from '_components/ControllerTextField';
+import { AddrBookAutoComplete } from '_components/AddrBookAutoComplete';
 import { MyDialog } from '_components/MyDialog';
 
 import { RowDataType } from './DataTableBase';
 import { DeleteConfirmDialog } from './DeleteConfirmDialog';
 import { RoomInputFields } from './RoomInputFields';
 import { RoomReadFields, strRoomStatus } from './RoomReadFields';
-import { AddrBookAutoComplete } from './AddrBookAutoComplete';
 import { ControllerDateTimePicker } from './ControllerDateTimePicker';
 
 const useRowDataDialogStyles = makeTableDialogStyle();
