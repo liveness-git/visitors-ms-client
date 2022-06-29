@@ -97,5 +97,8 @@
 	"settings.header.room.tea-supply":"給茶",
 	"settings.header.room.members":"メンバー",
 	"settings.header.room.location":"ロケーション",
-	"settings.header.room.category":"カテゴリ"
+	"settings.header.room.category":"カテゴリ",
+	"settings.view.role.name.admin":"管理者",
+	"settings.view.role.name.front":"フロント",
+	"settings.form.role.error.name.unique":"このロールは既に登録されています。"
 }

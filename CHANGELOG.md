@@ -1,5 +1,14 @@
 # visitors-ms client
 
+## 0.0.0.56-2022-06-29
+
+- ControllerTextField。select にも対応
+- AddrBookUserDisplay 作成にあたり、TableTheme に slim を追加。
+- Https。エラー内容をコンソールに出力するよう変更。
+- Visitor 予約の参加メンバー。読み取り専用ダイアログにも表示されるよう対応。
+- マスタ画面 Role 設定作成。
+- ロールのメンバー情報。name と address の json 形式に変更。
+
 ## 0.0.0.55-2022-06-23
 
 - 会議室別。参加者の場合、読み取りで詳細ダイアログ表示。そうでない場合は、詳細ダイアログ表示 NG。ホバーによる詳細は OK。

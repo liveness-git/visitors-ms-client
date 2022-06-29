@@ -3,8 +3,10 @@ export type PostDataResult<T> = {
   errors?: { [P in keyof T]?: string[] };
 };
 
+type ServerErrorType = { body: string };
+
 export interface HttpResponse<T> extends Response {
-  parsedBody?: T;
+  parsedBody?: T & ServerErrorType;
 }
 export async function http<T>(request: RequestInfo): Promise<HttpResponse<T>> {
   const response: HttpResponse<T> = await fetch(request);
@@ -15,6 +17,7 @@ export async function http<T>(request: RequestInfo): Promise<HttpResponse<T>> {
   } catch (ex) {}
 
   if (!response.ok) {
+    console.error('Server Error: ', response.parsedBody?.body);
     throw new Error(response.statusText);
   }
   return response;

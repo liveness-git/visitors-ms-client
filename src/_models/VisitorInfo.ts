@@ -1,3 +1,5 @@
+import { EmailAddress } from './User';
+
 // 一般/フロント 共通
 export type VisitorInfo = {
   iCalUId: string;
@@ -12,7 +14,7 @@ export type VisitorInfo = {
   comment: string;
   contactAddr: string;
 };
-export type EmailAddress = { name: string; address: string };
+
 export type VisitorInfoResourcies = {
   teaSupply: boolean;
   numberOfVisitor: number;

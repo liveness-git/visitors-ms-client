@@ -10,6 +10,7 @@ import { dataDialogReducer, DataDialogState } from '../DataTableBase';
 import { Role } from '_models/Role';
 import { Inputs } from 'master/RowDataInputDialog';
 import { HeaderActions } from 'master/HeaderActions';
+import { SelectOption } from '_components/ControllerTextField';
 
 export function RoleSettings() {
   const { t } = useTranslation();
@@ -22,9 +23,13 @@ export function RoleSettings() {
   // ダイアログの状態
   const [dataDialogState, dataDialogDispatch] = useReducer(dataDialogReducer, initialState);
 
-  const columns: Columns[] = [
-    { title: t('settings.header.role.name'), field: 'name' },
-    { title: t('settings.header.role.members'), field: 'members' },
+  const columns: Columns<Role>[] = [
+    {
+      title: t('settings.header.role.name'),
+      field: 'name',
+      render: (rowData) => t(`settings.view.role.name.${rowData.name}`),
+    },
+    // { title: t('settings.header.role.members'), field: 'members' },
   ];
 
   const defaultValues: Inputs<Role> = {

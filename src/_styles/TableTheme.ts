@@ -32,7 +32,7 @@ export const makeTableDialogStyle = () => {
       display: 'flex',
       // flexFlow: 'row-wrap',
       // width: '100%',
-      '&:first-child div': {
+      '&:first-child > div': {
         borderTop: border,
       },
     },
@@ -48,6 +48,14 @@ export const makeTableDialogStyle = () => {
       boxSizing: 'border-box',
       flexBasis: '75%',
       padding: '0.7em',
+      borderRight: border,
+      borderBottom: border,
+      whiteSpace: 'pre-wrap',
+    },
+    fieldSlim: {
+      boxSizing: 'border-box',
+      flexBasis: '75%',
+      padding: '0.2em',
       borderRight: border,
       borderBottom: border,
       whiteSpace: 'pre-wrap',

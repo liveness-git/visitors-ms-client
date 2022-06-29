@@ -22,7 +22,7 @@ export function RoomSettings() {
   // ダイアログの状態
   const [dataDialogState, dataDialogDispatch] = useReducer(dataDialogReducer, initialState);
 
-  const columns: Columns[] = [
+  const columns: Columns<Room>[] = [
     { title: t('settings.header.room.name'), field: 'name' },
     { title: t('settings.header.room.email'), field: 'email' },
     { title: t('settings.header.room.type'), field: 'type' },

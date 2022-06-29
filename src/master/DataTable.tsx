@@ -14,16 +14,17 @@ import { DefaultValuesType, Mastertype } from './RowDataInputDialog';
 
 const useStyles = makeVisitorTableStyles();
 
-export type Columns = {
+export type Columns<RowData> = {
   title: string;
   field: string;
   type?: string;
   cellStyle?: object | void;
+  render?: (rowData: RowData) => any;
 };
 
 type DataTableProps<RowData> = {
   master: Mastertype;
-  columns: Columns[];
+  columns: Columns<RowData>[];
   defaultValues: DefaultValuesType<RowData>;
   dataDialogHook: {
     state: DataDialogState;

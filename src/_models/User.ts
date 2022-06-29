@@ -4,3 +4,7 @@ export type User = {
   isAdmin: boolean;
   isFront: boolean;
 };
+export type EmailAddress = {
+  name: string;
+  address: string;
+};

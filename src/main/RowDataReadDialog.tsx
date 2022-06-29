@@ -8,6 +8,7 @@ import { MyDialog } from '_components/MyDialog';
 
 import { RowDataType } from './DataTableBase';
 import { RoomReadFields } from './RoomReadFields';
+import { AddrBookUserDisplay } from '_components/AddrBookUserDisplay';
 
 const useRowDataDialogStyles = makeTableDialogStyle();
 
@@ -47,6 +48,23 @@ export function RowDataReadDialog(props: RowDataReadDialogProps) {
           <li key="reservation-name" className={classes.list}>
             <div className={classes.title}>{t('visittable.header.reservation-name')}</div>
             <div className={classes.field}>{data.reservationName}</div>
+          </li>
+        </List>
+      </Box>
+
+      <Box px={2} pt={2}>
+        <List disablePadding={true}>
+          <li key="mailto-required" className={classes.list}>
+            <div className={classes.title}>{t('visittable.header.event-mailto-required')}</div>
+            <div className={classes.fieldSlim}>
+              <AddrBookUserDisplay key="mailto-required" data={data.mailto.required} />
+            </div>
+          </li>
+          <li key="mailto-optional" className={classes.list}>
+            <div className={classes.title}>{t('visittable.header.event-mailto-optional')}</div>
+            <div className={classes.fieldSlim}>
+              <AddrBookUserDisplay key="mailto-optional" data={data.mailto.optional} />
+            </div>
           </li>
         </List>
       </Box>

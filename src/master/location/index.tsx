@@ -22,7 +22,7 @@ export function LocationSettings() {
   // ダイアログの状態
   const [dataDialogState, dataDialogDispatch] = useReducer(dataDialogReducer, initialState);
 
-  const columns: Columns[] = [
+  const columns: Columns<Location>[] = [
     { title: t('settings.header.location.name'), field: 'name' },
     { title: t('settings.header.location.url'), field: 'url' },
     { title: t('settings.header.location.sort'), field: 'sort' },

@@ -22,7 +22,7 @@ export function CategorySettings() {
   // ダイアログの状態
   const [dataDialogState, dataDialogDispatch] = useReducer(dataDialogReducer, initialState);
 
-  const columns: Columns[] = [
+  const columns: Columns<Category>[] = [
     { title: t('settings.header.category.name'), field: 'name' },
     { title: t('settings.header.category.sort'), field: 'sort' },
     { title: t('settings.header.category.members'), field: 'members' },

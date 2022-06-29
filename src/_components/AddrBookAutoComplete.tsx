@@ -6,7 +6,7 @@ import { Autocomplete } from '@material-ui/lab';
 import { Chip, CircularProgress, TextField } from '@material-ui/core';
 import { CSSProperties } from '@material-ui/styles';
 
-import { EmailAddress } from '_models/VisitorInfo';
+import { EmailAddress } from '_models/User';
 import { useLoadData } from '_utils/useLoadData';
 
 type AddrBookAutoCompleteType<TFieldValues extends FieldValues, TName extends Path<TFieldValues>> = {
@@ -71,6 +71,7 @@ export function AddrBookAutoComplete<TFieldValues extends FieldValues, TName ext
             tagValue.map((option, index) => <Chip label={option.name} title={option.address} {...getTagProps({ index })} />)
           }
           filterSelectedOptions
+          getOptionSelected={(option, value) => option.address === value.address}
           renderInput={(params) => (
             <TextField
               {...params}
