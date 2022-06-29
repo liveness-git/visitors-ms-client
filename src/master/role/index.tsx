@@ -10,7 +10,6 @@ import { dataDialogReducer, DataDialogState } from '../DataTableBase';
 import { Role } from '_models/Role';
 import { Inputs } from 'master/RowDataInputDialog';
 import { HeaderActions } from 'master/HeaderActions';
-import { SelectOption } from '_components/ControllerTextField';
 
 export function RoleSettings() {
   const { t } = useTranslation();
