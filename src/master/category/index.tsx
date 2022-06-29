@@ -25,7 +25,8 @@ export function CategorySettings() {
   const columns: Columns<Category>[] = [
     { title: t('settings.header.category.name'), field: 'name' },
     { title: t('settings.header.category.sort'), field: 'sort' },
-    { title: t('settings.header.category.members'), field: 'members' },
+    { title: t('settings.header.category.limited-public'), field: 'limitedPublic', type: 'boolean' },
+    // { title: t('settings.header.category.members'), field: 'members' },
   ];
 
   const defaultValues: Inputs<Category> = {
@@ -33,6 +34,7 @@ export function CategorySettings() {
     id: '',
     name: '',
     sort: '',
+    limitedPublic: false,
     members: [],
   };
 

@@ -89,6 +89,7 @@
 	"settings.header.location.sort":"表示順",
 	"settings.header.category.name":"カテゴリ名",
 	"settings.header.category.sort":"表示順",
+	"settings.header.category.limited-public":"限定公開",
 	"settings.header.category.members":"メンバー",
 	"settings.header.room.name":"会議室名",
 	"settings.header.room.email":"メールアドレス",
@@ -100,5 +101,7 @@
 	"settings.header.room.category":"カテゴリ",
 	"settings.view.role.name.admin":"管理者",
 	"settings.view.role.name.front":"フロント",
-	"settings.form.role.error.name.unique":"このロールは既に登録されています。"
+	"settings.form.Limited-public":"限定公開",
+	"settings.form.role.error.name.unique":"このロールは既に登録されています。",
+	"settings.form.location.error.url.pattern":"半角の小文字英数字のみ入力できます。"
 }

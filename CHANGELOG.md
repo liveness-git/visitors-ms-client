@@ -1,5 +1,9 @@
 # visitors-ms client
 
+## 0.0.0.57-2022-06-29
+
+- マスタ画面のロケーション、カテゴリ設定の作成。(途中)
+
 ## 0.0.0.56-2022-06-29
 
 - ControllerTextField。select にも対応

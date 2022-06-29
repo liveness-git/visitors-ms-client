@@ -1,6 +1,9 @@
+import { EmailAddress } from './User';
+
 export type Category = {
   id: string;
   name: string;
   sort: string;
-  members?: string[];
+  limitedPublic: boolean;
+  members: EmailAddress[];
 };

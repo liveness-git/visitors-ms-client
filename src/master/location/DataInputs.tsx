@@ -22,7 +22,19 @@ export function DataInputs<TFieldValues extends FieldValues>(props: DataInputsPr
         required
         errors={errors}
       />
-      <ControllerTextField name={'url' as Path<TFieldValues>} control={control} label={t('settings.header.location.url')} required errors={errors} />
+      <ControllerTextField
+        name={'url' as Path<TFieldValues>}
+        control={control}
+        label={t('settings.header.location.url')}
+        required
+        validation={{
+          pattern: {
+            value: /^[a-z0-9]+$/,
+            message: t('settings.form.location.error.url.pattern'),
+          },
+        }}
+        errors={errors}
+      />
       <ControllerTextField name={'sort' as Path<TFieldValues>} control={control} label={t('settings.header.location.sort')} errors={errors} />
     </>
   );
