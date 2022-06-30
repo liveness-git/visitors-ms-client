@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { DeepPartial, Path, PathValue, SubmitHandler, UnpackNestedValue, useForm } from 'react-hook-form';
+import { DeepPartial, Path, PathValue, SubmitHandler, UnpackNestedValue, useForm, FieldValues } from 'react-hook-form';
 
 import { Box, Grid, Button } from '@material-ui/core';
 import { makeStyles, createStyles, createTheme, ThemeProvider } from '@material-ui/core/styles';
@@ -63,11 +63,6 @@ export type Inputs<RowData> = InputMode & RowData;
 
 export type DefaultValuesType<RowData> = UnpackNestedValue<DeepPartial<Inputs<RowData>>>;
 
-// TS7053 Element implicitly has an 'any' type の回避用
-type ObjType = {
-  [key: string]: any;
-};
-
 // react-hook-formのsetValue。型定義が長いのでショートカット用
 type RHFSetValueP1<RowData> = Path<Inputs<RowData>>;
 type RHFSetValueP2<RowData> = UnpackNestedValue<PathValue<Inputs<RowData>, Path<Inputs<RowData>>>>;
@@ -104,11 +99,11 @@ export function RowDataInputDialog<RowData>(props: RowDataInputDialogProps<RowDa
   // 入力フォームの初期化
   useEffect(() => {
     if (open && !!data) {
-      const values = Object.keys(defaultValues).reduce((newObj: ObjType, key) => {
+      const values = Object.keys(defaultValues).reduce((newObj: FieldValues, key) => {
         if (key === 'mode') {
           newObj['mode'] = 'upd';
         } else {
-          newObj[key] = (data as ObjType)[key];
+          newObj[key] = (data as FieldValues)[key];
         }
         return newObj;
       }, {});

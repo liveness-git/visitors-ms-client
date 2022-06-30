@@ -1,17 +1,21 @@
 import { useTranslation } from 'react-i18next';
 import { Control, Controller, DeepMap, DeepPartial, FieldError, FieldValues, Path, useWatch } from 'react-hook-form';
+import { FormControlLabel, Switch } from '@material-ui/core';
 
 import { ControllerTextField } from '_components/ControllerTextField';
 import { AddrBookAutoComplete } from '_components/AddrBookAutoComplete';
-import { FormControlLabel, Switch } from '@material-ui/core';
 import { useEffect, useState } from 'react';
 
-type DataInputsProps<TFieldValues extends FieldValues> = {
-  control: Control<TFieldValues>;
-  errors: DeepMap<DeepPartial<TFieldValues>, FieldError>;
+import { Category } from '_models/Category';
+
+import { Inputs } from 'master/RowDataInputDialog';
+
+type DataInputsProps = {
+  control: Control<Inputs<Category>>;
+  errors: DeepMap<DeepPartial<Inputs<Category>>, FieldError>;
 };
 
-export function DataInputs<TFieldValues extends FieldValues>(props: DataInputsProps<TFieldValues>) {
+export function DataInputs(props: DataInputsProps) {
   const { control, errors } = props;
 
   const { t } = useTranslation();
@@ -19,7 +23,7 @@ export function DataInputs<TFieldValues extends FieldValues>(props: DataInputsPr
   // メンバー表示の制御用に限定公開スイッチを監視
   const isLimitedPublic = useWatch({
     control,
-    name: 'limitedPublic' as Path<TFieldValues>,
+    name: 'limitedPublic',
   });
 
   //メンバー表示の状態
@@ -29,24 +33,18 @@ export function DataInputs<TFieldValues extends FieldValues>(props: DataInputsPr
   useEffect(() => {
     setShowMembers(isLimitedPublic);
     if (!isLimitedPublic) {
-      // setValue('members' as Path<TFieldValues>, []);
+      // setValue('members', []);
     }
   }, [isLimitedPublic]);
 
   return (
     <>
-      <ControllerTextField
-        name={'name' as Path<TFieldValues>}
-        control={control}
-        label={t('settings.header.category.name')}
-        required
-        errors={errors}
-      />
-      <ControllerTextField name={'sort' as Path<TFieldValues>} control={control} label={t('settings.header.category.sort')} errors={errors} />
+      <ControllerTextField name={'name'} control={control} label={t('settings.header.category.name')} required errors={errors} />
+      <ControllerTextField name={'sort'} control={control} label={t('settings.header.category.sort')} errors={errors} />
       <FormControlLabel
         control={
           <Controller
-            name={'limitedPublic' as Path<TFieldValues>}
+            name={'limitedPublic'}
             control={control}
             render={({ field }) => <Switch onChange={(e) => field.onChange(e.target.checked)} checked={field.value} color="primary" />}
           />
@@ -54,7 +52,7 @@ export function DataInputs<TFieldValues extends FieldValues>(props: DataInputsPr
         label={t('settings.form.Limited-public')}
       />
       <AddrBookAutoComplete
-        name={'members' as Path<TFieldValues>}
+        name={'members'}
         control={control}
         label={t('settings.header.category.members')}
         errors={errors}
