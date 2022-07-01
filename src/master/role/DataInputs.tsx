@@ -3,7 +3,7 @@ import { useFormContext } from 'react-hook-form';
 
 import { ControllerTextField } from '_components/ControllerTextField';
 import { AddrBookAutoComplete } from '_components/AddrBookAutoComplete';
-import { nameOfRole } from '_models/Role';
+import { nameOfRoleType } from '_models/Role';
 
 import { Role } from '_models/Role';
 
@@ -24,7 +24,7 @@ export function DataInputs() {
         control={control}
         label={t('settings.header.role.name')}
         required
-        selectList={nameOfRole.map((value) => {
+        selectList={nameOfRoleType.map((value) => {
           return { label: t(`settings.view.role.name.${value}`), value: value };
         })}
         errors={errors}

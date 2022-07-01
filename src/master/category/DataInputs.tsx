@@ -13,6 +13,7 @@ import { Inputs } from '../RowDataInputDialog';
 export function DataInputs() {
   const {
     control,
+    setValue,
     formState: { errors },
   } = useFormContext<Inputs<Category>>();
 
@@ -31,9 +32,9 @@ export function DataInputs() {
   useEffect(() => {
     setShowMembers(isLimitedPublic);
     if (!isLimitedPublic) {
-      // setValue('members', []);
+      setValue('members', []);
     }
-  }, [isLimitedPublic]);
+  }, [isLimitedPublic, setValue]);
 
   return (
     <>
@@ -47,7 +48,7 @@ export function DataInputs() {
             render={({ field }) => <Switch onChange={(e) => field.onChange(e.target.checked)} checked={field.value} color="primary" />}
           />
         }
-        label={t('settings.form.Limited-public')}
+        label={t('settings.header.category.limited-public')}
       />
       <AddrBookAutoComplete
         name={'members'}

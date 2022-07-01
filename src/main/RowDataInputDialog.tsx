@@ -364,7 +364,7 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
                 </Grid>
                 <Grid item xs={2} style={{ margin: 'auto' }}>
                   <Button onClick={handleSearch} variant="contained" color="primary" fullWidth disabled={data?.isMSMultipleLocations || !hiddenRooms}>
-                    {t('visitorinfoform.form.search')}
+                    {t('common.button.search')}
                   </Button>
                 </Grid>
               </Grid>
@@ -416,12 +416,12 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
                     startIcon={<SaveIcon />}
                     fullWidth
                   >
-                    {t('visitorinfoform.form.save')}
+                    {t('common.button.save')}
                   </Button>
                 </Grid>
                 <Grid item xs={6} style={!data ? { display: 'none' } : undefined}>
                   <Button onClick={handleDelete} variant="contained" color="primary" /*disabled={!data}*/ startIcon={<DeleteIcon />} fullWidth>
-                    {t('visitorinfoform.form.delete')}
+                    {t('common.button.delete')}
                   </Button>
                 </Grid>
               </Grid>

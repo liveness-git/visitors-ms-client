@@ -88,10 +88,12 @@ export function RowDataInputDialog<RowData>(props: RowDataInputDialogProps<RowDa
 
   // 入力フォームの登録
   const methods = useForm({ defaultValues: { ...inputFields.defaultValues } });
+
   const {
     handleSubmit,
     reset,
     setValue,
+    getValues,
     setError,
     formState: { isDirty, isSubmitting, dirtyFields },
   } = methods;
@@ -175,28 +177,21 @@ export function RowDataInputDialog<RowData>(props: RowDataInputDialogProps<RowDa
   return (
     <>
       <Spinner open={isSubmitting} />
-      <MyDialog open={open} onClose={onClose} title={t('visitdialog.title')}>
+      <MyDialog open={open} onClose={onClose} title={t(`settings.title.${inputFields.type}`)}>
         <ThemeProvider theme={inputformTheme}>
           <FormProvider {...methods}>
             <form>
-              <Box p={2}>
-                {inputFields.item}
-                {/* {master === 'role' && <RoleInputs/>}
-                {master === 'location' && <LocationInputs control={control} errors={errors} />}
-                {master === 'category' && <CategoryInputs />}
-                {master === 'room' && <RoomInputs control={control} errors={errors} />} */}
-              </Box>
-
+              <Box p={2}>{inputFields.item}</Box>
               <Box px={2}>
                 <Grid container justifyContent="space-between" spacing={2} className={classes.formAction}>
                   <Grid item xs={!data ? 12 : 6}>
                     <Button onClick={handleSave} variant="contained" color="primary" disabled={!isDirty} startIcon={<SaveIcon />} fullWidth>
-                      {t('visitorinfoform.form.save')}
+                      {t('common.button.save')}
                     </Button>
                   </Grid>
                   <Grid item xs={6} style={!data ? { display: 'none' } : undefined}>
                     <Button onClick={handleDelete} variant="contained" color="primary" /*disabled={!data}*/ startIcon={<DeleteIcon />} fullWidth>
-                      {t('visitorinfoform.form.delete')}
+                      {t('common.button.delete')}
                     </Button>
                   </Grid>
                 </Grid>
