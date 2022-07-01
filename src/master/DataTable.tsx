@@ -10,7 +10,7 @@ import { cellStyle, makeVisitorTableStyles } from '_styles/VisitorTableStyle';
 import { tableTheme } from '_styles/TableTheme';
 
 import { DataDialogAction, DataDialogState, DataTableBase } from './DataTableBase';
-import { DefaultValuesType, Mastertype } from './RowDataInputDialog';
+import { InputFields } from './RowDataInputDialog';
 
 const useStyles = makeVisitorTableStyles();
 
@@ -23,9 +23,8 @@ export type Columns<RowData> = {
 };
 
 type DataTableProps<RowData> = {
-  master: Mastertype;
+  inputFields: InputFields<RowData>;
   columns: Columns<RowData>[];
-  defaultValues: DefaultValuesType<RowData>;
   dataDialogHook: {
     state: DataDialogState;
     dispatch: React.Dispatch<DataDialogAction>;
@@ -33,13 +32,13 @@ type DataTableProps<RowData> = {
 };
 
 export function DataTable<RowData extends object>(props: DataTableProps<RowData>) {
-  const { master, columns, defaultValues, dataDialogHook } = props;
+  const { inputFields, columns, dataDialogHook } = props;
 
   const { t } = useTranslation();
   const classes = useStyles();
 
   // データ取得
-  const [{ data, isLoading, isError }, reload] = useLoadData<RowData[]>(`/${master}/list`, []);
+  const [{ data, isLoading, isError }, reload] = useLoadData<RowData[]>(`/${inputFields.type}/list`, []);
 
   // 選択行の状態
   const [currentRow, setCurrentRow] = useState<RowData | null>(null);
@@ -59,14 +58,7 @@ export function DataTable<RowData extends object>(props: DataTableProps<RowData>
   }
 
   return (
-    <DataTableBase<RowData>
-      master={master}
-      defaultValues={defaultValues}
-      currentRow={currentRow}
-      dataDialogHook={dataDialogHook}
-      isLoading={isLoading}
-      reload={reload}
-    >
+    <DataTableBase<RowData> inputFields={inputFields} currentRow={currentRow} dataDialogHook={dataDialogHook} isLoading={isLoading} reload={reload}>
       <MaterialTable
         columns={columns as Column<RowData>[]}
         components={{

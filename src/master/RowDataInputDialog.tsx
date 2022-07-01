@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { DeepPartial, Path, PathValue, SubmitHandler, UnpackNestedValue, useForm, FieldValues } from 'react-hook-form';
+import { DeepPartial, Path, PathValue, SubmitHandler, UnpackNestedValue, useForm, FieldValues, FormProvider } from 'react-hook-form';
 
 import { Box, Grid, Button } from '@material-ui/core';
 import { makeStyles, createStyles, createTheme, ThemeProvider } from '@material-ui/core/styles';
@@ -18,10 +18,6 @@ import { Spinner } from '_components/Spinner';
 import { MyDialog } from '_components/MyDialog';
 
 import { DeleteConfirmDialog } from './DeleteConfirmDialog';
-import { DataInputs as RoleInputs } from './role/DataInputs';
-import { DataInputs as LocationInputs } from './location/DataInputs';
-import { DataInputs as CategoryInputs } from './category/DataInputs';
-import { DataInputs as RoomInputs } from './room/DataInputs';
 
 const useStyles = makeStyles((tableTheme) => {
   return createStyles({
@@ -61,15 +57,19 @@ export type Mastertype = 'role' | 'location' | 'category' | 'room';
 type InputMode = { mode: 'ins' | 'upd' | 'del' };
 export type Inputs<RowData> = InputMode & RowData;
 
-export type DefaultValuesType<RowData> = UnpackNestedValue<DeepPartial<Inputs<RowData>>>;
+type DefaultValuesType<RowData> = UnpackNestedValue<DeepPartial<Inputs<RowData>>>;
+export type InputFields<RowData> = {
+  type: Mastertype;
+  item: React.ReactNode;
+  defaultValues: DefaultValuesType<RowData>;
+};
 
 // react-hook-formのsetValue。型定義が長いのでショートカット用
 type RHFSetValueP1<RowData> = Path<Inputs<RowData>>;
 type RHFSetValueP2<RowData> = UnpackNestedValue<PathValue<Inputs<RowData>, Path<Inputs<RowData>>>>;
 
 type RowDataInputDialogProps<RowData> = {
-  master: Mastertype;
-  defaultValues: DefaultValuesType<RowData>;
+  inputFields: InputFields<RowData>;
   open: boolean;
   onClose: () => void;
   data: RowData | null;
@@ -77,29 +77,29 @@ type RowDataInputDialogProps<RowData> = {
 };
 
 export function RowDataInputDialog<RowData>(props: RowDataInputDialogProps<RowData>) {
-  const { master, defaultValues, open, onClose, data, reload } = props;
+  const { inputFields, open, onClose, data, reload } = props;
 
   const { t } = useTranslation();
   const classes = useStyles();
   const snackberContext = useContext(MySnackberContext); // スナックバー取得用
 
-  // 削除確認メッセージの状態
+  // 削除確認メッセージの状
   const [delConfOpen, setDelConfOpen] = useState(false);
 
   // 入力フォームの登録
+  const methods = useForm({ defaultValues: { ...inputFields.defaultValues } });
   const {
-    control,
     handleSubmit,
     reset,
     setValue,
     setError,
-    formState: { errors, isDirty, isSubmitting, dirtyFields },
-  } = useForm({ defaultValues });
+    formState: { isDirty, isSubmitting, dirtyFields },
+  } = methods;
 
   // 入力フォームの初期化
   useEffect(() => {
     if (open && !!data) {
-      const values = Object.keys(defaultValues).reduce((newObj: FieldValues, key) => {
+      const values = Object.keys(inputFields.defaultValues).reduce((newObj: FieldValues, key) => {
         if (key === 'mode') {
           newObj['mode'] = 'upd';
         } else {
@@ -109,9 +109,9 @@ export function RowDataInputDialog<RowData>(props: RowDataInputDialogProps<RowDa
       }, {});
       reset(_.cloneDeep(values as DefaultValuesType<RowData>));
     } else {
-      reset(_.cloneDeep(defaultValues));
+      reset(_.cloneDeep(inputFields.defaultValues));
     }
-  }, [data, defaultValues, open, reset]);
+  }, [data, inputFields, open, reset]);
 
   // 保存アクション
   const handleSave = () => {
@@ -133,13 +133,13 @@ export function RowDataInputDialog<RowData>(props: RowDataInputDialogProps<RowDa
       let url = '';
       switch (formData.mode) {
         case 'ins':
-          url = `/${master}/create`;
+          url = `/${inputFields.type}/create`;
           break;
         case 'upd':
-          url = `/${master}/update`;
+          url = `/${inputFields.type}/update`;
           break;
         case 'del':
-          url = `/${master}/delete`;
+          url = `/${inputFields.type}/delete`;
           break;
       }
       const result = await fetchPostData(url, { inputs: formData, dirtyFields: dirtyFields });
@@ -177,29 +177,32 @@ export function RowDataInputDialog<RowData>(props: RowDataInputDialogProps<RowDa
       <Spinner open={isSubmitting} />
       <MyDialog open={open} onClose={onClose} title={t('visitdialog.title')}>
         <ThemeProvider theme={inputformTheme}>
-          <form>
-            <Box p={2}>
-              {master === 'role' && <RoleInputs control={control} errors={errors} />}
-              {master === 'location' && <LocationInputs control={control} errors={errors} />}
-              {master === 'category' && <CategoryInputs control={control} errors={errors} />}
-              {master === 'room' && <RoomInputs control={control} errors={errors} />}
-            </Box>
+          <FormProvider {...methods}>
+            <form>
+              <Box p={2}>
+                {inputFields.item}
+                {/* {master === 'role' && <RoleInputs/>}
+                {master === 'location' && <LocationInputs control={control} errors={errors} />}
+                {master === 'category' && <CategoryInputs />}
+                {master === 'room' && <RoomInputs control={control} errors={errors} />} */}
+              </Box>
 
-            <Box px={2}>
-              <Grid container justifyContent="space-between" spacing={2} className={classes.formAction}>
-                <Grid item xs={!data ? 12 : 6}>
-                  <Button onClick={handleSave} variant="contained" color="primary" disabled={!isDirty} startIcon={<SaveIcon />} fullWidth>
-                    {t('visitorinfoform.form.save')}
-                  </Button>
+              <Box px={2}>
+                <Grid container justifyContent="space-between" spacing={2} className={classes.formAction}>
+                  <Grid item xs={!data ? 12 : 6}>
+                    <Button onClick={handleSave} variant="contained" color="primary" disabled={!isDirty} startIcon={<SaveIcon />} fullWidth>
+                      {t('visitorinfoform.form.save')}
+                    </Button>
+                  </Grid>
+                  <Grid item xs={6} style={!data ? { display: 'none' } : undefined}>
+                    <Button onClick={handleDelete} variant="contained" color="primary" /*disabled={!data}*/ startIcon={<DeleteIcon />} fullWidth>
+                      {t('visitorinfoform.form.delete')}
+                    </Button>
+                  </Grid>
                 </Grid>
-                <Grid item xs={6} style={!data ? { display: 'none' } : undefined}>
-                  <Button onClick={handleDelete} variant="contained" color="primary" /*disabled={!data}*/ startIcon={<DeleteIcon />} fullWidth>
-                    {t('visitorinfoform.form.delete')}
-                  </Button>
-                </Grid>
-              </Grid>
-            </Box>
-          </form>
+              </Box>
+            </form>
+          </FormProvider>
         </ThemeProvider>
       </MyDialog>
       <DeleteConfirmDialog open={delConfOpen} onClose={handleDelConfClose}></DeleteConfirmDialog>

@@ -1,24 +1,26 @@
 import { useTranslation } from 'react-i18next';
-import { Control, DeepMap, DeepPartial, FieldError, FieldValues, Path } from 'react-hook-form';
+import { useFormContext } from 'react-hook-form';
 
 import { ControllerTextField } from '_components/ControllerTextField';
 import { AddrBookAutoComplete } from '_components/AddrBookAutoComplete';
 import { nameOfRole } from '_models/Role';
 
-type DataInputsProps<TFieldValues extends FieldValues> = {
-  control: Control<TFieldValues>;
-  errors: DeepMap<DeepPartial<TFieldValues>, FieldError>;
-};
+import { Role } from '_models/Role';
 
-export function DataInputs<TFieldValues extends FieldValues>(props: DataInputsProps<TFieldValues>) {
-  const { control, errors } = props;
+import { Inputs } from '../RowDataInputDialog';
+
+export function DataInputs() {
+  const {
+    control,
+    formState: { errors },
+  } = useFormContext<Inputs<Role>>();
 
   const { t } = useTranslation();
 
   return (
     <>
       <ControllerTextField
-        name={'name' as Path<TFieldValues>}
+        name={'name'}
         control={control}
         label={t('settings.header.role.name')}
         required
@@ -27,7 +29,7 @@ export function DataInputs<TFieldValues extends FieldValues>(props: DataInputsPr
         })}
         errors={errors}
       />
-      <AddrBookAutoComplete name={'members' as Path<TFieldValues>} control={control} label={t('settings.header.role.members')} errors={errors} />
+      <AddrBookAutoComplete name={'members'} control={control} label={t('settings.header.role.members')} errors={errors} />
     </>
   );
 }

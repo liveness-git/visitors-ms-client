@@ -6,10 +6,11 @@ import { Box, Paper } from '@material-ui/core';
 import BaseTemplate from '../../_components/BaseTemplate';
 import { Columns, DataTable } from '../DataTable';
 import { dataDialogReducer, DataDialogState } from '../DataTableBase';
+import { Inputs } from '../RowDataInputDialog';
+import { HeaderActions } from '../HeaderActions';
+import { DataInputs } from './DataInputs';
 
 import { Category } from '_models/Category';
-import { Inputs } from 'master/RowDataInputDialog';
-import { HeaderActions } from 'master/HeaderActions';
 
 export function CategorySettings() {
   const { t } = useTranslation();
@@ -46,9 +47,8 @@ export function CategorySettings() {
         </Box>
         <Box p={2}>
           <DataTable<Category>
-            master="category"
+            inputFields={{ type: 'category', item: <DataInputs />, defaultValues: defaultValues }}
             columns={columns}
-            defaultValues={defaultValues}
             dataDialogHook={{ state: dataDialogState, dispatch: dataDialogDispatch }}
           />
         </Box>

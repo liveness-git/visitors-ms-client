@@ -6,10 +6,11 @@ import { Box, Paper } from '@material-ui/core';
 import BaseTemplate from '../../_components/BaseTemplate';
 import { Columns, DataTable } from '../DataTable';
 import { dataDialogReducer, DataDialogState } from '../DataTableBase';
+import { Inputs } from '../RowDataInputDialog';
+import { HeaderActions } from '../HeaderActions';
+import { DataInputs } from './DataInputs';
 
 import { Location } from '_models/Location';
-import { Inputs } from 'master/RowDataInputDialog';
-import { HeaderActions } from 'master/HeaderActions';
 
 export function LocationSettings() {
   const { t } = useTranslation();
@@ -44,9 +45,8 @@ export function LocationSettings() {
         </Box>
         <Box p={2}>
           <DataTable<Location>
-            master="location"
+            inputFields={{ type: 'location', item: <DataInputs />, defaultValues: defaultValues }}
             columns={columns}
-            defaultValues={defaultValues}
             dataDialogHook={{ state: dataDialogState, dispatch: dataDialogDispatch }}
           />
         </Box>

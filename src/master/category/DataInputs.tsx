@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { Control, Controller, DeepMap, DeepPartial, FieldError, FieldValues, Path, useWatch } from 'react-hook-form';
+import { Controller, useFormContext, useWatch } from 'react-hook-form';
 import { FormControlLabel, Switch } from '@material-ui/core';
 
 import { ControllerTextField } from '_components/ControllerTextField';
@@ -8,15 +8,13 @@ import { useEffect, useState } from 'react';
 
 import { Category } from '_models/Category';
 
-import { Inputs } from 'master/RowDataInputDialog';
+import { Inputs } from '../RowDataInputDialog';
 
-type DataInputsProps = {
-  control: Control<Inputs<Category>>;
-  errors: DeepMap<DeepPartial<Inputs<Category>>, FieldError>;
-};
-
-export function DataInputs(props: DataInputsProps) {
-  const { control, errors } = props;
+export function DataInputs() {
+  const {
+    control,
+    formState: { errors },
+  } = useFormContext<Inputs<Category>>();
 
   const { t } = useTranslation();
 

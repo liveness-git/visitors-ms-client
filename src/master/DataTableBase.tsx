@@ -3,7 +3,7 @@ import { ThemeProvider } from '@material-ui/core/styles';
 import { tableTheme } from '_styles/TableTheme';
 import { Spinner } from '_components/Spinner';
 
-import { DefaultValuesType, Mastertype, RowDataInputDialog } from './RowDataInputDialog';
+import { InputFields, RowDataInputDialog } from './RowDataInputDialog';
 
 export type DataDialogState = {
   mode: 'rowData' | 'addData';
@@ -28,8 +28,7 @@ export const dataDialogReducer = (state: DataDialogState, action: DataDialogActi
 };
 
 type DataTableBaseProps<RowData> = {
-  master: Mastertype;
-  defaultValues: DefaultValuesType<RowData>;
+  inputFields: InputFields<RowData>;
   currentRow: RowData | null;
   dataDialogHook: {
     state: DataDialogState;
@@ -41,7 +40,7 @@ type DataTableBaseProps<RowData> = {
 };
 
 export function DataTableBase<RowData>(props: DataTableBaseProps<RowData>) {
-  const { master, defaultValues, dataDialogHook, isLoading, reload, currentRow, children } = props;
+  const { inputFields, dataDialogHook, isLoading, reload, currentRow, children } = props;
 
   // ダイアログを閉じる(input)
   const handleInputDialogClose = async () => {
@@ -53,8 +52,7 @@ export function DataTableBase<RowData>(props: DataTableBaseProps<RowData>) {
       <Spinner open={isLoading} />
       {children}
       <RowDataInputDialog<RowData>
-        defaultValues={defaultValues}
-        master={master}
+        inputFields={inputFields}
         open={dataDialogHook.state.inputOpen}
         onClose={handleInputDialogClose}
         data={dataDialogHook.state.mode === 'addData' ? null : currentRow}
