@@ -45,7 +45,7 @@ export function Authorize() {
           } else {
             snackberContext.dispatch({ type: 'error', message: t('common.msg.login-failed') }); //TODO:あとでtestが必要
           }
-          // urlにロケーションを設定
+          // ロケーションを取得
           let location = getTempLocation(); // sessionStrageからlocationを取得
           removeTempLocation(); // sessionStrageからlocationを削除
           if (!location || location === 'undefined') {
@@ -53,11 +53,19 @@ export function Authorize() {
             if (first.parsedBody) {
               location = first.parsedBody.url;
             } else {
-              throw new Error('Location is not registered.');
+              // throw new Error('Location is not registered.');
             }
           }
+          // urlを設定
+          let url = '';
+          if (!!location) {
+            url = `/${location}/main`;
+          } else {
+            // ロケーション設定が未だの場合
+            url = '/settings/location';
+          }
           setTimeout(() => {
-            window.location.replace(`/${location}/main`);
+            window.location.replace(url);
           }, 1500);
         }
       } catch (error) {

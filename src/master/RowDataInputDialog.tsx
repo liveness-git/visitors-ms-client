@@ -93,7 +93,6 @@ export function RowDataInputDialog<RowData>(props: RowDataInputDialogProps<RowDa
     handleSubmit,
     reset,
     setValue,
-    getValues,
     setError,
     formState: { isDirty, isSubmitting, dirtyFields },
   } = methods;
@@ -150,6 +149,14 @@ export function RowDataInputDialog<RowData>(props: RowDataInputDialogProps<RowDa
         await reload();
         onClose();
         snackberContext.dispatch({ type: 'success', message: t('common.msg.update-success') });
+        // ロール設定とロケーション設定は更新反映のためにログアウトを促す
+        if (inputFields.type === 'role' || inputFields.type === 'location') {
+          await new Promise(() =>
+            setTimeout(() => {
+              snackberContext.dispatch({ type: 'warning', message: t('common.msg.prompt-logout') });
+            }, 1500)
+          );
+        }
       } else {
         // エラー判定のセット
         if (result!.errors) {

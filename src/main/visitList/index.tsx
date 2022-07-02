@@ -31,9 +31,15 @@ export function VisitList() {
     <BaseTemplate>
       <Paper square>
         <Box p={2}>
-          <HeaderActions title={t('main.visitlist.title')} date={selectedDate} onDateChange={handleDateChange} dispatch={dataDialogDispatch} />
+          <HeaderActions
+            title={t('main.visitlist.title')}
+            subtitle={t('main.visitlist.subtitle')}
+            date={selectedDate}
+            onDateChange={handleDateChange}
+            dispatch={dataDialogDispatch}
+          />
         </Box>
-        <Box p={2}>
+        <Box px={2} pb={2}>
           <DataTable currentDate={selectedDate!} dataDialogHook={{ state: dataDialogState, dispatch: dataDialogDispatch }} />
         </Box>
       </Paper>

@@ -19,10 +19,10 @@ export function Routes() {
         <Route exact path="/:location/main" component={VisitList} />
         <Route exact path="/:location/main/byroom" component={ByRoom} />
         <Route exact path="/:location/front" component={Front} />
-        <Route exact path="/:location/settings/role" component={RoleSettings} />
-        <Route exact path="/:location/settings/location" component={LocationSettings} />
-        <Route exact path="/:location/settings/category" component={CategorySettings} />
-        <Route exact path="/:location/settings/room" component={RoomSettings} />
+        <Route exact path="/:location?/settings/role" component={RoleSettings} />
+        <Route exact path="/:location?/settings/location" component={LocationSettings} />
+        <Route exact path="/:location?/settings/category" component={CategorySettings} />
+        <Route exact path="/:location?/settings/room" component={RoomSettings} />
         {/*** リダイレクト ***/}
         <Redirect from="/" to="/login" />
       </Switch>

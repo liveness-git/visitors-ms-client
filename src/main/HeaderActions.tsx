@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 
-import { Button, Grid, makeStyles, Typography } from '@material-ui/core';
+import { Box, Button, Grid, makeStyles, Typography } from '@material-ui/core';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
 
 import MyCalendar from '_components/MyCalendar';
@@ -22,13 +22,14 @@ const useStyles = makeStyles(() => ({
 
 type HeaderActionsProps = {
   title: string;
+  subtitle?: string;
   date: Date | null;
   onDateChange: (date: Date | null) => void;
   dispatch: React.Dispatch<DataDialogAction>;
 };
 
 export function HeaderActions(props: HeaderActionsProps) {
-  const { title, date, onDateChange, dispatch } = props;
+  const { title, subtitle, date, onDateChange, dispatch } = props;
 
   const { t } = useTranslation();
   const classes = useStyles();
@@ -54,6 +55,7 @@ export function HeaderActions(props: HeaderActionsProps) {
             {t('main.header.add-event')}
           </Button>
         </Grid>
+        <Box pt={1}>{subtitle}</Box>
       </Grid>
     </>
   );

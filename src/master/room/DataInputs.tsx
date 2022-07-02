@@ -51,6 +51,7 @@ export function DataInputs({ locations, categories }: DataInputsProps) {
         required
         validation={{
           pattern: {
+            // eslint-disable-next-line no-useless-escape
             value: /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/,
             message: t('settings.form.room.error.email.pattern'),
           },

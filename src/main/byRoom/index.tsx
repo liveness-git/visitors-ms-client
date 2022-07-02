@@ -32,7 +32,13 @@ export function ByRoom() {
     <BaseTemplate>
       <Paper square>
         <Box p={2}>
-          <HeaderActions title={t('main.byroom.title')} date={selectedDate} onDateChange={handleDateChange} dispatch={dataDialogDispatch} />
+          <HeaderActions
+            title={t('main.byroom.title')}
+            subtitle={t('main.byroom.subtitle')}
+            date={selectedDate}
+            onDateChange={handleDateChange}
+            dispatch={dataDialogDispatch}
+          />
         </Box>
         <CategoryTabContext
           tabPanelContent={
