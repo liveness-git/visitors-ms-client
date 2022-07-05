@@ -75,7 +75,7 @@ export function RowDataFrontDialog(props: RowDataReadDialogProps) {
     }
   }, [data, open, reset]);
 
-  const timestamp = () => format(new Date(), 'yyyy/MM/dd hh:mm:ss', { locale: muiPickContext?.locale });
+  const timestamp = () => format(new Date(), 'yyyy/MM/dd HH:mm:ss', { locale: muiPickContext?.locale });
 
   // チェックインaction
   const handleCheckIn = () => {
