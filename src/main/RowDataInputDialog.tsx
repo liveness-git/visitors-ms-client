@@ -293,12 +293,22 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
     setHiddenRooms(false);
   };
 
-  // 検索ボタン活性化アクション
-  const handleDateTimeChange = () => {
+  // 検索ボタン活性化
+  const activeSearchButton = () => {
     if (getValues('mode') === 'upd') return; // 更新時、会議室変更は出来ないため非対応
     if (!hiddenRooms) {
       setHiddenRooms(true);
     }
+  };
+  // 開始日時の変更アクション
+  const handleStartTimeChange = () => {
+    const endTime = addMinutes(change5MinuteIntervals(getValues('startTime')), startTimeBufferMinute + endTimeBufferMinute);
+    setValue('endTime', endTime);
+    activeSearchButton();
+  };
+  // 終了日時の変更アクション
+  const handleEndTimeChange = () => {
+    activeSearchButton();
   };
 
   // 削除確認アクション
@@ -385,7 +395,7 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
                     control={control}
                     getValues={getValues}
                     label={t('visittable.header.event-start-time')}
-                    handleDateTimeChange={handleDateTimeChange}
+                    handleDateTimeChange={handleStartTimeChange}
                     errors={errors}
                   />
                 </Grid>
@@ -395,7 +405,7 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
                     control={control}
                     getValues={getValues}
                     label={t('visittable.header.event-end-time')}
-                    handleDateTimeChange={handleDateTimeChange}
+                    handleDateTimeChange={handleEndTimeChange}
                     errors={errors}
                   />
                 </Grid>
