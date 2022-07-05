@@ -6,7 +6,7 @@ import MaterialTable, { Column, MTableCell } from '@material-table/core';
 
 import BorderColorIcon from '@material-ui/icons/BorderColor';
 
-import { tableIcons } from '_utils/MaterialTableIcons';
+import { pageingOntions, tableIcons } from '_utils/MaterialTableIcons';
 import { useLoadData } from '_utils/useLoadData';
 
 import { DataDialogAction, DataDialogState, DataTableBase, RowDataType } from '../DataTableBase';
@@ -122,6 +122,7 @@ export function DataTable(props: DataTableProps) {
           headerStyle: { backgroundColor: tableTheme.palette.primary.light },
           tableLayout: 'fixed',
           // actionsColumnIndex: -1,
+          ...pageingOntions,
         }}
         icons={tableIcons}
       />

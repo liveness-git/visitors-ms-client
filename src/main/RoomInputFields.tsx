@@ -120,7 +120,7 @@ export function RoomInputFields(props: RoomInputFieldsProps) {
           />
         </Grid>
 
-        <Grid item xs={4}>
+        <Grid item xs={4} style={disabledVisitor ? { opacity: 0 } : undefined}>
           <Controller
             name={`resourcies.${roomId}.numberOfVisitor`}
             control={control}

@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 
 import MaterialTable, { MTableCell } from '@material-table/core';
 
-import { tableIcons } from '_utils/MaterialTableIcons';
+import { tableIcons, pageingOntions } from '_utils/MaterialTableIcons';
 import { useLoadData } from '_utils/useLoadData';
 
 import { LocationParams } from '_models/Location';
@@ -86,6 +86,7 @@ export function DataTable(props: DataTableProps) {
           search: false,
           headerStyle: { backgroundColor: tableTheme.palette.primary.light },
           tableLayout: 'fixed',
+          ...pageingOntions,
         }}
         icons={tableIcons}
       />

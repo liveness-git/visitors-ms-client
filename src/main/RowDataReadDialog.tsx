@@ -73,7 +73,7 @@ export function RowDataReadDialog(props: RowDataReadDialogProps) {
         return <RoomReadFields key={roomId} data={data.resourcies[roomId]} /*hiddenTeaSupply={data.isMSMultipleLocations}*/ />;
       })}
 
-      <Box p={2}>
+      <Box px={2} pt={2} style={data.usageRange === 'inside' ? { display: 'none' } : undefined}>
         <List disablePadding={true}>
           <li key="visit-company" className={classes.list}>
             <div className={classes.title}>{t('visittable.header.visit-company')}</div>
@@ -83,6 +83,11 @@ export function RowDataReadDialog(props: RowDataReadDialogProps) {
             <div className={classes.title}>{t('visittable.header.visitor-name')}</div>
             <div className={classes.field}>{data.visitorName}</div>
           </li>
+        </List>
+      </Box>
+
+      <Box p={2} pt={2}>
+        <List disablePadding={true}>
           <li key="comment" className={classes.list}>
             <div className={classes.title}>{t('visittable.header.comment')}</div>
             <div className={classes.field}>{data.comment}</div>

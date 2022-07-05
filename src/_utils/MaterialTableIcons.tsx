@@ -38,3 +38,13 @@ export const tableIcons: Icons = {
   ThirdStateCheck: forwardRef((props, ref) => <Remove {...props} ref={ref} />),
   ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />),
 };
+
+/**
+ * ページ設定共通用
+ */
+export const pageingOntions = {
+  paging: true,
+  pageSize: 10, // make initial page size
+  // emptyRowsWhenPaging: false, // To avoid of having empty rows
+  pageSizeOptions: [5, 10, 20, 50], // rows selection options
+};

@@ -376,17 +376,19 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
                 disabled={data?.isMSMultipleLocations}
               />
 
-              <ControllerTextField
-                name={'usageRange'}
-                control={control}
-                label={t('visittable.header.usage-range')}
-                required
-                selectList={nameOfUsageRangeForVisitor.map((value) => {
-                  return { label: t(`visitdialog.view.usage-range.${value}`), value: value };
-                })}
-                disabled={getValues('mode') === 'upd'}
-                errors={errors}
-              />
+              <Box py={1} style={!!data ? { display: 'none' } : undefined}>
+                <ControllerTextField
+                  name={'usageRange'}
+                  control={control}
+                  label={t('visittable.header.usage-range')}
+                  required
+                  selectList={nameOfUsageRangeForVisitor.map((value) => {
+                    return { label: t(`visitdialog.view.usage-range.${value}`), value: value };
+                  })}
+                  disabled={!!data}
+                  errors={errors}
+                />
+              </Box>
 
               <Grid container spacing={1}>
                 <Grid item xs={5}>

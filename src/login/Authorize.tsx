@@ -57,11 +57,9 @@ export function Authorize() {
             }
           }
           // urlを設定
-          let url = '';
-          if (!!location) {
-            url = `/${location}/main`;
-          } else {
-            // ロケーション設定が未だの場合
+          let url = `/${location}/main`;
+          // ロケーション設定が未だの場合
+          if (location === 'undefined') {
             url = '/settings/location';
           }
           setTimeout(() => {
