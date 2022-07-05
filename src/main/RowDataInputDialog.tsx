@@ -1,7 +1,7 @@
 import { useCallback, useContext, useEffect, useState } from 'react';
 import { useRouteMatch } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { SubmitHandler, useForm } from 'react-hook-form';
+import { SubmitHandler, useForm, useWatch } from 'react-hook-form';
 
 import { Box, Grid, Button, List } from '@material-ui/core';
 import { makeStyles, createStyles, createTheme, ThemeProvider } from '@material-ui/core/styles';
@@ -14,7 +14,7 @@ import { addMinutes } from 'date-fns';
 import _ from 'lodash';
 
 import { VisitorInfo, EventInputType, RoomInputType } from '_models/VisitorInfo';
-import { Room } from '_models/Room';
+import { nameOfUsageRangeForVisitor, Room } from '_models/Room';
 import { LocationParams } from '_models/Location';
 
 import { tableTheme, makeTableDialogStyle } from '_styles/TableTheme';
@@ -97,6 +97,7 @@ const getDefaultValues = (start?: Date, roomId?: string) => {
     visitCompany: '',
     visitorName: '',
     mailto: { authors: [], required: [], optional: [] },
+    usageRange: 'inside',
     resourcies: {
       [ADD_ROOM_KEY]: {
         roomForEdit: room,
@@ -155,6 +156,7 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
         visitCompany: data.visitCompany,
         visitorName: data.visitorName,
         mailto: data.mailto,
+        usageRange: data.usageRange,
         resourcies: Object.keys(data.resourcies).reduce((newObj, room) => {
           newObj[room] = {
             roomForEdit: room,
@@ -178,6 +180,9 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
   // 会議室コンポーネントの表示状態
   const [hiddenRooms, setHiddenRooms] = useState(false);
 
+  // 利用範囲選択を監視
+  const usageRangeWatch = useWatch({ control, name: 'usageRange' });
+
   // 空き会議室一覧の取得
   const defaultRoomsUrl = `/room/choices?location=${match.params.location}`;
   const [roomsUrl, setRoomsUrl] = useState(defaultRoomsUrl);
@@ -189,7 +194,11 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
       // 更新時、会議室変更は出来ないためデフォルト値
       setRoomsUrl(defaultRoomsUrl);
     } else {
-      setRoomsUrl(defaultRoomsUrl + `&start=${getValues('startTime').getTime()}&end=${getValues('endTime').getTime()}`);
+      setRoomsUrl(
+        defaultRoomsUrl +
+          `&start=${getValues('startTime').getTime()}&end=${getValues('endTime').getTime()}` +
+          `&usagerange=${getValues('usageRange')}`
+      );
     }
   }, [defaultRoomsUrl, getValues]);
 
@@ -198,7 +207,7 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
     if (open) {
       buildRoomsUrl();
     }
-  }, [buildRoomsUrl, open]);
+  }, [buildRoomsUrl, open, usageRangeWatch]); // 利用範囲変更時もリセット対象
 
   // 会議室コンポーネントの表示リセット
   useEffect(() => {
@@ -206,6 +215,22 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
   }, [open]);
 
   // ::空き会議室の制御関連 end --------------------------<
+
+  // 来訪情報の制御状態
+  const [disabledVisitor, setDisabledVisitor] = useState(false);
+
+  // 利用範囲のエフェクト（来訪情報の制御）
+  useEffect(() => {
+    // 社内会議
+    if (usageRangeWatch === 'inside') {
+      setValue('visitCompany', '');
+      setValue('visitorName', '');
+      setDisabledVisitor(true);
+    } else {
+      // 社外会議
+      setDisabledVisitor(false);
+    }
+  }, [setValue, usageRangeWatch]);
 
   // 保存アクション
   const handleSave = () => {
@@ -270,7 +295,7 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
 
   // 検索ボタン活性化アクション
   const handleDateTimeChange = () => {
-    if (getValues('mode') === 'upd') return; //TODO: 更新時、空き会議室検索は未対応
+    if (getValues('mode') === 'upd') return; // 更新時、会議室変更は出来ないため非対応
     if (!hiddenRooms) {
       setHiddenRooms(true);
     }
@@ -341,6 +366,18 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
                 disabled={data?.isMSMultipleLocations}
               />
 
+              <ControllerTextField
+                name={'usageRange'}
+                control={control}
+                label={t('visittable.header.usage-range')}
+                required
+                selectList={nameOfUsageRangeForVisitor.map((value) => {
+                  return { label: t(`visitdialog.view.usage-range.${value}`), value: value };
+                })}
+                disabled={getValues('mode') === 'upd'}
+                errors={errors}
+              />
+
               <Grid container spacing={1}>
                 <Grid item xs={5}>
                   <ControllerDateTimePicker
@@ -372,7 +409,16 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
 
             {!data ? (
               /* 新規作成 */
-              !hiddenRooms && <RoomInputFields control={control} setValue={setValue} rooms={rooms} roomId={ADD_ROOM_KEY} errors={errors} />
+              !hiddenRooms && (
+                <RoomInputFields
+                  control={control}
+                  setValue={setValue}
+                  rooms={rooms}
+                  roomId={ADD_ROOM_KEY}
+                  disabledVisitor={disabledVisitor}
+                  errors={errors}
+                />
+              )
             ) : (
               <>
                 {!data.isMSMultipleLocations ? (
@@ -384,6 +430,7 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
                       rooms={rooms}
                       roomId={Object.keys(data.resourcies)[0]}
                       disabledRoom={true}
+                      disabledVisitor={data.usageRange === 'inside'}
                       errors={errors}
                     />
                   )
@@ -398,9 +445,25 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
               </>
             )}
 
+            <Box p={2} style={disabledVisitor ? { display: 'none' } : undefined}>
+              <ControllerTextField
+                name="visitCompany"
+                control={control}
+                label={t('visittable.header.visit-company')}
+                required={!disabledVisitor}
+                disabled={disabledVisitor}
+                errors={errors}
+              />
+              <ControllerTextField
+                name="visitorName"
+                control={control}
+                label={t('visittable.header.visitor-name')}
+                disabled={disabledVisitor}
+                errors={errors}
+              />
+            </Box>
+
             <Box p={2}>
-              <ControllerTextField name="visitCompany" control={control} label={t('visittable.header.visit-company')} required errors={errors} />
-              <ControllerTextField name="visitorName" control={control} label={t('visittable.header.visitor-name')} errors={errors} />
               <ControllerTextField name="comment" control={control} label={t('visittable.header.comment')} multiline errors={errors} />
               <ControllerTextField name="contactAddr" control={control} label={t('visittable.header.contact-addr')} errors={errors} />
             </Box>

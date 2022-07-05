@@ -6,9 +6,10 @@ type ControllerTextFieldProps<TFieldValues extends FieldValues, TName extends Pa
   name: TName;
   control: Control<TFieldValues>;
   label: string;
-  required?: true;
+  required?: true | boolean;
   validation?: RegisterOptions;
-  multiline?: true;
+  multiline?: true | boolean;
+  disabled?: true | boolean;
   selectList?: SelectOption[];
   errors: DeepMap<DeepPartial<TFieldValues>, FieldError>;
 };
@@ -20,7 +21,7 @@ export type SelectOption = {
 export function ControllerTextField<TFieldValues extends FieldValues, TName extends Path<TFieldValues>>(
   props: ControllerTextFieldProps<TFieldValues, TName>
 ) {
-  const { name, control, label, required, selectList, multiline, validation, errors } = props;
+  const { name, control, label, required, selectList, multiline, disabled, validation, errors } = props;
 
   const { t } = useTranslation();
 
@@ -35,6 +36,7 @@ export function ControllerTextField<TFieldValues extends FieldValues, TName exte
         <TextField
           {...field}
           label={label}
+          disabled={disabled}
           multiline={multiline}
           select={!!selectList}
           error={!!errors[name]}

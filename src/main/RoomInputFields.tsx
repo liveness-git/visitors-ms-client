@@ -11,12 +11,13 @@ type RoomInputFieldsProps = {
   setValue: UseFormSetValue<Inputs>;
   rooms: Room[] | undefined;
   roomId: string;
+  disabledVisitor: boolean;
   disabledRoom?: boolean;
   errors: DeepMap<DeepPartial<Inputs>, FieldError>;
 };
 
 export function RoomInputFields(props: RoomInputFieldsProps) {
-  const { control, setValue, rooms, roomId, disabledRoom, errors } = props;
+  const { control, setValue, rooms, roomId, disabledVisitor, disabledRoom, errors } = props;
 
   const { t } = useTranslation();
 
@@ -53,6 +54,13 @@ export function RoomInputFields(props: RoomInputFieldsProps) {
     setDisabledTeaMember(!teaWatch);
   }, [teaWatch, setValue, roomId]);
 
+  // 利用範囲のエフェクト（来訪者数のリセット）
+  useEffect(() => {
+    if (disabledVisitor) {
+      setValue(`resourcies.${roomId}.numberOfVisitor`, 0);
+    }
+  }, [setValue, disabledVisitor, roomId]);
+
   // 多階層になっている場合の取得回避策
   const getNestedError = (name: string): FieldError => {
     return get(errors, `resourcies.${roomId}.${name}`) as FieldError;
@@ -71,7 +79,11 @@ export function RoomInputFields(props: RoomInputFieldsProps) {
       <Controller
         name={`resourcies.${roomId}.roomForEdit`}
         control={control}
-        rules={{ required: t('common.form.required') as string }}
+        rules={{
+          required: t('common.form.required') as string,
+          // 何らかの挙動で選択リストから消えた会議室を選択している場合のエラー処理
+          validate: (roomId) => (rooms!.some((room) => room.id === roomId) ? undefined : (t('visitdialog.form.error.room-not-covered') as string)),
+        }}
         render={({ field }) => (
           <TextField
             {...field}
@@ -92,7 +104,7 @@ export function RoomInputFields(props: RoomInputFieldsProps) {
         )}
       />
 
-      <Grid container spacing={1}>
+      <Grid container spacing={1} style={disabledTeaSupply ? { display: 'none' } : undefined}>
         <Grid item xs={4}>
           <FormControlLabel
             control={
@@ -118,7 +130,7 @@ export function RoomInputFields(props: RoomInputFieldsProps) {
                 type="number"
                 inputProps={{ min: 0, style: { textAlign: 'right' } }}
                 {...field}
-                disabled={disabledTeaMember}
+                disabled={disabledTeaMember || disabledVisitor}
                 label={t('visittable.header.number-of-visitor')}
                 error={!!getNestedError('numberOfVisitor')}
                 helperText={!!getNestedError('numberOfVisitor') && getNestedError('numberOfVisitor').message}

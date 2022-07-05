@@ -1,3 +1,4 @@
+import { UsageRangeForVisitor } from './Room';
 import { EmailAddress } from './User';
 
 // 一般/フロント 共通
@@ -5,6 +6,7 @@ export type VisitorInfo = {
   iCalUId: string;
   subject: string;
   visitorId: string;
+  usageRange: UsageRangeForVisitor;
   visitCompany: string;
   visitorName: string;
   mailto: { authors: EmailAddress[]; required: EmailAddress[]; optional: EmailAddress[] };
