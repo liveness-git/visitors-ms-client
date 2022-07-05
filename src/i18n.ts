@@ -19,7 +19,8 @@ i18n.use(initReactI18next).init({
     escapeValue: false,
   },
   react: {
-    wait: true,
+    // wait: true,
+    useSuspense: false,
   },
   resources: resources,
 });
