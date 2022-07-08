@@ -59,7 +59,7 @@ export function RowDataFrontDialog(props: RowDataReadDialogProps) {
     setValue,
     reset,
     formState: { errors, isSubmitting, dirtyFields },
-  } = useForm<Inputs>();
+  } = useForm<Inputs>({ reValidateMode: 'onSubmit' });
 
   // 入力フォームの初期化
   useEffect(() => {
@@ -80,13 +80,13 @@ export function RowDataFrontDialog(props: RowDataReadDialogProps) {
   // チェックインaction
   const handleCheckIn = () => {
     setValue('mode', 'checkin');
-    setValue('checkIn', timestamp());
+    setValue('checkIn', timestamp(), { shouldDirty: true });
     handleSubmit(onSubmit)();
   };
   // チェックアウトaction
   const handleCheckOut = () => {
     setValue('mode', 'checkout');
-    setValue('checkOut', timestamp());
+    setValue('checkOut', timestamp(), { shouldDirty: true });
     handleSubmit(onSubmit)();
   };
 

@@ -31,10 +31,10 @@ export function RoomInputFields(props: RoomInputFieldsProps) {
   useEffect(() => {
     if (!!roomWatch && !!rooms) {
       const result = rooms.some((room) => room.id === roomWatch && room.teaSupply);
-      if (!result) setValue(`resourcies.${roomId}.teaSupply`, false);
+      if (!result) setValue(`resourcies.${roomId}.teaSupply`, false, { shouldDirty: true });
       setDisabledTeaSupply(!result);
     } else {
-      setValue(`resourcies.${roomId}.teaSupply`, false);
+      setValue(`resourcies.${roomId}.teaSupply`, false, { shouldDirty: true });
       setDisabledTeaSupply(true);
     }
   }, [roomId, roomWatch, rooms, setValue]);
@@ -48,8 +48,8 @@ export function RoomInputFields(props: RoomInputFieldsProps) {
   // 給茶人数のエフェクト
   useEffect(() => {
     if (!teaWatch) {
-      setValue(`resourcies.${roomId}.numberOfVisitor`, 0);
-      setValue(`resourcies.${roomId}.numberOfEmployee`, 0);
+      setValue(`resourcies.${roomId}.numberOfVisitor`, 0, { shouldDirty: true });
+      setValue(`resourcies.${roomId}.numberOfEmployee`, 0, { shouldDirty: true });
     }
     setDisabledTeaMember(!teaWatch);
   }, [teaWatch, setValue, roomId]);
@@ -57,7 +57,7 @@ export function RoomInputFields(props: RoomInputFieldsProps) {
   // 利用範囲のエフェクト（来訪者数のリセット）
   useEffect(() => {
     if (disabledVisitor) {
-      setValue(`resourcies.${roomId}.numberOfVisitor`, 0);
+      setValue(`resourcies.${roomId}.numberOfVisitor`, 0, { shouldDirty: true });
     }
   }, [setValue, disabledVisitor, roomId]);
 

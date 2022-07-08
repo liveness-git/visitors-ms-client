@@ -14,7 +14,7 @@ import { addMinutes } from 'date-fns';
 import _ from 'lodash';
 
 import { VisitorInfo, EventInputType, RoomInputType } from '_models/VisitorInfo';
-import { nameOfUsageRangeForVisitor, Room } from '_models/Room';
+import { nameOfUsageRangeForVisitor, Room, UsageRangeForVisitor } from '_models/Room';
 import { LocationParams } from '_models/Location';
 
 import { tableTheme, makeTableDialogStyle } from '_styles/TableTheme';
@@ -83,12 +83,14 @@ export const ADD_ROOM_KEY = 'add-room-01';
 export type AddDefaultType = {
   start: Date;
   roomId: string;
+  usageRange: UsageRangeForVisitor;
 };
 
 // 入力フォームの初期値
-const getDefaultValues = (start?: Date, roomId?: string) => {
+const getDefaultValues = (start?: Date, roomId?: string, usage?: UsageRangeForVisitor) => {
   const startDate = start ? start : new Date();
   const room = roomId ? roomId : '';
+  const usageRange = usage ? usage : 'inside';
   return {
     mode: 'ins',
     iCalUId: '',
@@ -97,7 +99,7 @@ const getDefaultValues = (start?: Date, roomId?: string) => {
     visitCompany: '',
     visitorName: '',
     mailto: { authors: [], required: [], optional: [] },
-    usageRange: 'inside',
+    usageRange: usageRange,
     resourcies: {
       [ADD_ROOM_KEY]: {
         roomForEdit: room,
@@ -143,7 +145,7 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
     trigger,
     setError,
     formState: { errors, isDirty, isSubmitting, dirtyFields },
-  } = useForm<Inputs>({ defaultValues });
+  } = useForm<Inputs>({ defaultValues, reValidateMode: 'onSubmit' });
 
   // 入力フォームの初期化
   useEffect(() => {
@@ -172,7 +174,7 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
         endTime: new Date(data.endDateTime),
       });
     } else {
-      reset(_.cloneDeep(getDefaultValues(addDefault?.start, addDefault?.roomId)));
+      reset(_.cloneDeep(getDefaultValues(addDefault?.start, addDefault?.roomId, addDefault?.usageRange)));
     }
   }, [data, open, reset, addDefault]);
 
@@ -223,8 +225,8 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
   useEffect(() => {
     // 社内会議
     if (usageRangeWatch === 'inside') {
-      setValue('visitCompany', '');
-      setValue('visitorName', '');
+      setValue('visitCompany', '', { shouldDirty: true });
+      setValue('visitorName', '', { shouldDirty: true });
       setDisabledVisitor(true);
     } else {
       // 社外会議
@@ -303,7 +305,7 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
   // 開始日時の変更アクション
   const handleStartTimeChange = () => {
     const endTime = addMinutes(change5MinuteIntervals(getValues('startTime')), startTimeBufferMinute + endTimeBufferMinute);
-    setValue('endTime', endTime);
+    setValue('endTime', endTime, { shouldDirty: true });
     activeSearchButton();
   };
   // 終了日時の変更アクション

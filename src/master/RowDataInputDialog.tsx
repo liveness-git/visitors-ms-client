@@ -87,7 +87,7 @@ export function RowDataInputDialog<RowData>(props: RowDataInputDialogProps<RowDa
   const [delConfOpen, setDelConfOpen] = useState(false);
 
   // 入力フォームの登録
-  const methods = useForm({ defaultValues: { ...inputFields.defaultValues } });
+  const methods = useForm({ defaultValues: { ...inputFields.defaultValues }, reValidateMode: 'onSubmit' });
 
   const {
     handleSubmit,

@@ -1,5 +1,13 @@
 # visitors-ms client
 
+## 0.0.0.61-2022-07-08
+
+- β 版に向け、不具合修正と byRoomWeekly 対応に伴い既存部分改修。以下詳細
+- useForm の引数に{ reValidateMode: 'onSubmit' }を追加。
+- setValue の引数に{ shouldDirty: true }を追加。
+- front ビューの給茶。表示不具合修正。
+- byRoom の Timebar から新規作成時、usageRange を引き継げるよう改修。
+
 ## 0.0.0.60-2022-07-05
 
 - β 版に向け、最終テスト → 細かい修正

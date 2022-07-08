@@ -1,11 +1,14 @@
 import { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
+import { Tooltip, Typography } from '@material-ui/core';
 import { makeStyles, createStyles, withStyles } from '@material-ui/core/styles';
 
-import _ from 'lodash';
 import { differenceInMinutes, endOfDay, isAfter, isBefore, isSameDay, startOfDay } from 'date-fns';
+import _ from 'lodash';
 import clsx from 'clsx';
-import { Tooltip, Typography } from '@material-ui/core';
+
 import { Schedule, ScheduleItem } from '_models/Schedule';
+import { UsageRangeForVisitor } from '_models/Room';
+
 import { DataDialogAction, DataDialogState, RowDataType } from 'main/DataTableBase';
 
 type Point = {
@@ -250,7 +253,7 @@ export function TimeBar(props: TimeBarProps) {
   );
 
   // 新規作成ボタン(開始時間の指定あり)
-  const handleCreateClick = (event: React.MouseEvent<SVGRectElement, MouseEvent>, roomId: string) => {
+  const handleCreateClick = (event: React.MouseEvent<SVGRectElement, MouseEvent>, roomId: string, usageRange: UsageRangeForVisitor) => {
     const svg: SVGSVGElement | null = event.currentTarget.closest('svg');
     if (!svg) return;
 
@@ -266,7 +269,7 @@ export function TimeBar(props: TimeBarProps) {
     const time = Math.floor($time / 1000 / 60 / 30) * 1000 * 60 * 30; //TODO: Interval config化？
     const start = new Date(startOfDay(currentDate).getTime() + time);
 
-    dataDialogHook.dispatch({ type: 'addDataOpen', addDefault: { start: start, roomId: roomId } });
+    dataDialogHook.dispatch({ type: 'addDataOpen', addDefault: { start: start, roomId: roomId, usageRange: usageRange } });
   };
 
   // スケジュール枠の表示（不要レンダリングが起きるためメモ化）
@@ -307,7 +310,7 @@ export function TimeBar(props: TimeBarProps) {
               y={rectY}
               width={calcX(24, boxStyle.width)}
               height={rectHeight}
-              onClick={(e) => handleCreateClick(e, schedule.roomId)}
+              onClick={(e) => handleCreateClick(e, schedule.roomId, schedule.usageRange)}
             ></rect>
             {rectSchedules}
             {rectEvents}

@@ -24,6 +24,7 @@ export type Columns = {
   field: string;
   type?: string;
   cellStyle?: object | void;
+  render?: (rowData: FrontRowData) => any;
 };
 
 export type FrontRowData = RowDataType & VisitorInfoFront;
@@ -82,7 +83,16 @@ export function DataTable(props: DataTableProps) {
   const columns: Columns[] = [
     { title: t('visittable.header.appt-time'), field: 'apptTime' },
     { title: t('visittable.header.room-name'), field: 'roomName' },
-    { title: t('visittable.header.tea-supply'), field: 'teaSupply', type: 'boolean' },
+    {
+      title: t('visittable.header.tea-supply'),
+      field: 'teaSupply',
+      render: (rowData) => {
+        const roomId = Object.keys(rowData.resourcies)[0]; // TODO:複数会議室未対応
+        const strNumOfVisitor = `${t('visitdialog.view.tea-supply.number-of-visitor')}:${rowData.resourcies[roomId].numberOfVisitor}`;
+        const strNumOfEmployee = `${t('visitdialog.view.tea-supply.number-of-employee')}:${rowData.resourcies[roomId].numberOfEmployee}`;
+        return `${strNumOfVisitor}, ${strNumOfEmployee}`;
+      },
+    },
     { title: t('visittable.header.visit-company'), field: 'visitCompany' },
     { title: t('visittable.header.visitor-name'), field: 'visitorName' },
     { title: t('visittable.header.check-in'), field: 'checkIn', type: 'boolean' },

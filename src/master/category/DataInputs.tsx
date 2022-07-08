@@ -32,7 +32,7 @@ export function DataInputs() {
   useEffect(() => {
     setShowMembers(isLimitedPublic);
     if (!isLimitedPublic) {
-      setValue('members', []);
+      setValue('members', [], { shouldDirty: true });
     }
   }, [isLimitedPublic, setValue]);
 

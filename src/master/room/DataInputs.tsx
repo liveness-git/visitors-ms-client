@@ -34,7 +34,7 @@ export function DataInputs({ locations, categories }: DataInputsProps) {
   // 給茶選択のエフェクト
   useEffect(() => {
     if (typeWatch === 'free') {
-      setValue('teaSupply', false);
+      setValue('teaSupply', false, { shouldDirty: true });
       setDisabledTeaSupply(true);
     } else {
       setDisabledTeaSupply(false);

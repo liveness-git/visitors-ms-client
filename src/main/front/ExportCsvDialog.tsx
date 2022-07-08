@@ -104,7 +104,7 @@ export function ExportCsvDialog(props: ExportCsvDialogProps) {
   // 開始日の変更アクション
   const handleStartDateChange = () => {
     const endDate = addWeeks(getValues('startDate'), 1);
-    setValue('endDate', endDate);
+    setValue('endDate', endDate, { shouldDirty: true });
   };
 
   // CSV出力アクション
