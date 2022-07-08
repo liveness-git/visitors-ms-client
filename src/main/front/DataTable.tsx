@@ -34,11 +34,11 @@ type DataTableProps = {
     state: DataDialogState;
     dispatch: React.Dispatch<DataDialogAction>;
   };
-  category: string;
+  tabKey: string;
 };
 
 export function DataTable(props: DataTableProps) {
-  const { currentDate, dataDialogHook, category } = props;
+  const { currentDate, dataDialogHook, tabKey } = props;
 
   const { t } = useTranslation();
   const classes = useStyles();
@@ -46,7 +46,7 @@ export function DataTable(props: DataTableProps) {
 
   // データ取得
   const [{ data, isLoading, isError }, reload] = useLoadData<FrontRowData[]>(
-    `/front/visitlist?timestamp=${currentDate!.getTime()}&location=${match.params.location}&category=${category}`,
+    `/front/visitlist?timestamp=${currentDate!.getTime()}&location=${match.params.location}&category=${tabKey}`,
     []
   );
 

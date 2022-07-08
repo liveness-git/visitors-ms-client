@@ -42,7 +42,7 @@ export function ByRoom() {
         </Box>
         <CategoryTabContext
           tabPanelContent={
-            <DataTable currentDate={selectedDate!} dataDialogHook={{ state: dataDialogState, dispatch: dataDialogDispatch }} category="dummyId" />
+            <DataTable currentDate={selectedDate!} dataDialogHook={{ state: dataDialogState, dispatch: dataDialogDispatch }} tabKey="dummyId" />
           }
         />
       </Paper>
