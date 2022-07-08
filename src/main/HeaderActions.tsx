@@ -7,11 +7,6 @@ import MyCalendar from '_components/MyCalendar';
 import { DataDialogAction } from './DataTableBase';
 
 const useStyles = makeStyles(() => ({
-  datePickerArea: {},
-  actionButtonArea: {
-    textAlign: 'right',
-    margin: 'auto',
-  },
   datePicker: {
     margin: 'auto 0',
   },
@@ -26,10 +21,11 @@ type HeaderActionsProps = {
   date: Date | null;
   onDateChange: (date: Date | null) => void;
   dispatch: React.Dispatch<DataDialogAction>;
+  actionButtons?: React.ReactNode[];
 };
 
 export function HeaderActions(props: HeaderActionsProps) {
-  const { title, subtitle, date, onDateChange, dispatch } = props;
+  const { title, subtitle, date, onDateChange, dispatch, actionButtons } = props;
 
   const { t } = useTranslation();
   const classes = useStyles();
@@ -42,7 +38,7 @@ export function HeaderActions(props: HeaderActionsProps) {
   return (
     <>
       <Grid container alignItems="stretch" justifyContent="space-between">
-        <Grid container item xs={12} sm={9} className={classes.datePickerArea}>
+        <Grid container item xs={12} sm={!!actionButtons ? 6 : 9}>
           <Grid item className={classes.datePicker}>
             <MyCalendar label={t('main.header.picker-label')} date={date} onChange={onDateChange} />
           </Grid>
@@ -50,11 +46,23 @@ export function HeaderActions(props: HeaderActionsProps) {
             <Typography component="h5">{title}</Typography>
           </Grid>
         </Grid>
-        <Grid item xs={12} sm={3} className={classes.actionButtonArea}>
-          <Button variant="contained" color="secondary" startIcon={<AddCircleIcon />} onClick={handleCreateClick}>
-            {t('main.header.add-event')}
-          </Button>
+
+        <Grid container item justifyContent="flex-end" alignItems="center" spacing={2} xs={12} sm={!!actionButtons ? 6 : 3}>
+          {!!actionButtons &&
+            actionButtons.map((item, index) => {
+              return (
+                <Grid item key={`actionButtons-${index}`}>
+                  {item}
+                </Grid>
+              );
+            })}
+          <Grid item>
+            <Button variant="contained" color="secondary" startIcon={<AddCircleIcon />} onClick={handleCreateClick}>
+              {t('main.header.add-event')}
+            </Button>
+          </Grid>
         </Grid>
+
         <Box pt={1}>{subtitle}</Box>
       </Grid>
     </>

@@ -1,5 +1,6 @@
-export type PostDataResult<T> = {
+export type PostDataResult<T, U> = {
   success: boolean;
+  value?: U;
   errors?: { [P in keyof T]?: string[] };
 };
 

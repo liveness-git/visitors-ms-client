@@ -7,11 +7,11 @@ type FormDataType<T, U> = {
   dirtyFields: DeepMap<DeepPartial<U>, boolean>;
 };
 
-export async function fetchPostData<T, U>(url: string, formData: FormDataType<T, U>) {
-  let response: HttpResponse<PostDataResult<T>>;
+export async function fetchPostData<T, U, P>(url: string, formData: FormDataType<T, U>) {
+  let response: HttpResponse<PostDataResult<T, P>>;
   try {
     console.log('formData', formData); // TODO: debug
-    response = await post<PostDataResult<T>>(url, formData);
+    response = await post<PostDataResult<T, P>>(url, formData);
     console.log('response', response); // TODO: debug
 
     const result = response.parsedBody;
