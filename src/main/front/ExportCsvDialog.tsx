@@ -4,7 +4,6 @@ import { useRouteMatch } from 'react-router-dom';
 import { addWeeks, format, startOfDay } from 'date-fns';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { CSVLink } from 'react-csv';
-import i18next from 'i18next';
 import _ from 'lodash';
 
 import { Box, Button, Grid, makeStyles } from '@material-ui/core';
@@ -57,11 +56,6 @@ type CsvDataType = {
 };
 type CsvHeaderType = { label: string; key: keyof CsvDataType };
 
-// CSVヘッダー
-const headers: CsvHeaderType[] = nameOfCsvHeaders.map((value) => {
-  return { label: i18next.t(`export-csv.file.header.${_.kebabCase(value)}`), key: value };
-});
-
 type ExportCsvDialogProps = {
   open: boolean;
   onClose: () => void;
@@ -111,6 +105,11 @@ export function ExportCsvDialog(props: ExportCsvDialogProps) {
   const handleExportCsv = async () => {
     handleSubmit(onSubmit)();
   };
+
+  // CSVヘッダー
+  const headers: CsvHeaderType[] = nameOfCsvHeaders.map((value) => {
+    return { label: t(`export-csv.file.header.${_.kebabCase(value)}`), key: value };
+  });
 
   // CSVファイル名
   const filename = `visitor-${format(getValues('startDate'), 'yyyyMMdd')}-${format(getValues('endDate'), 'yyyyMMdd')}.csv`;
