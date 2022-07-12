@@ -25,7 +25,7 @@ export function MyTabContext<T extends TabModel>(props: MyTabContextProps<T>) {
   // タブリストの表示（不要レンダリングが起きるためメモ化）
   const tabList = useMemo(() => {
     return (
-      <TabList indicatorColor="primary" textColor="primary" variant="fullWidth" onChange={handleTabChange} aria-label="view tabs">
+      <TabList indicatorColor="primary" textColor="primary" variant="scrollable" onChange={handleTabChange} aria-label="view tabs">
         {data?.map((item, index) => (
           <Tab key={`tab-${index}`} label={item.name} value={`${index}`} />
         ))}

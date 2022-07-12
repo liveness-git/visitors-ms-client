@@ -1,4 +1,6 @@
-import { useCallback, useMemo, useState } from 'react';
+import { MuiPickersContext } from '@material-ui/pickers';
+import { format } from 'date-fns';
+import { useCallback, useContext, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRouteMatch } from 'react-router-dom';
 
@@ -29,10 +31,11 @@ export function DataTable(props: DataTableProps) {
 
   const { t } = useTranslation();
   const match = useRouteMatch<LocationParams>();
+  const muiPickContext = useContext(MuiPickersContext); // locale取得用
 
   // データ取得
   const [{ data, isLoading, isError }, reload] = useLoadData<TimeBarDataType>(
-    `/event/byroom?timestamp=${currentDate!.getTime()}&location=${match.params.location}&category=${tabKey}`,
+    `/event/byroom/weekly?timestamp=${currentDate!.getTime()}&location=${match.params.location}&room=${tabKey}`,
     undefined
   );
 
@@ -63,13 +66,13 @@ export function DataTable(props: DataTableProps) {
             schedule={schedule}
             events={data!.events.filter((_event, eIdx) => schedule.eventsIndex.some((num: number) => num === eIdx))}
             onClickCallback={handleDialogOpen}
-            keyLabel={schedule.roomName}
-            keyValue={schedule.roomEmail}
+            keyLabel={format(schedule.date, 'yyyy/MM/dd', { locale: muiPickContext?.locale })}
+            keyValue={schedule.date.toString()}
           ></TimeBar>
         ))}
       </>
     );
-  }, [data, dataDialogHook, handleDialogOpen]);
+  }, [data, dataDialogHook, handleDialogOpen, muiPickContext?.locale]);
 
   // データ取得失敗した場合
   if (isError) {

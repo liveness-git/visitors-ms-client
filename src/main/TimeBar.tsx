@@ -60,8 +60,6 @@ const timeToPoint = (time: Date, boxStyle: BoxStyle) => {
 const pointToTime = (point: number, boxStyle: BoxStyle) => {
   const offset = 0;
   return ((point + offset) / boxStyle.scale) * 60 * 1000;
-  // const timestamp = startOfDay(new Date()).getTime() + minutes * 60 * 1000;
-  // return new Date(timestamp);
 };
 
 const getBoxData = (item: ScheduleItem, boxStyle: BoxStyle, currentDate: Date): BoxData => {
@@ -166,7 +164,6 @@ const useStyles = makeStyles((theme) =>
 
 type TimeBarProps = {
   // rangesw: BoxStyle;
-  currentDate: Date;
   dataDialogHook: {
     state: DataDialogState;
     dispatch: React.Dispatch<DataDialogAction>;
@@ -174,10 +171,12 @@ type TimeBarProps = {
   schedule: Schedule;
   events: RowDataType[];
   onClickCallback: (rowData: RowDataType) => void;
+  keyLabel: string; //schedule.roomName
+  keyValue: string; //schedule.roomEmail
 };
 
 export function TimeBar(props: TimeBarProps) {
-  const { currentDate, dataDialogHook, schedule, events, onClickCallback } = props;
+  const { dataDialogHook, schedule, events, onClickCallback, keyLabel, keyValue } = props;
   const classes = useStyles();
 
   const [boxStyle, setBoxStyle] = useState(shortStyle);
@@ -197,11 +196,11 @@ export function TimeBar(props: TimeBarProps) {
 
   // スケジュール枠の作成
   const createScheduleBox = useCallback(
-    (item: ScheduleItem, index: number, roomEmail: string) => {
-      const boxData = getBoxData(item, boxStyle, currentDate);
+    (item: ScheduleItem, index: number, timestamp: number) => {
+      const boxData = getBoxData(item, boxStyle, new Date(timestamp));
       return (
         <rect
-          key={`${roomEmail}-sc-${index}`}
+          key={`${keyValue}-sc-${index}`}
           className={boxData.className}
           x={boxData.x}
           y={rectY}
@@ -212,14 +211,14 @@ export function TimeBar(props: TimeBarProps) {
         ></rect>
       );
     },
-    [boxStyle, rectHeight, rectY, currentDate]
+    [boxStyle, keyValue, rectY, rectHeight]
   );
 
   // イベント枠の作成 (textのoverflow:hiddenっぽくするためにsvgの入れ子で作成)
   const createEventBox = useCallback(
-    (event: RowDataType, index: number, roomEmail: string) => {
+    (event: RowDataType, index: number, timestamp: number) => {
       const item: ScheduleItem = { status: 'event', start: event.startDateTime, end: event.endDateTime };
-      const boxData = getBoxData(item, boxStyle, currentDate);
+      const boxData = getBoxData(item, boxStyle, new Date(timestamp));
       const x = boxData.x;
       const y = rectY;
       const width = boxData.width;
@@ -227,7 +226,7 @@ export function TimeBar(props: TimeBarProps) {
       const myEvent = event.isAttendees ? 'myOwn' : '';
       return (
         <HtmlTooltip
-          key={`${roomEmail}-ev-${index}`}
+          key={`${keyValue}-ev-${index}`}
           title={
             <>
               <Typography variant="body2">{event.subject}</Typography>
@@ -249,11 +248,16 @@ export function TimeBar(props: TimeBarProps) {
         </HtmlTooltip>
       );
     },
-    [boxStyle, onClickCallback, rectHeight, rectY, currentDate]
+    [boxStyle, rectY, rectHeight, keyValue, onClickCallback]
   );
 
   // 新規作成ボタン(開始時間の指定あり)
-  const handleCreateClick = (event: React.MouseEvent<SVGRectElement, MouseEvent>, roomId: string, usageRange: UsageRangeForVisitor) => {
+  const handleCreateClick = (
+    event: React.MouseEvent<SVGRectElement, MouseEvent>,
+    timestamp: number,
+    roomId: string,
+    usageRange: UsageRangeForVisitor
+  ) => {
     const svg: SVGSVGElement | null = event.currentTarget.closest('svg');
     if (!svg) return;
 
@@ -267,24 +271,24 @@ export function TimeBar(props: TimeBarProps) {
     const rectX = svgP.x - boxStyle.transform.x + viewWidthMargin;
     const $time = pointToTime(rectX, boxStyle);
     const time = Math.floor($time / 1000 / 60 / 30) * 1000 * 60 * 30; //TODO: Interval config化？
-    const start = new Date(startOfDay(currentDate).getTime() + time);
+    const start = new Date(startOfDay(timestamp).getTime() + time);
 
     dataDialogHook.dispatch({ type: 'addDataOpen', addDefault: { start: start, roomId: roomId, usageRange: usageRange } });
   };
 
   // スケジュール枠の表示（不要レンダリングが起きるためメモ化）
   const rectSchedules = useMemo(() => {
-    return <>{schedule.scheduleItems.map((item, index) => createScheduleBox(item, index, schedule.roomEmail))}</>;
+    return <>{schedule.scheduleItems.map((item, index) => createScheduleBox(item, index, schedule.date))}</>;
   }, [createScheduleBox, schedule]);
 
   // イベント枠の表示（不要レンダリングが起きるためメモ化）
   const rectEvents = useMemo(() => {
-    return <>{events.map((event, index) => createEventBox(event, index, schedule.roomEmail))}</>;
+    return <>{events.map((event, index) => createEventBox(event, index, schedule.date))}</>;
   }, [createEventBox, events, schedule]);
 
   return (
     <>
-      <Typography className={classes.title}>{schedule.roomName}</Typography>
+      <Typography className={classes.title}>{keyLabel}</Typography>
       <div className={classes.container}>
         <svg viewBox={viewBox} preserveAspectRatio="none">
           <g transform={transform}>
@@ -310,7 +314,7 @@ export function TimeBar(props: TimeBarProps) {
               y={rectY}
               width={calcX(24, boxStyle.width)}
               height={rectHeight}
-              onClick={(e) => handleCreateClick(e, schedule.roomId, schedule.usageRange)}
+              onClick={(e) => handleCreateClick(e, schedule.date, schedule.roomId, schedule.usageRange)}
             ></rect>
             {rectSchedules}
             {rectEvents}
