@@ -13,5 +13,5 @@ export function CategoryTabContext(props: CategoryTabContextProps) {
   // カテゴリ取得
   const [{ data }] = useLoadData<Category[]>(`/category/choices`, []);
 
-  return <MyTabContext data={data} tabPanelContent={tabPanelContent} selected={selected} />;
+  return <>{!!data?.length && <MyTabContext data={data} tabPanelContent={tabPanelContent} selected={selected} />}</>;
 }

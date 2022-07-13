@@ -14,22 +14,27 @@ import { RoomTabContext } from 'main/RoomTabContext';
 
 export type ByRoomState = {
   weekly: boolean;
-  tabKey: string;
+  changeTab: string | undefined;
   titleLabel: string;
   subtitleLabel: string;
 };
 
 export type ByRoomAction = {
   type: 'default' | 'weekly';
-  tabKey: string;
+  changeTab: string;
 };
 
 export const byRoomReducer = (state: ByRoomState, action: ByRoomAction) => {
   switch (action.type) {
     case 'default':
-      return { ...state, weekly: false, titleLabel: 'main.byroom.title', subtitleLabel: 'main.byroom.subtitle' };
+      return { weekly: false, changeTab: action.changeTab, titleLabel: 'main.byroom.title', subtitleLabel: 'main.byroom.subtitle' };
     case 'weekly':
-      return { ...state, weekly: true, titleLabel: 'main.byroom-weekly.title', subtitleLabel: 'main.byroom-weekly.subtitle' };
+      return {
+        weekly: true,
+        changeTab: action.changeTab,
+        titleLabel: 'main.byroom-weekly.title',
+        subtitleLabel: 'main.byroom-weekly.subtitle',
+      };
     default:
       return state;
   }
@@ -56,7 +61,7 @@ export function ByRoom() {
   // １週間表示切替えの状態管理
   const [byRoomState, byRoomDispatch] = useReducer(byRoomReducer, {
     weekly: false,
-    tabKey: 'dummyId',
+    changeTab: undefined,
     titleLabel: 'main.byroom.title',
     subtitleLabel: 'main.byroom.subtitle',
   });
@@ -64,15 +69,13 @@ export function ByRoom() {
   // デフォルト → １週間表示へ切替えアクション
   const handleDefaultClick = (timestamp: number, _categoryId: string, roomId: string) => {
     setSelectedDate(new Date(timestamp));
-    console.log('roomId: ', roomId);
-    byRoomDispatch({ type: 'weekly', tabKey: roomId });
+    byRoomDispatch({ type: 'weekly', changeTab: roomId });
   };
 
   // １週間 → デフォルト表示へ切替えアクション
   const handleWeeklyClick = (timestamp: number, categoryId: string, _roomId: string) => {
     setSelectedDate(new Date(timestamp));
-    console.log('categoryId: ', categoryId);
-    byRoomDispatch({ type: 'default', tabKey: categoryId });
+    byRoomDispatch({ type: 'default', changeTab: categoryId });
   };
 
   return (
@@ -95,11 +98,11 @@ export function ByRoom() {
                 <DataTable
                   currentDate={selectedDate!}
                   dataDialogHook={{ state: dataDialogState, dispatch: dataDialogDispatch }}
-                  tabKey={byRoomState.tabKey}
+                  tabKey="dummyId"
                   onTitleClick={handleDefaultClick}
                 />
               }
-              selected={byRoomState.tabKey}
+              selected={byRoomState.changeTab}
             />
           )
         }
@@ -111,11 +114,11 @@ export function ByRoom() {
                 <DataTableWeekly
                   currentDate={selectedDate!}
                   dataDialogHook={{ state: dataDialogState, dispatch: dataDialogDispatch }}
-                  tabKey={byRoomState.tabKey}
+                  tabKey="dummyId"
                   onTitleClick={handleWeeklyClick}
                 />
               }
-              selected={byRoomState.tabKey}
+              selected={byRoomState.changeTab}
               type="rooms"
             />
           )

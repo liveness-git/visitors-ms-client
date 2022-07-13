@@ -9,7 +9,7 @@ interface TabModel {
 }
 
 type MyTabContextProps<T extends TabModel> = {
-  data: Array<T> | undefined;
+  data: Array<T>;
   tabPanelContent: React.ReactElement;
   selected?: string;
 };
@@ -20,14 +20,14 @@ export function MyTabContext<T extends TabModel>(props: MyTabContextProps<T>) {
   // タブの状態
   const [tabValue, setTabValue] = useState('');
 
-  // // タブの自動選択
-  // useEffect(() => {
-  //   if (!!selected) {
-  //     setTabValue(selected);
-  //   } else if (!!data) {
-  //     setTabValue(data[0].id);
-  //   }
-  // }, [data, selected]);
+  // タブの自動選択
+  useEffect(() => {
+    if (!!selected) {
+      setTabValue(selected);
+    } else {
+      setTabValue(data[0].id);
+    }
+  }, [data, selected]);
 
   // タブ切り替えアクション
   const handleTabChange = (_event: React.ChangeEvent<{}>, newValue: string) => {

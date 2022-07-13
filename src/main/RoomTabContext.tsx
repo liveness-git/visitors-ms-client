@@ -22,5 +22,5 @@ export function RoomTabContext(props: RoomTabContextProps) {
   // カテゴリ取得
   const [{ data }] = useLoadData<Room[]>(`/room/choices?location=${match.params.location}${typeQuery}`, []);
 
-  return <MyTabContext data={data} tabPanelContent={tabPanelContent} selected={selected} />;
+  return <>{!!data?.length && <MyTabContext data={data} tabPanelContent={tabPanelContent} selected={selected} />}</>;
 }
