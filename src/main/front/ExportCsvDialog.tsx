@@ -123,7 +123,6 @@ export function ExportCsvDialog(props: ExportCsvDialogProps) {
       });
       if (result!.success) {
         if (!!result.value) {
-          console.log(result.value);
           const dataByCategory = result.value.map((rowData) => {
             const category = rowData.category;
             return rowData.data.map((item) => {

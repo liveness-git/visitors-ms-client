@@ -43,7 +43,7 @@ export function Authorize() {
           if (result.parsedBody.ok) {
             snackberContext.dispatch({ type: 'success', message: t('common.msg.login-success') });
           } else {
-            snackberContext.dispatch({ type: 'error', message: t('common.msg.login-failed') }); //TODO:あとでtestが必要
+            snackberContext.dispatch({ type: 'error', message: t('common.msg.login-failed') });
           }
           // ロケーションを取得
           let location = getTempLocation(); // sessionStrageからlocationを取得

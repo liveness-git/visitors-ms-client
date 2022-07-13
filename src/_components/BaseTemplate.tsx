@@ -237,7 +237,6 @@ const BaseTemplate = ({ children, adminMode, frontMode, menuOpen }: BaseTemplate
           saveUserInfo(JSON.stringify(user)); //sessionStrageにUser情報を格納
           dispatch({ type: 'signedIn', user: user });
         } else {
-          // TODO: ここに遷移することってある？？？
           removeUserInfo();
           dispatch({ type: 'signedOut' });
           console.log('Failed to retrieve email');
