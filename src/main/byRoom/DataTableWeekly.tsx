@@ -24,10 +24,11 @@ type DataTableProps = {
     dispatch: React.Dispatch<DataDialogAction>;
   };
   tabKey: string;
+  onTitleClick: (timestamp: number, categoryId: string, roomId: string) => void;
 };
 
-export function DataTable(props: DataTableProps) {
-  const { currentDate, dataDialogHook, tabKey } = props;
+export function DataTableWeekly(props: DataTableProps) {
+  const { currentDate, dataDialogHook, tabKey, onTitleClick } = props;
 
   const { t } = useTranslation();
   const match = useRouteMatch<LocationParams>();
@@ -60,19 +61,21 @@ export function DataTable(props: DataTableProps) {
     if (!data) return <></>;
     return (
       <>
-        {data.schedules.map((schedule) => (
+        {data.schedules.map((schedule, sIdx) => (
           <TimeBar
+            key={sIdx}
             dataDialogHook={dataDialogHook}
             schedule={schedule}
             events={data!.events.filter((_event, eIdx) => schedule.eventsIndex.some((num: number) => num === eIdx))}
             onClickCallback={handleDialogOpen}
             keyLabel={format(schedule.date, 'yyyy/MM/dd', { locale: muiPickContext?.locale })}
             keyValue={schedule.date.toString()}
+            onTitleClick={onTitleClick}
           ></TimeBar>
         ))}
       </>
     );
-  }, [data, dataDialogHook, handleDialogOpen, muiPickContext?.locale]);
+  }, [data, dataDialogHook, handleDialogOpen, muiPickContext?.locale, onTitleClick]);
 
   // データ取得失敗した場合
   if (isError) {

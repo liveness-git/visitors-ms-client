@@ -4,13 +4,14 @@ import { MyTabContext } from '_components/MyTabContext';
 
 type CategoryTabContextProps = {
   tabPanelContent: React.ReactElement;
+  selected?: string;
 };
 
 export function CategoryTabContext(props: CategoryTabContextProps) {
-  const { tabPanelContent } = props;
+  const { tabPanelContent, selected } = props;
 
   // カテゴリ取得
   const [{ data }] = useLoadData<Category[]>(`/category/choices`, []);
 
-  return <MyTabContext data={data} tabPanelContent={tabPanelContent} />;
+  return <MyTabContext data={data} tabPanelContent={tabPanelContent} selected={selected} />;
 }

@@ -1,5 +1,5 @@
 import { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
-import { Tooltip, Typography } from '@material-ui/core';
+import { Tooltip, Typography, Button } from '@material-ui/core';
 import { makeStyles, createStyles, withStyles } from '@material-ui/core/styles';
 
 import { differenceInMinutes, endOfDay, isAfter, isBefore, isSameDay, startOfDay } from 'date-fns';
@@ -108,6 +108,7 @@ const useStyles = makeStyles((theme) =>
     container: {
       display: 'flex',
       flexDirection: 'column',
+      marginBottom: '0.5rem',
       height: '5vmin',
       '& svg': {
         fontSize: '1.5rem',
@@ -158,6 +159,8 @@ const useStyles = makeStyles((theme) =>
     },
     title: {
       // color: theme.palette.grey[500],
+      fontSize: '1rem',
+      paddingBottom: 0,
     },
   })
 );
@@ -173,10 +176,11 @@ type TimeBarProps = {
   onClickCallback: (rowData: RowDataType) => void;
   keyLabel: string; //schedule.roomName
   keyValue: string; //schedule.roomEmail
+  onTitleClick: (timestamp: number, categoryId: string, roomId: string) => void;
 };
 
 export function TimeBar(props: TimeBarProps) {
-  const { dataDialogHook, schedule, events, onClickCallback, keyLabel, keyValue } = props;
+  const { dataDialogHook, schedule, events, onClickCallback, keyLabel, keyValue, onTitleClick } = props;
   const classes = useStyles();
 
   const [boxStyle, setBoxStyle] = useState(shortStyle);
@@ -288,7 +292,15 @@ export function TimeBar(props: TimeBarProps) {
 
   return (
     <>
-      <Typography className={classes.title}>{keyLabel}</Typography>
+      {/* <Typography className={classes.title}>{keyLabel}</Typography> */}
+      <Button
+        color="secondary"
+        className={classes.title}
+        size="small"
+        onClick={() => onTitleClick(schedule.date, schedule.categoryId, schedule.roomId)}
+      >
+        {keyLabel}
+      </Button>
       <div className={classes.container}>
         <svg viewBox={viewBox} preserveAspectRatio="none">
           <g transform={transform}>

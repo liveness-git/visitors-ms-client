@@ -1,4 +1,4 @@
-import { cloneElement, useMemo, useState } from 'react';
+import { cloneElement, useEffect, useMemo, useState } from 'react';
 
 import { AppBar, Tab } from '@material-ui/core';
 import { TabContext, TabList, TabPanel } from '@material-ui/lab';
@@ -11,13 +11,25 @@ interface TabModel {
 type MyTabContextProps<T extends TabModel> = {
   data: Array<T> | undefined;
   tabPanelContent: React.ReactElement;
+  selected?: string;
 };
 
 export function MyTabContext<T extends TabModel>(props: MyTabContextProps<T>) {
-  const { data, tabPanelContent } = props;
+  const { data, tabPanelContent, selected } = props;
 
-  // タブ切り替え
-  const [tabValue, setTabValue] = useState('0');
+  // タブの状態
+  const [tabValue, setTabValue] = useState('');
+
+  // // タブの自動選択
+  // useEffect(() => {
+  //   if (!!selected) {
+  //     setTabValue(selected);
+  //   } else if (!!data) {
+  //     setTabValue(data[0].id);
+  //   }
+  // }, [data, selected]);
+
+  // タブ切り替えアクション
   const handleTabChange = (_event: React.ChangeEvent<{}>, newValue: string) => {
     setTabValue(newValue);
   };
@@ -27,7 +39,7 @@ export function MyTabContext<T extends TabModel>(props: MyTabContextProps<T>) {
     return (
       <TabList indicatorColor="primary" textColor="primary" variant="scrollable" onChange={handleTabChange} aria-label="view tabs">
         {data?.map((item, index) => (
-          <Tab key={`tab-${index}`} label={item.name} value={`${index}`} />
+          <Tab key={`tab-${index}`} label={item.name} value={`${item.id}`} />
         ))}
       </TabList>
     );
@@ -39,7 +51,7 @@ export function MyTabContext<T extends TabModel>(props: MyTabContextProps<T>) {
       <>
         {data?.map((item, index) => {
           return (
-            <TabPanel key={`tab-panel-${index}`} value={`${index}`}>
+            <TabPanel key={`tab-panel-${index}`} value={`${item.id}`}>
               {cloneElement(tabPanelContent, { tabKey: item.id })}
             </TabPanel>
           );

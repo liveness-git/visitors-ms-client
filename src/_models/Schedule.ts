@@ -3,6 +3,7 @@ import { UsageRangeForVisitor } from './Room';
 // 一般/フロント 共通
 export type Schedule = {
   date: number;
+  categoryId: string;
   roomId: string;
   roomName: string;
   roomEmail: string;

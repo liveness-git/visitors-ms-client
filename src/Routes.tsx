@@ -4,7 +4,6 @@ import { SignIn } from 'login';
 import { AuthorizeWrapper } from 'login/Authorize';
 import { VisitList } from 'main/visitList';
 import { ByRoom } from 'main/byRoom';
-import { ByRoomWeekly } from 'main/byRoomWeekly';
 import { Front } from 'main/front';
 import { RoleSettings } from 'master/role';
 import { LocationSettings } from 'master/location';
@@ -19,7 +18,6 @@ export function Routes() {
         <Route exact path="/oauth/redirect" component={AuthorizeWrapper} />
         <Route exact path="/:location/main" component={VisitList} />
         <Route exact path="/:location/main/byroom" component={ByRoom} />
-        <Route exact path="/:location/main/byroom/weekly" component={ByRoomWeekly} />
         <Route exact path="/:location/front" component={Front} />
         <Route exact path="/:location?/settings/role" component={RoleSettings} />
         <Route exact path="/:location?/settings/location" component={LocationSettings} />
