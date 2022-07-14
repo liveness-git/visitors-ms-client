@@ -29,7 +29,7 @@ export type VisitorInfoReadOnly = {
   startDateTime: number;
   endDateTime: number;
   roomName: string; //表での表示用
-  roomStatus: string; // TODO:表での表示用
+  roomStatus: string; // TODO:複数会議室未対応 //表での表示用
   reservationName: string;
   isAuthor: boolean;
   isAttendees: boolean;
