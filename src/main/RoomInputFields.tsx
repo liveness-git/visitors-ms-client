@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Control, Controller, DeepMap, DeepPartial, FieldError, UseFormSetValue, useWatch } from 'react-hook-form';
-import { Box, FormControlLabel, Grid, Switch, TextField } from '@material-ui/core';
+import { Box, FormControlLabel, Grid, MenuItem, Switch, TextField } from '@material-ui/core';
 import { Room } from '_models/Room';
 import { Inputs } from './RowDataInputDialog';
 import { get } from 'lodash';
@@ -94,11 +94,11 @@ export function RoomInputFields(props: RoomInputFieldsProps) {
             helperText={!!getNestedError('roomForEdit') && getNestedError('roomForEdit').message}
           >
             {rooms!.map((option) => (
-              <option key={option.id} value={option.id}>
+              <MenuItem key={option.id} value={option.id}>
                 {option.name} {'<'}
                 {option.email}
                 {'>'}
-              </option>
+              </MenuItem>
             ))}
           </TextField>
         )}

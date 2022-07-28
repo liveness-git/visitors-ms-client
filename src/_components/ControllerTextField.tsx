@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { TextField } from '@material-ui/core';
+import { MenuItem, TextField } from '@material-ui/core';
 import { Control, Controller, DeepMap, DeepPartial, FieldError, FieldValues, Path, RegisterOptions } from 'react-hook-form';
 
 type ControllerTextFieldProps<TFieldValues extends FieldValues, TName extends Path<TFieldValues>> = {
@@ -44,9 +44,9 @@ export function ControllerTextField<TFieldValues extends FieldValues, TName exte
         >
           {!!selectList &&
             selectList.map((option, index) => (
-              <option key={`${name}-${index}`} value={option.value}>
+              <MenuItem key={`${name}-${index}`} value={option.value}>
                 {option.label}
-              </option>
+              </MenuItem>
             ))}
         </TextField>
       )}

@@ -1,5 +1,10 @@
 # visitors-ms client
 
+## 0.0.0.63-2022-07-28
+
+- byRoomWeekly の日付表示に曜日を追加。
+- セレクトボックスの option タグ → MenuItem タグに変更。
+
 ## 0.0.0.62-2022-07-12
 
 - byRoomWeekly の機能追加(タイトルリンク未実装)
