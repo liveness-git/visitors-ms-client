@@ -24,7 +24,7 @@ export function Routes() {
         <Route exact path="/:location?/settings/category" component={CategorySettings} />
         <Route exact path="/:location?/settings/room" component={RoomSettings} />
         {/*** リダイレクト ***/}
-        <Redirect from="/" to="/login" />
+        <Redirect from="/:location?/" to="/:location?/login" />
       </Switch>
     </BrowserRouter>
   );
