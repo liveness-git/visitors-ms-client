@@ -8,7 +8,7 @@ export type Schedule = {
   roomName: string;
   roomEmail: string;
   usageRange: UsageRangeForVisitor;
-  scheduleItems: ScheduleItem[];
+  scheduleItems: ScheduleItem[][];
   eventsIndex: number[];
 };
 export type ScheduleItem = {

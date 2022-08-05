@@ -21,8 +21,8 @@ export function useLoadData<T>(url: string, initialData: T | undefined) {
     setIsLoading(true);
     try {
       const result = await get<T>(url);
-      // console.log(url); // TODO: debug
-      // console.log(result.parsedBody); // TODO: debug
+      console.log(url); // TODO: debug
+      console.log(result.parsedBody); // TODO: debug
       if (result.parsedBody) setData(result.parsedBody);
     } catch (error) {
       setIsError(true);

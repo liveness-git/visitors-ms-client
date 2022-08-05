@@ -119,7 +119,7 @@ export function ByRoom() {
                 />
               }
               selected={byRoomState.changeTab}
-              type="rooms"
+              // type="rooms"
             />
           )
         }

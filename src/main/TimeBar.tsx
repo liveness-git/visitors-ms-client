@@ -48,7 +48,6 @@ const viewWidth = 60 * 24;
 const viewHeight = 70;
 const viewWidthMargin = 1; // lineの一番両端が身切れして他のlineより細くなる現象を避けるため
 const viewWidthWrap = viewWidth + viewWidthMargin * 2;
-const viewBox = `0 0 ${viewWidthWrap} ${viewHeight}`;
 const fontHeight = 30;
 const fontMargin = 5;
 
@@ -109,7 +108,7 @@ const useStyles = makeStyles((theme) =>
       display: 'flex',
       flexDirection: 'column',
       marginBottom: '0.5rem',
-      height: '5vmin',
+      // height: '5vmin',
       '& svg': {
         fontSize: '1.5rem',
         '& line': {
@@ -197,17 +196,18 @@ export function TimeBar(props: TimeBarProps) {
   const hRatio = 1;
   const rectY = fontHeight + (viewHeight - fontHeight) * (1 - hRatio) + 1;
   const rectHeight = (viewHeight - fontHeight) * hRatio - 1;
+  const viewHeightDup = schedule.scheduleItems.length ? viewHeight + rectHeight * (schedule.scheduleItems.length - 1) : viewHeight;
 
   // スケジュール枠の作成
   const createScheduleBox = useCallback(
-    (item: ScheduleItem, index: number, timestamp: number) => {
+    (item: ScheduleItem, index: number, timestamp: number, rowIndex: number) => {
       const boxData = getBoxData(item, boxStyle, new Date(timestamp));
       return (
         <rect
           key={`${keyValue}-sc-${index}`}
           className={boxData.className}
           x={boxData.x}
-          y={rectY}
+          y={rectY + rectHeight * rowIndex}
           width={boxData.width}
           height={rectHeight}
           rx={3}
@@ -282,7 +282,7 @@ export function TimeBar(props: TimeBarProps) {
 
   // スケジュール枠の表示（不要レンダリングが起きるためメモ化）
   const rectSchedules = useMemo(() => {
-    return <>{schedule.scheduleItems.map((item, index) => createScheduleBox(item, index, schedule.date))}</>;
+    return <>{schedule.scheduleItems.map((row, rowIndex) => row.map((item, index) => createScheduleBox(item, index, schedule.date, rowIndex)))}</>;
   }, [createScheduleBox, schedule]);
 
   // イベント枠の表示（不要レンダリングが起きるためメモ化）
@@ -302,18 +302,18 @@ export function TimeBar(props: TimeBarProps) {
         {keyLabel}
       </Button>
       <div className={classes.container}>
-        <svg viewBox={viewBox} preserveAspectRatio="none">
+        <svg viewBox={`0 0 ${viewWidthWrap} ${viewHeightDup}`} preserveAspectRatio="none">
           <g transform={transform}>
-            <line className="hour-line" x1={0} y1={0} x2={0} y2={viewHeight}></line>
-            <line className="hour-half-line" x1={boxStyle.halfWidth} y1={fontHeight} x2={boxStyle.halfWidth} y2={viewHeight}></line>
+            <line className="hour-line" x1={0} y1={0} x2={0} y2={viewHeightDup}></line>
+            <line className="hour-half-line" x1={boxStyle.halfWidth} y1={fontHeight} x2={boxStyle.halfWidth} y2={viewHeightDup}></line>
             {_.range(0, 24).map(($) => {
               const x = calcX($, boxStyle.width);
               const minX = x + boxStyle.halfWidth;
               const fontX = $ * boxStyle.width + fontMargin;
               return (
                 <Fragment key={`fragment-${$}`}>
-                  <line key={`hour-line-${$}`} className="hour-line" x1={x} y1={0} x2={x} y2={viewHeight}></line>
-                  <line key={`hour-half-line-${$}`} className="hour-half-line" x1={minX} y1={fontHeight} x2={minX} y2={viewHeight}></line>
+                  <line key={`hour-line-${$}`} className="hour-line" x1={x} y1={0} x2={x} y2={viewHeightDup}></line>
+                  <line key={`hour-half-line-${$}`} className="hour-half-line" x1={minX} y1={fontHeight} x2={minX} y2={viewHeightDup}></line>
                   <text key={`hour-text-${$}`} x={fontX} y={fontHeight - 5}>
                     {$}
                   </text>
@@ -325,7 +325,7 @@ export function TimeBar(props: TimeBarProps) {
               x={0}
               y={rectY}
               width={calcX(24, boxStyle.width)}
-              height={rectHeight}
+              height={viewHeightDup - rectY}
               onClick={(e) => handleCreateClick(e, schedule.date, schedule.roomId, schedule.usageRange)}
             ></rect>
             {rectSchedules}
