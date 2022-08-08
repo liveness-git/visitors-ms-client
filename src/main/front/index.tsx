@@ -5,6 +5,7 @@ import { Box, Button, Paper } from '@material-ui/core';
 import ArchiveOutlinedIcon from '@material-ui/icons/ArchiveOutlined';
 
 import BaseTemplate from '../../_components/BaseTemplate';
+import { useSelectedDate } from '_utils/useSelectedDate';
 
 import { DataTable } from './DataTable';
 import { ExportCsvDialog } from './ExportCsvDialog';
@@ -16,7 +17,7 @@ export function Front() {
   const { t } = useTranslation();
 
   // カレンダー選択日の状態
-  const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
+  const [selectedDate, setSelectedDate] = useSelectedDate();
   const handleDateChange = (date: Date | null) => {
     setSelectedDate(date);
   };

@@ -29,7 +29,7 @@ import ExpandMore from '@material-ui/icons/ExpandMore';
 import RefreshIcon from '@material-ui/icons/Refresh';
 
 import { get } from '_utils/Http';
-import { getUserInfo, removeUserInfo, saveUserInfo } from '_utils/SessionStrage';
+import { getUserInfo, removeSessionStrage, saveUserInfo, setReloadStateFlg } from '_utils/SessionStrage';
 
 import { Copyright } from './Copyright';
 import { MySnackberProvider } from './MySnackbarContext';
@@ -191,7 +191,7 @@ const BaseTemplate = ({ children, adminMode, frontMode, menuOpen }: BaseTemplate
     try {
       const result = await get<string | undefined>('/oauth/signout');
       if (result.ok) {
-        removeUserInfo(); //sessionStrageからUser情報を削除
+        removeSessionStrage(); //sessionStrageから情報を削除
         window.location.href = '/login';
       }
     } catch (error) {
@@ -237,20 +237,21 @@ const BaseTemplate = ({ children, adminMode, frontMode, menuOpen }: BaseTemplate
           saveUserInfo(JSON.stringify(user)); //sessionStrageにUser情報を格納
           dispatch({ type: 'signedIn', user: user });
         } else {
-          removeUserInfo();
+          removeSessionStrage();
           dispatch({ type: 'signedOut' });
           console.log('Failed to retrieve email');
         }
       }
     } catch (error) {
       // serverのpoliciesで弾かれた場合、ここへ遷移
-      removeUserInfo();
+      removeSessionStrage();
       window.location.href = '/login';
     }
   }, []);
 
   // 画面リフレッシュ
   const refreshPage = () => {
+    setReloadStateFlg(); // リフレッシュ後にstateを復元できるようフラグをONにする
     window.location.reload();
   };
 
