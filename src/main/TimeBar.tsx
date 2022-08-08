@@ -171,7 +171,7 @@ type TimeBarProps = {
     dispatch: React.Dispatch<DataDialogAction>;
   };
   schedule: Schedule;
-  events: RowDataType[];
+  events: RowDataType[][];
   onClickCallback: (rowData: RowDataType) => void;
   keyLabel: string; //schedule.roomName
   keyValue: string; //schedule.roomEmail
@@ -196,7 +196,7 @@ export function TimeBar(props: TimeBarProps) {
   const hRatio = 1;
   const rectY = fontHeight + (viewHeight - fontHeight) * (1 - hRatio) + 1;
   const rectHeight = (viewHeight - fontHeight) * hRatio - 1;
-  const viewHeightDup = schedule.scheduleItems.length ? viewHeight + rectHeight * (schedule.scheduleItems.length - 1) : viewHeight;
+  const viewHeightDup = schedule.type === 'free' ? viewHeight + rectHeight * (schedule.scheduleItems.length - 1) + rectHeight : viewHeight;
 
   // スケジュール枠の作成
   const createScheduleBox = useCallback(
@@ -220,11 +220,11 @@ export function TimeBar(props: TimeBarProps) {
 
   // イベント枠の作成 (textのoverflow:hiddenっぽくするためにsvgの入れ子で作成)
   const createEventBox = useCallback(
-    (event: RowDataType, index: number, timestamp: number) => {
+    (event: RowDataType, index: number, timestamp: number, rowIndex: number) => {
       const item: ScheduleItem = { status: 'event', start: event.startDateTime, end: event.endDateTime };
       const boxData = getBoxData(item, boxStyle, new Date(timestamp));
       const x = boxData.x;
-      const y = rectY;
+      const y = rectY + rectHeight * rowIndex;
       const width = boxData.width;
       const height = rectHeight;
       const myEvent = event.isAttendees ? 'myOwn' : '';
@@ -287,7 +287,7 @@ export function TimeBar(props: TimeBarProps) {
 
   // イベント枠の表示（不要レンダリングが起きるためメモ化）
   const rectEvents = useMemo(() => {
-    return <>{events.map((event, index) => createEventBox(event, index, schedule.date))}</>;
+    return <>{events.map((row, rowIndex) => row.map((event, index) => createEventBox(event, index, schedule.date, rowIndex)))}</>;
   }, [createEventBox, events, schedule]);
 
   return (

@@ -66,7 +66,7 @@ export function DataTableWeekly(props: DataTableProps) {
             key={sIdx}
             dataDialogHook={dataDialogHook}
             schedule={schedule}
-            events={data!.events.filter((_event, eIdx) => schedule.eventsIndex.some((num: number) => num === eIdx))}
+            events={schedule.eventsIndex.map((row) => row.map((eventIndex) => data!.events[eventIndex]))}
             onClickCallback={handleDialogOpen}
             keyLabel={format(schedule.date, 'yyyy/MM/dd (E)', { locale: muiPickContext?.locale })}
             keyValue={schedule.date.toString()}
