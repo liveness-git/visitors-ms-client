@@ -17,6 +17,10 @@ type MyTabContextProps<T extends TabModel> = {
 export function MyTabContext<T extends TabModel>(props: MyTabContextProps<T>) {
   const { data, tabPanelContent, selected } = props;
 
+  // タブパネルとタブリストの描画が揃ってから表示するための制御
+  const [activateTab, setActivateTab] = useState(false);
+  useEffect(() => setActivateTab(true), []);
+
   // タブの状態
   const [tabValue, setTabValue] = useState('');
 
@@ -59,6 +63,10 @@ export function MyTabContext<T extends TabModel>(props: MyTabContextProps<T>) {
       </>
     );
   }, [data, tabPanelContent]);
+
+  if (!activateTab) {
+    return <></>;
+  }
 
   return (
     <TabContext value={tabValue}>
