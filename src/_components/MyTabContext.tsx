@@ -3,6 +3,8 @@ import { cloneElement, useEffect, useMemo, useState } from 'react';
 import { AppBar, Tab } from '@material-ui/core';
 import { TabContext, TabList, TabPanel } from '@material-ui/lab';
 
+import { getReloadStateFlg, saveReloadState } from '_utils/SessionStrage';
+
 interface TabModel {
   id: string;
   name: string;
@@ -32,6 +34,15 @@ export function MyTabContext<T extends TabModel>(props: MyTabContextProps<T>) {
       setTabValue(data[0].id);
     }
   }, [data, selected]);
+
+  // ================================
+  // ReloadStateStrageの設定
+  useEffect(() => {
+    if (!getReloadStateFlg()) {
+      saveReloadState('tabValue', tabValue);
+    }
+  }, [tabValue]);
+  // ================================
 
   // タブ切り替えアクション
   const handleTabChange = (_event: React.ChangeEvent<{}>, newValue: string) => {

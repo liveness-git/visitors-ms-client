@@ -1,4 +1,4 @@
-import { useReducer, useState } from 'react';
+import { useEffect, useReducer, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { Box, Button, Paper } from '@material-ui/core';
@@ -6,6 +6,7 @@ import ArchiveOutlinedIcon from '@material-ui/icons/ArchiveOutlined';
 
 import BaseTemplate from '../../_components/BaseTemplate';
 import { useSelectedDate } from '_utils/useSelectedDate';
+import { getReloadState, getReloadStateFlg, removeReloadStateFlg } from '_utils/SessionStrage';
 
 import { DataTable } from './DataTable';
 import { ExportCsvDialog } from './ExportCsvDialog';
@@ -33,6 +34,21 @@ export function Front() {
 
   //  CSV出力ダイアログの状態
   const [exportCsvOpen, setExportCsvOpen] = useState(false);
+
+  // reload用にtabの状態を一時的に保持
+  const [changeTab, setChangeTab] = useState('');
+
+  // ================================
+  // refreshボタンによるreload
+  useEffect(() => {
+    if (!!getReloadStateFlg()) {
+      setSelectedDate(new Date(Number(getReloadState('selectedDate'))));
+      setChangeTab(getReloadState('tabValue'));
+      removeReloadStateFlg();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  // ================================
 
   //  CSV出力クリックアクション
   const handleExporCsvClick = () => {
@@ -66,6 +82,7 @@ export function Front() {
           tabPanelContent={
             <DataTable currentDate={selectedDate!} dataDialogHook={{ state: dataDialogState, dispatch: dataDialogDispatch }} tabKey="dummyId" />
           }
+          selected={changeTab ? changeTab : undefined}
         />
       </Paper>
       <ExportCsvDialog open={exportCsvOpen} onClose={handleExporCsvClose} />

@@ -29,7 +29,7 @@ import ExpandMore from '@material-ui/icons/ExpandMore';
 import RefreshIcon from '@material-ui/icons/Refresh';
 
 import { get } from '_utils/Http';
-import { getUserInfo, removeSessionStrage, saveUserInfo, setReloadStateFlg } from '_utils/SessionStrage';
+import { getReloadStateFlg, getUserInfo, initReloadState, removeSessionStrage, saveUserInfo, setReloadStateFlg } from '_utils/SessionStrage';
 
 import { Copyright } from './Copyright';
 import { MySnackberProvider } from './MySnackbarContext';
@@ -258,6 +258,13 @@ const BaseTemplate = ({ children, adminMode, frontMode, menuOpen }: BaseTemplate
   useEffect(() => {
     checkAuth();
   }, [checkAuth]);
+
+  // ================================
+  // ReloadStateStrageの初期化
+  useEffect(() => {
+    if (!getReloadStateFlg()) initReloadState();
+  }, []);
+  // ================================
 
   // 権限制御をつけてchildrenを表示する
   let conditionalChildren = children;
