@@ -20,7 +20,7 @@ import Collapse from '@material-ui/core/Collapse';
 import { ListItemText, Menu, MenuItem, Tooltip } from '@material-ui/core';
 import { AccountCircle } from '@material-ui/icons';
 import MenuIcon from '@material-ui/icons/Menu';
-import EditIcon from '@material-ui/icons/Edit';
+import FaceIcon from '@material-ui/icons/Face';
 import MeetingRoomIcon from '@material-ui/icons/MeetingRoom';
 import PeopleIcon from '@material-ui/icons/People';
 import SettingsIcon from '@material-ui/icons/Settings';
@@ -295,7 +295,7 @@ const BaseTemplate = ({ children, adminMode, frontMode, menuOpen }: BaseTemplate
               <MenuIcon />
             </IconButton>
             <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
-              Visitors for Microsoft
+              LIVENESS Visitors for Microsoft
             </Typography>
             <div>
               <MyLocation></MyLocation>
@@ -349,7 +349,7 @@ const BaseTemplate = ({ children, adminMode, frontMode, menuOpen }: BaseTemplate
               <ListItem button>
                 <Tooltip title={t('main.menu.created-visit-info') as string}>
                   <ListItemIcon>
-                    <EditIcon />
+                    <FaceIcon />
                   </ListItemIcon>
                 </Tooltip>
                 <ListItemText primary={t('main.menu.created-visit-info')} />
