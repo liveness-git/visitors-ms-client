@@ -90,7 +90,7 @@ export type AddDefaultType = {
 const getDefaultValues = (start?: Date, roomId?: string, usage?: UsageRangeForVisitor) => {
   const startDate = start ? start : new Date();
   const room = roomId ? roomId : '';
-  const usageRange = usage ? usage : 'inside';
+  const usageRange = usage ? usage : 'outside';
   return {
     mode: 'ins',
     iCalUId: '',

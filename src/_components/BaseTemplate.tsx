@@ -20,7 +20,7 @@ import Collapse from '@material-ui/core/Collapse';
 import { ListItemText, Menu, MenuItem, Tooltip } from '@material-ui/core';
 import { AccountCircle } from '@material-ui/icons';
 import MenuIcon from '@material-ui/icons/Menu';
-import EditIcon from '@material-ui/icons/Edit';
+import FaceIcon from '@material-ui/icons/Face';
 import MeetingRoomIcon from '@material-ui/icons/MeetingRoom';
 import PeopleIcon from '@material-ui/icons/People';
 import SettingsIcon from '@material-ui/icons/Settings';
@@ -29,7 +29,7 @@ import ExpandMore from '@material-ui/icons/ExpandMore';
 import RefreshIcon from '@material-ui/icons/Refresh';
 
 import { get } from '_utils/Http';
-import { getUserInfo, removeUserInfo, saveUserInfo } from '_utils/SessionStrage';
+import { getReloadStateFlg, getUserInfo, initReloadState, removeSessionStrage, saveUserInfo, setReloadStateFlg } from '_utils/SessionStrage';
 
 import { Copyright } from './Copyright';
 import { MySnackberProvider } from './MySnackbarContext';
@@ -191,7 +191,7 @@ const BaseTemplate = ({ children, adminMode, frontMode, menuOpen }: BaseTemplate
     try {
       const result = await get<string | undefined>('/oauth/signout');
       if (result.ok) {
-        removeUserInfo(); //sessionStrageからUser情報を削除
+        removeSessionStrage(); //sessionStrageから情報を削除
         window.location.href = '/login';
       }
     } catch (error) {
@@ -237,26 +237,34 @@ const BaseTemplate = ({ children, adminMode, frontMode, menuOpen }: BaseTemplate
           saveUserInfo(JSON.stringify(user)); //sessionStrageにUser情報を格納
           dispatch({ type: 'signedIn', user: user });
         } else {
-          removeUserInfo();
+          removeSessionStrage();
           dispatch({ type: 'signedOut' });
           console.log('Failed to retrieve email');
         }
       }
     } catch (error) {
       // serverのpoliciesで弾かれた場合、ここへ遷移
-      removeUserInfo();
+      removeSessionStrage();
       window.location.href = '/login';
     }
   }, []);
 
   // 画面リフレッシュ
   const refreshPage = () => {
+    setReloadStateFlg(); // リフレッシュ後にstateを復元できるようフラグをONにする
     window.location.reload();
   };
 
   useEffect(() => {
     checkAuth();
   }, [checkAuth]);
+
+  // ================================
+  // ReloadStateStrageの初期化
+  useEffect(() => {
+    if (!getReloadStateFlg()) initReloadState();
+  }, []);
+  // ================================
 
   // 権限制御をつけてchildrenを表示する
   let conditionalChildren = children;
@@ -287,7 +295,7 @@ const BaseTemplate = ({ children, adminMode, frontMode, menuOpen }: BaseTemplate
               <MenuIcon />
             </IconButton>
             <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
-              Visitors for Microsoft
+              LIVENESS Visitors for Microsoft
             </Typography>
             <div>
               <MyLocation></MyLocation>
@@ -341,7 +349,7 @@ const BaseTemplate = ({ children, adminMode, frontMode, menuOpen }: BaseTemplate
               <ListItem button>
                 <Tooltip title={t('main.menu.created-visit-info') as string}>
                   <ListItemIcon>
-                    <EditIcon />
+                    <FaceIcon />
                   </ListItemIcon>
                 </Tooltip>
                 <ListItemText primary={t('main.menu.created-visit-info')} />

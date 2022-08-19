@@ -1,4 +1,4 @@
-import { UsageRangeForVisitor } from './Room';
+import { RoomType, UsageRangeForVisitor } from './Room';
 
 // 一般/フロント 共通
 export type Schedule = {
@@ -7,9 +7,10 @@ export type Schedule = {
   roomId: string;
   roomName: string;
   roomEmail: string;
+  type: RoomType;
   usageRange: UsageRangeForVisitor;
-  scheduleItems: ScheduleItem[];
-  eventsIndex: number[];
+  scheduleItems: ScheduleItem[][];
+  eventsIndex: number[][];
 };
 export type ScheduleItem = {
   status: string;

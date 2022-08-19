@@ -71,6 +71,7 @@ export function Authorize() {
       }
     };
     sendAuthCode();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -81,7 +82,7 @@ export function Authorize() {
           <LockOutlinedIcon />
         </Avatar>
         <Typography component="h1" variant="h5">
-          Visitors for Microsoft
+          LIVENESS Visitors for Microsoft
         </Typography>
       </div>
       <Box mt={8}>

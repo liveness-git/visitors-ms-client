@@ -7,6 +7,11 @@ export const theme = createTheme({
     primary: purple,
     secondary: amber,
   },
+  typography: {
+    button: {
+      textTransform: 'none',
+    },
+  },
   props: {
     MuiTextField: {
       variant: 'outlined',

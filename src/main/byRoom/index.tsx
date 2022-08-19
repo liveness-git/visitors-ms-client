@@ -1,9 +1,11 @@
-import { useReducer, useState } from 'react';
+import { useEffect, useReducer } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { Box, Paper } from '@material-ui/core';
 
 import BaseTemplate from '../../_components/BaseTemplate';
+import { useSelectedDate } from '_utils/useSelectedDate';
+import { getReloadState, getReloadStateFlg, removeReloadStateFlg, saveReloadState } from '_utils/SessionStrage';
 
 import { DataTable } from './DataTable';
 import { DataTableWeekly } from './DataTableWeekly';
@@ -44,7 +46,7 @@ export function ByRoom() {
   const { t } = useTranslation();
 
   // カレンダー選択日の状態
-  const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
+  const [selectedDate, setSelectedDate] = useSelectedDate();
   const handleDateChange = (date: Date | null) => {
     setSelectedDate(date);
   };
@@ -65,6 +67,24 @@ export function ByRoom() {
     titleLabel: 'main.byroom.title',
     subtitleLabel: 'main.byroom.subtitle',
   });
+
+  // ================================
+  // refreshボタンによるreload
+  useEffect(() => {
+    if (!!getReloadStateFlg()) {
+      setSelectedDate(new Date(Number(getReloadState('selectedDate'))));
+      byRoomDispatch({ type: !!getReloadState('weekly') ? 'weekly' : 'default', changeTab: getReloadState('tabValue') });
+      removeReloadStateFlg();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  // ReloadStateStrageの設定
+  useEffect(() => {
+    if (!getReloadStateFlg()) {
+      saveReloadState('weekly', byRoomState.weekly ? '1' : '');
+    }
+  }, [byRoomState.weekly]);
+  // ================================
 
   // デフォルト → １週間表示へ切替えアクション
   const handleDefaultClick = (timestamp: number, _categoryId: string, roomId: string) => {
@@ -119,7 +139,7 @@ export function ByRoom() {
                 />
               }
               selected={byRoomState.changeTab}
-              type="rooms"
+              // type="rooms"
             />
           )
         }

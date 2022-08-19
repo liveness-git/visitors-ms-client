@@ -3,6 +3,8 @@ import { cloneElement, useEffect, useMemo, useState } from 'react';
 import { AppBar, Tab } from '@material-ui/core';
 import { TabContext, TabList, TabPanel } from '@material-ui/lab';
 
+import { getReloadStateFlg, saveReloadState } from '_utils/SessionStrage';
+
 interface TabModel {
   id: string;
   name: string;
@@ -17,6 +19,10 @@ type MyTabContextProps<T extends TabModel> = {
 export function MyTabContext<T extends TabModel>(props: MyTabContextProps<T>) {
   const { data, tabPanelContent, selected } = props;
 
+  // タブパネルとタブリストの描画が揃ってから表示するための制御
+  const [activateTab, setActivateTab] = useState(false);
+  useEffect(() => setActivateTab(true), []);
+
   // タブの状態
   const [tabValue, setTabValue] = useState('');
 
@@ -28,6 +34,15 @@ export function MyTabContext<T extends TabModel>(props: MyTabContextProps<T>) {
       setTabValue(data[0].id);
     }
   }, [data, selected]);
+
+  // ================================
+  // ReloadStateStrageの設定
+  useEffect(() => {
+    if (!getReloadStateFlg()) {
+      saveReloadState('tabValue', tabValue);
+    }
+  }, [tabValue]);
+  // ================================
 
   // タブ切り替えアクション
   const handleTabChange = (_event: React.ChangeEvent<{}>, newValue: string) => {
@@ -59,6 +74,10 @@ export function MyTabContext<T extends TabModel>(props: MyTabContextProps<T>) {
       </>
     );
   }, [data, tabPanelContent]);
+
+  if (!activateTab) {
+    return <></>;
+  }
 
   return (
     <TabContext value={tabValue}>

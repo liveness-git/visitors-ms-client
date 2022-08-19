@@ -4,6 +4,8 @@ import { useTranslation } from 'react-i18next';
 import { Box, Paper } from '@material-ui/core';
 
 import BaseTemplate from '../../_components/BaseTemplate';
+import { useSelectedDate } from '_utils/useSelectedDate';
+import { getReloadState, getReloadStateFlg, removeReloadStateFlg } from '_utils/SessionStrage';
 
 import { DataTable } from './DataTable';
 import { dataDialogReducer, DataDialogState } from '../DataTableBase';
@@ -19,7 +21,7 @@ export function VisitList() {
   }, []);
 
   // カレンダー選択日の状態
-  const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
+  const [selectedDate, setSelectedDate] = useSelectedDate();
   const handleDateChange = (date: Date | null) => {
     setSelectedDate(date);
   };
@@ -32,6 +34,17 @@ export function VisitList() {
   };
   // ダイアログの状態
   const [dataDialogState, dataDialogDispatch] = useReducer(dataDialogReducer, initialState);
+
+  // ================================
+  // refreshボタンによるreload
+  useEffect(() => {
+    if (!!getReloadStateFlg()) {
+      setSelectedDate(new Date(Number(getReloadState('selectedDate'))));
+      removeReloadStateFlg();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  // ================================
 
   return (
     <BaseTemplate>

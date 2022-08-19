@@ -63,7 +63,7 @@ export function DataTable(props: DataTableProps) {
             key={sIdx}
             dataDialogHook={dataDialogHook}
             schedule={schedule}
-            events={data!.events.filter((_event, eIdx) => schedule.eventsIndex.some((num: number) => num === eIdx))}
+            events={schedule.eventsIndex.map((row) => row.map((eventIndex) => data!.events[eventIndex]))}
             onClickCallback={handleDialogOpen}
             keyLabel={schedule.roomName}
             keyValue={schedule.roomEmail}
