@@ -414,7 +414,14 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
                   />
                 </Grid>
                 <Grid item xs={2} style={{ margin: 'auto' }}>
-                  <Button onClick={handleSearch} variant="contained" color="primary" fullWidth disabled={data?.isMSMultipleLocations || !hiddenRooms}>
+                  <Button
+                    onClick={handleSearch}
+                    variant="contained"
+                    color="primary"
+                    fullWidth
+                    disabled={data?.isMSMultipleLocations || !hiddenRooms}
+                    style={getValues('mode') === 'upd' ? { display: 'none' } : undefined}
+                  >
                     {t('common.button.search')}
                   </Button>
                 </Grid>
@@ -479,7 +486,7 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
 
             <Box p={2}>
               <ControllerTextField name="comment" control={control} label={t('visittable.header.comment')} multiline errors={errors} />
-              <ControllerTextField name="contactAddr" control={control} label={t('visittable.header.contact-addr')} errors={errors} />
+              <ControllerTextField name="contactAddr" control={control} label={t('visittable.header.contact-addr')} required errors={errors} />
             </Box>
 
             <Box px={2}>
