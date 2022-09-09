@@ -13,7 +13,7 @@ import { tableTheme } from '_styles/TableTheme';
 
 import { DataDialogAction, DataDialogState, DataTableBase, RowDataType } from '../DataTableBase';
 
-const useStyles = makeVisitorTableStyles();
+const useStyles = makeVisitorTableStyles(false);
 
 export type Columns = {
   title: string;

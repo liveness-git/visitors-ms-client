@@ -5,18 +5,51 @@ import clsx from 'clsx';
 import { FrontRowData } from 'main/front/DataTable';
 import { RowDataType } from 'main/DataTableBase';
 
-export const makeVisitorTableStyles = () => {
+export const frontCellPadding = '12px 6px';
+
+export const makeVisitorTableStyles = (isFront: boolean) => {
+  const cellPadding = isFront ? frontCellPadding : '';
   return makeStyles(() => ({
-    //cell default
-    cellApptTime: {},
-    cellRoomName: {},
-    cellRoomStatus: {},
-    cellReservationName: {},
-    cellVisitCompany: {},
-    cellSubject: {},
-    cellContactAddr: {},
-    cellCheckIn: {},
-    cellCheckOut: {},
+    cellApptTime: {
+      padding: cellPadding,
+    },
+    cellRoomName: {
+      padding: cellPadding,
+    },
+    cellTeaSupply: {
+      padding: cellPadding,
+    },
+    cellRoomStatus: {
+      padding: cellPadding,
+    },
+    cellReservationName: {
+      padding: cellPadding,
+    },
+    cellVisitCompany: {
+      padding: cellPadding,
+    },
+    cellVisitorName: {
+      padding: cellPadding,
+    },
+    cellSubject: {
+      padding: cellPadding,
+    },
+    cellContactAddr: {
+      padding: cellPadding,
+    },
+    cellCheckIn: {
+      padding: cellPadding,
+      // textAlign: 'center',
+      overflowWrap: 'break-word',
+    },
+    cellCheckOut: {
+      padding: cellPadding,
+      // textAlign: 'center',
+      overflowWrap: 'break-word',
+    },
+    cellComment: {
+      padding: cellPadding,
+    },
     // 会議室状態が辞退の場合
     declinedApptTime: { textDecoration: 'line-through 2px solid red' },
     declinedRoomName: {
