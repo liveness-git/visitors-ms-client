@@ -27,18 +27,17 @@ export function AddrBookAutoComplete<TFieldValues extends FieldValues, TName ext
 
   // アドレス帳の取得
   const [filter, setFilter] = useState('');
-  const [{ data: addressbook, isLoading: loading }] = useLoadData<EmailAddress[]>(`/user/addressbook`, []);
-  // const [{ data: addressbook, isLoading: loading }] = useLoadData<EmailAddress[]>(`/user/addressbook?filter=${filter}`, []); // TODO:前方一致検索の場合
+  const [{ data: addressbook, isLoading: loading }] = useLoadData<EmailAddress[]>(`/user/addressbook?filter=${filter}`, []);
 
   // アドレス帳検索の状態
   const [open, setOpen] = useState(false);
 
-  // // アドレス帳検索の初期化 // TODO:前方一致検索の場合
-  // useEffect(() => {
-  //   if (!open) {
-  //     setFilter('');
-  //   }
-  // }, [open]);
+  // アドレス帳検索の初期化
+  useEffect(() => {
+    if (!open) {
+      setFilter('');
+    }
+  }, [open]);
 
   // アドレス帳検索値のリアルタイム取得
   const onChangeHandle = async (value: string) => {
