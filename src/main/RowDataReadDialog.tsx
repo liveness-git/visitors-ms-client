@@ -9,6 +9,7 @@ import { MyDialog } from '_components/MyDialog';
 import { RowDataType } from './DataTableBase';
 import { RoomReadFields } from './RoomReadFields';
 import { AddrBookUserDisplay } from '_components/AddrBookUserDisplay';
+import ReservationNameField from './ReservationNameField';
 
 const useRowDataDialogStyles = makeTableDialogStyle();
 
@@ -47,7 +48,9 @@ export function RowDataReadDialog(props: RowDataReadDialogProps) {
           </li>
           <li key="reservation-name" className={classes.list}>
             <div className={classes.title}>{t('visittable.header.reservation-name')}</div>
-            <div className={classes.field}>{data.reservationName}</div>
+            <div className={classes.field}>
+              <ReservationNameField name={data.reservationName} status={data.reservationStatus} />
+            </div>
           </li>
         </List>
       </Box>
