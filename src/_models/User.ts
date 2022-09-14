@@ -7,4 +7,6 @@ export type User = {
 export type EmailAddress = {
   name: string;
   address: string;
+  status?: UserStatus;
 };
+export type UserStatus = 'none' | 'accepted' | 'declined';

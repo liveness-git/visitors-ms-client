@@ -33,6 +33,7 @@ import { DeleteConfirmDialog } from './DeleteConfirmDialog';
 import { RoomInputFields } from './RoomInputFields';
 import { RoomReadFields, strRoomStatus } from './RoomReadFields';
 import { ControllerDateTimePicker } from './ControllerDateTimePicker';
+import ReservationNameField from './ReservationNameField';
 
 const useRowDataDialogStyles = makeTableDialogStyle();
 
@@ -342,7 +343,9 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
                       </li>
                       <li key="reservation-name" className={classes.list}>
                         <div className={classes.title}>{t('visittable.header.reservation-name')}</div>
-                        <div className={classes.field}>{data.reservationName}</div>
+                        <div className={classes.field}>
+                          <ReservationNameField name={data.reservationName} status={data.reservationStatus} />
+                        </div>
                       </li>
                     </List>
                   );
