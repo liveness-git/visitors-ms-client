@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 
-import { Box, List } from '@material-ui/core';
+import { Box, List, Typography } from '@material-ui/core';
 
 import { makeTableDialogStyle } from '_styles/TableTheme';
 
@@ -9,6 +9,7 @@ import { MyDialog } from '_components/MyDialog';
 import { RowDataType } from './DataTableBase';
 import { RoomReadFields } from './RoomReadFields';
 import { AddrBookUserDisplay } from '_components/AddrBookUserDisplay';
+import { UserStatusIconNote } from '_components/UserStatusIconNote';
 import ReservationNameField from './ReservationNameField';
 
 const useRowDataDialogStyles = makeTableDialogStyle();
@@ -56,6 +57,10 @@ export function RowDataReadDialog(props: RowDataReadDialogProps) {
       </Box>
 
       <Box px={2} pt={2}>
+        <Typography variant="caption" display="block" gutterBottom>
+          {t('visitdialog.notes.reply-status')}
+          <UserStatusIconNote />
+        </Typography>
         <List disablePadding={true}>
           <li key="mailto-required" className={classes.list}>
             <div className={classes.title}>{t('visittable.header.event-mailto-required')}</div>

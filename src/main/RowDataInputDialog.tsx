@@ -3,7 +3,7 @@ import { useRouteMatch } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { SubmitHandler, useForm, useWatch } from 'react-hook-form';
 
-import { Box, Grid, Button, List } from '@material-ui/core';
+import { Box, Grid, Button, List, Typography } from '@material-ui/core';
 import { makeStyles, createStyles, createTheme, ThemeProvider } from '@material-ui/core/styles';
 import { grey, purple } from '@material-ui/core/colors';
 
@@ -27,6 +27,7 @@ import { Spinner } from '_components/Spinner';
 import { ControllerTextField } from '_components/ControllerTextField';
 import { AddrBookAutoComplete } from '_components/AddrBookAutoComplete';
 import { MyDialog } from '_components/MyDialog';
+import { UserStatusIconNote } from '_components/UserStatusIconNote';
 
 import { RowDataType } from './DataTableBase';
 import { DeleteConfirmDialog } from './DeleteConfirmDialog';
@@ -47,6 +48,9 @@ const useStyles = makeStyles((tableTheme) => {
       color: 'red',
       fontSize: '0.9em',
       margin: 0,
+    },
+    usageGuide: {
+      marginTop: '5px',
     },
   });
 });
@@ -357,6 +361,13 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
           <form>
             <Box p={2}>
               <ControllerTextField name="subject" control={control} label={t('visittable.header.event-subject')} required errors={errors} />
+
+              {!!data && (
+                <Typography variant="caption" display="block" className={classes.usageGuide}>
+                  {t('visitdialog.notes.reply-status')}
+                  <UserStatusIconNote />
+                </Typography>
+              )}
 
               <AddrBookAutoComplete
                 name={'mailto.authors'}

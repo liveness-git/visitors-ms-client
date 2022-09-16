@@ -8,7 +8,7 @@ import { CSSProperties } from '@material-ui/styles';
 
 import { EmailAddress } from '_models/User';
 import { useLoadData } from '_utils/useLoadData';
-import MyChip from './MyChip';
+import { MyChip } from './MyChip';
 
 type AddrBookAutoCompleteType<TFieldValues extends FieldValues, TName extends Path<TFieldValues>> = {
   name: TName;

@@ -1,6 +1,6 @@
 import { makeStyles, createStyles } from '@material-ui/core';
 import { EmailAddress } from '_models/User';
-import MyChip from './MyChip';
+import { MyChip } from './MyChip';
 
 const useStyles = makeStyles((theme) =>
   createStyles({
