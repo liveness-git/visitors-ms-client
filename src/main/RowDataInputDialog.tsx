@@ -5,7 +5,7 @@ import { SubmitHandler, useForm, useWatch } from 'react-hook-form';
 
 import { Box, Grid, Button, List, Typography } from '@material-ui/core';
 import { makeStyles, createStyles, createTheme, ThemeProvider } from '@material-ui/core/styles';
-import { grey, purple } from '@material-ui/core/colors';
+import { grey } from '@material-ui/core/colors';
 
 import DeleteIcon from '@material-ui/icons/Delete';
 import SaveIcon from '@material-ui/icons/Save';
@@ -17,6 +17,7 @@ import { VisitorInfo, EventInputType, RoomInputType } from '_models/VisitorInfo'
 import { nameOfUsageRangeForVisitor, Room, UsageRangeForVisitor } from '_models/Room';
 import { LocationParams } from '_models/Location';
 
+import { defaultPrimary } from '_styles/Theme';
 import { tableTheme, makeTableDialogStyle } from '_styles/TableTheme';
 
 import { fetchPostData } from '_utils/FetchPostData';
@@ -58,7 +59,7 @@ const useStyles = makeStyles((tableTheme) => {
 const inputformTheme = createTheme({
   palette: {
     primary: {
-      main: purple[500],
+      main: defaultPrimary.main,
     },
     secondary: {
       main: grey[300],

@@ -4,13 +4,14 @@ import { DeepPartial, Path, PathValue, SubmitHandler, UnpackNestedValue, useForm
 
 import { Box, Grid, Button } from '@material-ui/core';
 import { makeStyles, createStyles, createTheme, ThemeProvider } from '@material-ui/core/styles';
-import { grey, purple } from '@material-ui/core/colors';
+import { grey } from '@material-ui/core/colors';
 
 import DeleteIcon from '@material-ui/icons/Delete';
 import SaveIcon from '@material-ui/icons/Save';
 
 import _ from 'lodash';
 
+import { defaultPrimary } from '_styles/Theme';
 import { fetchPostData } from '_utils/FetchPostData';
 
 import { MySnackberContext } from '_components/MySnackbarContext';
@@ -36,7 +37,7 @@ const useStyles = makeStyles((tableTheme) => {
 const inputformTheme = createTheme({
   palette: {
     primary: {
-      main: purple[500],
+      main: defaultPrimary.main,
     },
     secondary: {
       main: grey[300],
