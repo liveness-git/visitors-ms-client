@@ -127,17 +127,27 @@ export function DataTable(props: DataTableProps) {
             <span>{rowData.visitorCardNumber}</span>
           </>
         ) : (
-          <span>-</span>
+          <span></span>
         ),
       width: '70px',
     },
     {
       title: t('visittable.header.check-out'),
       field: 'checkOut',
-      render: (rowData) => (rowData.checkOut ? <span>✓</span> : <span>-</span>),
+      render: (rowData) => (rowData.checkOut ? <span>✓</span> : <span></span>),
       width: '50px',
     },
-    { title: t('visittable.header.reservation-name'), field: 'reservationName' },
+    {
+      title: `${t('visittable.header.reservation-name')} / ${t('visittable.header.contact-addr')}`,
+      field: 'reservationName',
+      render: (rowData) => (
+        <>
+          {rowData.reservationName}
+          <br />
+          {rowData.contactAddr}
+        </>
+      ),
+    },
     { title: t('visittable.header.comment'), field: 'comment', width: '60%' },
   ];
 
