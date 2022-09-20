@@ -50,6 +50,7 @@
 	"visitdialog.view.tea-supply.number-of-visitor":"来",
 	"visitdialog.view.tea-supply.number-of-employee":"従",
 	"visitdialog.title":"予約情報",
+	"visitdialog.header.last-updated":"最終更新日時",
 	"visitdialog.notes.multiple-locations":"※複数の場所(会議室以外含む)が登録されているため一部機能は編集できません",
 	"visitdialog.notes.no-relevant-rooms":"予約可能な会議室がありません",
 	"visitdialog.notes.reservation-status-declined":"予約者がこの予約を辞退しています",

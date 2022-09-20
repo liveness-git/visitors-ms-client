@@ -61,5 +61,8 @@ export const makeTableDialogStyle = () => {
       borderBottom: border,
       whiteSpace: 'pre-wrap',
     },
+    bottomLine: {
+      borderBottom: border,
+    },
   }));
 };

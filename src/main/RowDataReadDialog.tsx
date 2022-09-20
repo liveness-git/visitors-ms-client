@@ -11,6 +11,7 @@ import { RoomReadFields } from './RoomReadFields';
 import { AddrBookUserDisplay } from '_components/AddrBookUserDisplay';
 import { UserStatusIconNote } from '_components/UserStatusIconNote';
 import ReservationNameField from './ReservationNameField';
+import { LastUpdatedField } from './LastUpdatedField';
 
 const useRowDataDialogStyles = makeTableDialogStyle();
 
@@ -103,6 +104,17 @@ export function RowDataReadDialog(props: RowDataReadDialogProps) {
           <li key="contact-addr" className={classes.list}>
             <div className={classes.title}>{t('visittable.header.contact-addr')}</div>
             <div className={classes.field}>{data.contactAddr}</div>
+          </li>
+        </List>
+      </Box>
+
+      <Box px={2} pb={2}>
+        <List disablePadding={true}>
+          <li key="datetime" className={classes.list}>
+            <div className={classes.title}>{t('visitdialog.header.last-updated')}</div>
+            <div className={classes.field}>
+              <LastUpdatedField datetime={data.lastUpdated} />
+            </div>
           </li>
         </List>
       </Box>

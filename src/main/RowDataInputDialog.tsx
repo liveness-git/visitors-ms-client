@@ -36,6 +36,7 @@ import { RoomInputFields } from './RoomInputFields';
 import { RoomReadFields, strRoomStatus } from './RoomReadFields';
 import { ControllerDateTimePicker } from './ControllerDateTimePicker';
 import ReservationNameField from './ReservationNameField';
+import { LastUpdatedField } from './LastUpdatedField';
 
 const useRowDataDialogStyles = makeTableDialogStyle();
 
@@ -48,7 +49,7 @@ const useStyles = makeStyles((tableTheme) => {
     note: {
       color: 'red',
       fontSize: '0.9em',
-      margin: 0,
+      marginTop: 0,
     },
     usageGuide: {
       marginTop: '5px',
@@ -334,28 +335,32 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
         <ThemeProvider theme={inputformTheme}>
           {!!data && (
             <Box px={2}>
-              {(() => {
-                if (data.isMSMultipleLocations) {
-                  /* mode=upd & 複数会議室 */
-                  return <p className={classes.note}>{t('visitdialog.notes.multiple-locations')}</p>;
-                } else {
-                  /* mode=upd & 単一会議室 */
-                  return (
-                    <List disablePadding={true}>
+              <List disablePadding={true}>
+                {(() => {
+                  if (data.isMSMultipleLocations) {
+                    /* mode=upd & 複数会議室 */
+                    return (
+                      <li className={classes.bottomLine}>
+                        <p className={classes.note}>{t('visitdialog.notes.multiple-locations')}</p>
+                      </li>
+                    );
+                  } else {
+                    /* mode=upd & 単一会議室 */
+                    return (
                       <li key="resource-status" className={classes.list}>
                         <div className={classes.title}>{t('visittable.header.resource-status')}</div>
                         <div className={classes.field}>{t(strRoomStatus(data.roomStatus))}</div>
                       </li>
-                      <li key="reservation-name" className={classes.list}>
-                        <div className={classes.title}>{t('visittable.header.reservation-name')}</div>
-                        <div className={classes.field}>
-                          <ReservationNameField name={data.reservationName} status={data.reservationStatus} />
-                        </div>
-                      </li>
-                    </List>
-                  );
-                }
-              })()}
+                    );
+                  }
+                })()}
+                <li key="reservation-name" className={classes.list}>
+                  <div className={classes.title}>{t('visittable.header.reservation-name')}</div>
+                  <div className={classes.field}>
+                    <ReservationNameField name={data.reservationName} status={data.reservationStatus} />
+                  </div>
+                </li>
+              </List>
             </Box>
           )}
 
@@ -503,6 +508,19 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
               <ControllerTextField name="comment" control={control} label={t('visittable.header.comment')} multiline errors={errors} />
               <ControllerTextField name="contactAddr" control={control} label={t('visittable.header.contact-addr')} required errors={errors} />
             </Box>
+
+            {!!data && (
+              <Box px={2}>
+                <List disablePadding={true}>
+                  <li key="datetime" className={classes.list}>
+                    <div className={classes.title}>{t('visitdialog.header.last-updated')}</div>
+                    <div className={classes.field}>
+                      <LastUpdatedField datetime={data.lastUpdated} />
+                    </div>
+                  </li>
+                </List>
+              </Box>
+            )}
 
             <Box px={2}>
               <Grid container justifyContent="space-between" spacing={2} className={classes.formAction}>

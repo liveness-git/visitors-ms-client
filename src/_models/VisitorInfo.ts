@@ -38,6 +38,7 @@ export type VisitorInfoReadOnly = {
   resourcies: {
     [room: string]: ResourciesReadOnly;
   };
+  lastUpdated: number;
 };
 export type ResourciesReadOnly = {
   roomName: string; // outlook情報
