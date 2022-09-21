@@ -65,6 +65,7 @@ export function AddrBookAutoComplete<TFieldValues extends FieldValues, TName ext
             setOpen(false);
           }}
           options={!!addressbook && !!filter ? addressbook : []}
+          filterOptions={(options, _state) => options}
           noOptionsText={t('auto-complete.no-options-text')}
           loading={loading}
           getOptionLabel={(option) => `${option.name} <${option.address}>`}
