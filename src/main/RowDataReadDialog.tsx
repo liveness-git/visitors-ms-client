@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 
-import { Box, List } from '@material-ui/core';
+import { Box, List, Typography } from '@material-ui/core';
 
 import { makeTableDialogStyle } from '_styles/TableTheme';
 
@@ -9,6 +9,9 @@ import { MyDialog } from '_components/MyDialog';
 import { RowDataType } from './DataTableBase';
 import { RoomReadFields } from './RoomReadFields';
 import { AddrBookUserDisplay } from '_components/AddrBookUserDisplay';
+import { UserStatusIconNote } from '_components/UserStatusIconNote';
+import ReservationNameField from './ReservationNameField';
+import { LastUpdatedField } from './LastUpdatedField';
 
 const useRowDataDialogStyles = makeTableDialogStyle();
 
@@ -47,12 +50,18 @@ export function RowDataReadDialog(props: RowDataReadDialogProps) {
           </li>
           <li key="reservation-name" className={classes.list}>
             <div className={classes.title}>{t('visittable.header.reservation-name')}</div>
-            <div className={classes.field}>{data.reservationName}</div>
+            <div className={classes.field}>
+              <ReservationNameField name={data.reservationName} status={data.reservationStatus} />
+            </div>
           </li>
         </List>
       </Box>
 
       <Box px={2} pt={2}>
+        <Typography variant="caption" display="block" gutterBottom>
+          {t('visitdialog.notes.reply-status')}
+          <UserStatusIconNote />
+        </Typography>
         <List disablePadding={true}>
           <li key="mailto-required" className={classes.list}>
             <div className={classes.title}>{t('visittable.header.event-mailto-required')}</div>
@@ -95,6 +104,17 @@ export function RowDataReadDialog(props: RowDataReadDialogProps) {
           <li key="contact-addr" className={classes.list}>
             <div className={classes.title}>{t('visittable.header.contact-addr')}</div>
             <div className={classes.field}>{data.contactAddr}</div>
+          </li>
+        </List>
+      </Box>
+
+      <Box px={2} pb={2}>
+        <List disablePadding={true}>
+          <li key="datetime" className={classes.list}>
+            <div className={classes.title}>{t('visitdialog.header.last-updated')}</div>
+            <div className={classes.field}>
+              <LastUpdatedField datetime={data.lastUpdated} />
+            </div>
           </li>
         </List>
       </Box>

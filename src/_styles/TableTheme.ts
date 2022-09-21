@@ -1,5 +1,6 @@
 import { createTheme, makeStyles } from '@material-ui/core';
-import { grey, purple } from '@material-ui/core/colors';
+import { grey } from '@material-ui/core/colors';
+import { defaultPrimary } from './Theme';
 
 export const tableTheme = createTheme({
   palette: {
@@ -7,7 +8,7 @@ export const tableTheme = createTheme({
       main: grey[300],
     },
     secondary: {
-      main: purple[500],
+      main: defaultPrimary.main,
     },
   },
   props: {
@@ -59,6 +60,9 @@ export const makeTableDialogStyle = () => {
       borderRight: border,
       borderBottom: border,
       whiteSpace: 'pre-wrap',
+    },
+    bottomLine: {
+      borderBottom: border,
     },
   }));
 };

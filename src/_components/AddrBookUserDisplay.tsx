@@ -1,5 +1,6 @@
-import { Chip, makeStyles, createStyles } from '@material-ui/core';
+import { makeStyles, createStyles } from '@material-ui/core';
 import { EmailAddress } from '_models/User';
+import { MyChip } from './MyChip';
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -24,7 +25,7 @@ export function AddrBookUserDisplay({ key, data }: AddrBookUserDisplayProps) {
   return (
     <div className={classes.root}>
       {data.map((user, i) => (
-        <Chip key={`${key}-${i}`} label={user.name} />
+        <MyChip key={`${key}-${i}`} option={user} />
       ))}
     </div>
   );

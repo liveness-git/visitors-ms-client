@@ -6,6 +6,7 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import CloseIcon from '@material-ui/icons/Close';
+import { MouseEventHandler } from 'react';
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -36,22 +37,23 @@ export function MyDialog(props: MyDialogProps) {
   const { t } = useTranslation();
   const classes = useStyles();
 
-  const handleCancel = () => {
+  const handleCancel = (_event: MouseEventHandler, reason: string) => {
+    if (reason && reason === 'backdropClick') return;
     onClose();
   };
 
   return (
     <>
-      <Dialog open={open} onClose={onClose} fullWidth={true} maxWidth="sm" aria-labelledby="form-dialog-title">
+      <Dialog open={open} onClose={handleCancel} fullWidth={true} maxWidth="sm" aria-labelledby="form-dialog-title">
         <DialogTitle id="form-dialog-title" className={classes.root}>
           {title}
-          <IconButton className={classes.closeButton} onClick={handleCancel}>
+          <IconButton className={classes.closeButton} onClick={onClose}>
             <CloseIcon />
           </IconButton>
         </DialogTitle>
         <DialogContent dividers>{children}</DialogContent>
         <DialogActions style={{ display: 'none' }}>
-          <Button onClick={handleCancel}>{t('common.button.cancel')}</Button>
+          <Button onClick={onClose}>{t('common.button.cancel')}</Button>
         </DialogActions>
       </Dialog>
     </>

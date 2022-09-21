@@ -14,15 +14,15 @@ import { RowDataFrontDialog } from './RowDataFrontDialog';
 
 import { LocationParams } from '_models/Location';
 import { VisitorInfoFront } from '_models/VisitorInfo';
-import { cellStyle, makeVisitorTableStyles } from '_styles/VisitorTableStyle';
+import { cellStyle, makeVisitorTableStyles, frontCellPadding } from '_styles/VisitorTableStyle';
 import { tableTheme } from '_styles/TableTheme';
 
-const useStyles = makeVisitorTableStyles();
+const useStyles = makeVisitorTableStyles(true);
 
 export type Columns = {
   title: string;
   field: string;
-  type?: string;
+  width?: string;
   cellStyle?: object | void;
   render?: (rowData: FrontRowData) => any;
 };
@@ -81,7 +81,12 @@ export function DataTable(props: DataTableProps) {
   };
 
   const columns: Columns[] = [
-    { title: t('visittable.header.appt-time'), field: 'apptTime' },
+    {
+      title: t('visittable.header.appt-time'),
+      field: 'apptTime',
+      render: (rowData) => rowData.apptTime.split(' ')[1],
+      width: '90px',
+    },
     { title: t('visittable.header.room-name'), field: 'roomName' },
     {
       title: t('visittable.header.tea-supply'),
@@ -90,15 +95,60 @@ export function DataTable(props: DataTableProps) {
         const roomId = Object.keys(rowData.resourcies)[0]; // TODO:複数会議室未対応
         const strNumOfVisitor = `${t('visitdialog.view.tea-supply.number-of-visitor')}:${rowData.resourcies[roomId].numberOfVisitor}`;
         const strNumOfEmployee = `${t('visitdialog.view.tea-supply.number-of-employee')}:${rowData.resourcies[roomId].numberOfEmployee}`;
-        return `${strNumOfVisitor}, ${strNumOfEmployee}`;
+        return (
+          <>
+            {strNumOfVisitor}
+            <br />
+            {strNumOfEmployee}
+          </>
+        );
       },
+      width: '70px',
     },
-    { title: t('visittable.header.visit-company'), field: 'visitCompany' },
-    { title: t('visittable.header.visitor-name'), field: 'visitorName' },
-    { title: t('visittable.header.check-in'), field: 'checkIn', type: 'boolean' },
-    { title: t('visittable.header.check-out'), field: 'checkOut', type: 'boolean' },
-    { title: t('visittable.header.reservation-name'), field: 'reservationName' },
-    { title: t('visittable.header.comment'), field: 'comment' },
+    {
+      title: `${t('visittable.header.visit-company')} / ${t('visittable.header.visitor-name')}`,
+      field: 'visitCompany',
+      render: (rowData) => (
+        <>
+          {rowData.visitCompany}
+          <br />
+          {rowData.visitorName}
+        </>
+      ),
+    },
+    {
+      title: t('visittable.header.check-in'),
+      field: 'checkIn',
+      render: (rowData) =>
+        rowData.checkIn ? (
+          <>
+            <span>✓</span>
+            <br />
+            <span>{rowData.visitorCardNumber}</span>
+          </>
+        ) : (
+          <span></span>
+        ),
+      width: '70px',
+    },
+    {
+      title: t('visittable.header.check-out'),
+      field: 'checkOut',
+      render: (rowData) => (rowData.checkOut ? <span>✓</span> : <span></span>),
+      width: '50px',
+    },
+    {
+      title: `${t('visittable.header.reservation-name')} / ${t('visittable.header.contact-addr')}`,
+      field: 'reservationName',
+      render: (rowData) => (
+        <>
+          {rowData.reservationName}
+          <br />
+          {rowData.contactAddr}
+        </>
+      ),
+    },
+    { title: t('visittable.header.comment'), field: 'comment', width: '60%' },
   ];
 
   // データ取得失敗した場合
@@ -129,7 +179,7 @@ export function DataTable(props: DataTableProps) {
           showTitle: false,
           toolbar: false,
           search: false,
-          headerStyle: { backgroundColor: tableTheme.palette.primary.light },
+          headerStyle: { backgroundColor: tableTheme.palette.primary.light, padding: frontCellPadding },
           tableLayout: 'fixed',
           // actionsColumnIndex: -1,
           ...pageingOntions,

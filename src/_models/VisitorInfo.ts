@@ -1,5 +1,5 @@
 import { UsageRangeForVisitor } from './Room';
-import { EmailAddress } from './User';
+import { EmailAddress, UserStatus } from './User';
 
 // 一般/フロント 共通
 export type VisitorInfo = {
@@ -31,12 +31,14 @@ export type VisitorInfoReadOnly = {
   roomName: string; //表での表示用
   roomStatus: string; // TODO:複数会議室未対応 //表での表示用
   reservationName: string;
+  reservationStatus: UserStatus;
   isAuthor: boolean;
   isAttendees: boolean;
   isMSMultipleLocations: boolean; // MSEventに複数の場所(会議室以外も含む)が登録されているか否か
   resourcies: {
     [room: string]: ResourciesReadOnly;
   };
+  lastUpdated: number;
 };
 export type ResourciesReadOnly = {
   roomName: string; // outlook情報

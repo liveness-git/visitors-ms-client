@@ -3,11 +3,12 @@ import { useTranslation } from 'react-i18next';
 import { Control, Controller, DeepMap, DeepPartial, FieldError, FieldValues, Path } from 'react-hook-form';
 
 import { Autocomplete } from '@material-ui/lab';
-import { Chip, CircularProgress, TextField } from '@material-ui/core';
+import { CircularProgress, TextField } from '@material-ui/core';
 import { CSSProperties } from '@material-ui/styles';
 
 import { EmailAddress } from '_models/User';
 import { useLoadData } from '_utils/useLoadData';
+import { MyChip } from './MyChip';
 
 type AddrBookAutoCompleteType<TFieldValues extends FieldValues, TName extends Path<TFieldValues>> = {
   name: TName;
@@ -64,12 +65,11 @@ export function AddrBookAutoComplete<TFieldValues extends FieldValues, TName ext
             setOpen(false);
           }}
           options={!!addressbook && !!filter ? addressbook : []}
+          filterOptions={(options, _state) => options}
           noOptionsText={t('auto-complete.no-options-text')}
           loading={loading}
           getOptionLabel={(option) => `${option.name} <${option.address}>`}
-          renderTags={(tagValue, getTagProps) =>
-            tagValue.map((option, index) => <Chip label={option.name} title={option.address} {...getTagProps({ index })} />)
-          }
+          renderTags={(tagValue, getTagProps) => tagValue.map((option, index) => <MyChip option={option} {...getTagProps({ index })} />)}
           filterSelectedOptions
           getOptionSelected={(option, value) => option.address === value.address}
           renderInput={(params) => (
