@@ -8,7 +8,7 @@ import { Link, Typography } from '@material-ui/core';
 export function Copyright() {
   return (
     <Typography variant="body2" color="textSecondary" align="center">
-      {'Version. 1.0.0-beta.3 - Copyright © '}
+      {'Version. 1.0.0 - Copyright © '}
       <Link color="inherit" href="https://www.liveness.co.jp/">
         liveness, Inc.
       </Link>{' '}
