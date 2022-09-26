@@ -9,6 +9,7 @@ import { MuiPickersContext } from '@material-ui/pickers';
 import { FrontRowData } from './DataTable';
 
 import { RoomReadFields } from 'main/RoomReadFields';
+import { LastUpdatedField } from 'main/LastUpdatedField';
 
 import { fetchPostData } from '_utils/FetchPostData';
 import { MySnackberContext } from '_components/MySnackbarContext';
@@ -177,7 +178,7 @@ export function RowDataFrontDialog(props: RowDataReadDialogProps) {
           return <RoomReadFields key={roomId} data={data.resourcies[roomId]} /*hiddenTeaSupply={data.isMSMultipleLocations}*/ />;
         })}
 
-        <Box p={2}>
+        <Box px={2} pt={2}>
           <List disablePadding={true}>
             <li key="reservation-name" className={classes.list}>
               <div className={classes.title}>{t('visittable.header.reservation-name')}</div>
@@ -186,6 +187,17 @@ export function RowDataFrontDialog(props: RowDataReadDialogProps) {
             <li key="contact-addr" className={classes.list}>
               <div className={classes.title}>{t('visittable.header.contact-addr')}</div>
               <div className={classes.field}>{data.contactAddr}</div>
+            </li>
+          </List>
+        </Box>
+
+        <Box p={2}>
+          <List disablePadding={true}>
+            <li key="datetime" className={classes.list}>
+              <div className={classes.title}>{t('visitdialog.header.last-updated')}</div>
+              <div className={classes.field}>
+                <LastUpdatedField datetime={data.lastUpdated} />
+              </div>
             </li>
           </List>
         </Box>
