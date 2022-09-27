@@ -78,12 +78,9 @@ export function Front() {
             actionButtons={[csvButton]}
           />
         </Box>
-        <CategoryTabContext
-          tabPanelContent={
-            <DataTable currentDate={selectedDate!} dataDialogHook={{ state: dataDialogState, dispatch: dataDialogDispatch }} tabKey="dummyId" />
-          }
-          selected={changeTab ? changeTab : undefined}
-        />
+        <Box px={2} pb={2}>
+          <DataTable currentDate={selectedDate!} dataDialogHook={{ state: dataDialogState, dispatch: dataDialogDispatch }} />
+        </Box>
       </Paper>
       <ExportCsvDialog open={exportCsvOpen} onClose={handleExporCsvClose} />
     </BaseTemplate>
