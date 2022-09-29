@@ -12,7 +12,6 @@ import { DataTable } from './DataTable';
 import { ExportCsvDialog } from './ExportCsvDialog';
 import { dataDialogReducer, DataDialogState } from '../DataTableBase';
 import { HeaderActions } from '../HeaderActions';
-import { CategoryTabContext } from '../CategoryTabContext';
 
 export function Front() {
   const { t } = useTranslation();
@@ -35,15 +34,11 @@ export function Front() {
   //  CSV出力ダイアログの状態
   const [exportCsvOpen, setExportCsvOpen] = useState(false);
 
-  // reload用にtabの状態を一時的に保持
-  const [changeTab, setChangeTab] = useState('');
-
   // ================================
   // refreshボタンによるreload
   useEffect(() => {
     if (!!getReloadStateFlg()) {
       setSelectedDate(new Date(Number(getReloadState('selectedDate'))));
-      setChangeTab(getReloadState('tabValue'));
       removeReloadStateFlg();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
