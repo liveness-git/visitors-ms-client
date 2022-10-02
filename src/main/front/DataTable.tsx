@@ -35,11 +35,10 @@ type DataTableProps = {
     state: DataDialogState;
     dispatch: React.Dispatch<DataDialogAction>;
   };
-  tabKey: string;
 };
 
 export function DataTable(props: DataTableProps) {
-  const { currentDate, dataDialogHook, tabKey } = props;
+  const { currentDate, dataDialogHook } = props;
 
   const { t } = useTranslation();
   const classes = useStyles();
@@ -47,7 +46,7 @@ export function DataTable(props: DataTableProps) {
 
   // データ取得
   const [{ data, isLoading, isError }, reload] = useLoadData<FrontRowData[]>(
-    `/front/visitlist?timestamp=${currentDate!.getTime()}&location=${match.params.location}&category=${tabKey}`,
+    `/front/visitlist?timestamp=${currentDate!.getTime()}&location=${match.params.location}`,
     []
   );
 
@@ -85,7 +84,7 @@ export function DataTable(props: DataTableProps) {
       title: t('visittable.header.appt-time'),
       field: 'apptTime',
       render: (rowData) => rowData.apptTime.split(' ')[1],
-      width: '90px',
+      width: '95px',
     },
     { title: t('visittable.header.room-name'), field: 'roomName' },
     {
@@ -148,7 +147,7 @@ export function DataTable(props: DataTableProps) {
         </>
       ),
     },
-    { title: t('visittable.header.comment'), field: 'comment', width: '60%' },
+    { title: t('visittable.header.comment'), field: 'comment', width: '70%' },
   ];
 
   // データ取得失敗した場合

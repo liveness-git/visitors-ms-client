@@ -31,10 +31,9 @@ type ExportCsvParams = {
   endDate: Date;
 };
 
-type DataType = { category: string; data: (VisitorInfo & VisitorInfoReadOnly & VisitorInfoFront)[] };
+type DataType = VisitorInfo & VisitorInfoReadOnly & VisitorInfoFront;
 
 const nameOfCsvHeaders = [
-  'category',
   'apptTime',
   'roomName',
   'teaSupply',
@@ -123,30 +122,26 @@ export function ExportCsvDialog(props: ExportCsvDialogProps) {
       });
       if (result!.success) {
         if (!!result.value) {
-          const dataByCategory = result.value.map((rowData) => {
-            const category = rowData.category;
-            return rowData.data.map((item) => {
-              const roomId = Object.keys(item.resourcies)[0]; // TODO:複数会議室未対応
-              return {
-                category: category,
-                apptTime: item.apptTime,
-                roomName: item.roomName,
-                teaSupply: item.resourcies[roomId].teaSupply ? t('export-csv.file.tea-supply-yes') : t('export-csv.file.tea-supply-no'),
-                numberOfVisitor: item.resourcies[roomId].numberOfVisitor.toString(),
-                numberOfEmployee: item.resourcies[roomId].numberOfEmployee.toString(),
-                visitCompany: item.visitCompany,
-                visitorName: item.visitorName,
-                checkIn: item.checkIn,
-                visitorCardNumber: item.visitorCardNumber,
-                checkOut: item.checkOut,
-                reservationName: item.reservationName,
-                contactAddr: item.contactAddr,
-                subject: item.subject,
-                comment: item.comment,
-              };
-            }) as CsvDataType[];
-          });
-          setCsvData(dataByCategory.flat());
+          const data = result.value.map((item) => {
+            const roomId = Object.keys(item.resourcies)[0]; // TODO:複数会議室未対応
+            return {
+              apptTime: item.apptTime,
+              roomName: item.roomName,
+              teaSupply: item.resourcies[roomId].teaSupply ? t('export-csv.file.tea-supply-yes') : t('export-csv.file.tea-supply-no'),
+              numberOfVisitor: item.resourcies[roomId].numberOfVisitor.toString(),
+              numberOfEmployee: item.resourcies[roomId].numberOfEmployee.toString(),
+              visitCompany: item.visitCompany,
+              visitorName: item.visitorName,
+              checkIn: item.checkIn,
+              visitorCardNumber: item.visitorCardNumber,
+              checkOut: item.checkOut,
+              reservationName: item.reservationName,
+              contactAddr: item.contactAddr,
+              subject: item.subject,
+              comment: item.comment,
+            };
+          }) as CsvDataType[];
+          setCsvData(data);
           csvLinkRef?.current?.link.click();
           snackberContext.dispatch({ type: 'success', message: t('export-csv.msg.export-success') });
         }
