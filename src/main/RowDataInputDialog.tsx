@@ -7,6 +7,7 @@ import { Box, Grid, Button, List, Typography } from '@material-ui/core';
 import { makeStyles, createStyles, createTheme, ThemeProvider } from '@material-ui/core/styles';
 import { grey } from '@material-ui/core/colors';
 
+import LoopIcon from '@material-ui/icons/Loop';
 import DeleteIcon from '@material-ui/icons/Delete';
 import SaveIcon from '@material-ui/icons/Save';
 
@@ -119,6 +120,8 @@ const getDefaultValues = (start?: Date, roomId?: string, usage?: UsageRangeForVi
     contactAddr: '',
     startTime: addMinutes(change5MinuteIntervals(startDate), startTimeBufferMinute),
     endTime: addMinutes(change5MinuteIntervals(startDate), startTimeBufferMinute + endTimeBufferMinute),
+    seriesMasterId: undefined,
+    recurrence: undefined,
   } as Inputs;
 };
 
@@ -179,6 +182,8 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
         contactAddr: data.contactAddr,
         startTime: new Date(data.startDateTime),
         endTime: new Date(data.endDateTime),
+        seriesMasterId: data.seriesMasterId,
+        recurrence: data.recurrence,
       });
     } else {
       reset(_.cloneDeep(getDefaultValues(addDefault?.start, addDefault?.roomId, addDefault?.usageRange)));
@@ -264,11 +269,11 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
           url = '/event/create';
           break;
         case 'upd':
-          url = '/event/update';
+          url = `/event/update${!!formData.recurrence ? '/seriesmaster' : ''}`;
           // url = !data?.visitorId ? '/visitor/create' : '/visitor/update';
           break;
         case 'del':
-          url = '/event/delete';
+          url = `/event/delete${!!formData.recurrence ? '/seriesmaster' : ''}`;
           // url = '/visitor/delete';
           break;
       }
@@ -445,6 +450,11 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
                     {t('common.button.search')}
                   </Button>
                 </Grid>
+              </Grid>
+              <Grid>
+                <Button size="small" color="primary" startIcon={<LoopIcon />}>
+                  {t('visitdialog.button.repeat')}
+                </Button>
               </Grid>
             </Box>
 

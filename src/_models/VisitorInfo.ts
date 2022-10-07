@@ -15,6 +15,8 @@ export type VisitorInfo = {
   };
   comment: string;
   contactAddr: string;
+  seriesMasterId: string | undefined;
+  recurrence: object | undefined; // TODO:あとで
 };
 
 export type VisitorInfoResourcies = {

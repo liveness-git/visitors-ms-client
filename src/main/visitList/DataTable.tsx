@@ -52,7 +52,26 @@ export function DataTable(props: DataTableProps) {
       } else {
         dataDialogHook.dispatch({ type: 'readOpen' });
       }
+      if (!!selectedRow.seriesMasterId) {
+        // 定期イベントの場合は先に確認ダイアログを表示
+        dataDialogHook.dispatch({ type: 'recConfOpen' });
+      }
       setCurrentRow(selectedRow);
+    },
+    [dataDialogHook]
+  );
+
+  // 定期イベント確認メッセージを閉じる
+  const handleRecConfClose = useCallback(
+    (isCancel: boolean, master?: RowDataType) => {
+      if (isCancel) {
+        dataDialogHook.dispatch({ type: 'recConfCancel' });
+        return;
+      }
+      if (master) {
+        setCurrentRow(master);
+      }
+      dataDialogHook.dispatch({ type: 'recConfClose' });
     },
     [dataDialogHook]
   );
@@ -71,7 +90,7 @@ export function DataTable(props: DataTableProps) {
   }
 
   return (
-    <DataTableBase currentRow={currentRow} dataDialogHook={dataDialogHook} isLoading={isLoading} reload={reload}>
+    <DataTableBase currentRow={currentRow} dataDialogHook={dataDialogHook} isLoading={isLoading} reload={reload} onRecConfClose={handleRecConfClose}>
       <MaterialTable
         columns={columns}
         components={{
