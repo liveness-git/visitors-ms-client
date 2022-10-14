@@ -38,6 +38,7 @@ import { ControllerDateTimePicker } from './ControllerDateTimePicker';
 import ReservationNameField from './ReservationNameField';
 import { LastUpdatedField } from './LastUpdatedField';
 import { ControllerRecurrence } from './ControllerRecurrence';
+import { PatternedRecurrenceInput } from '_models/PatternedRecurrence';
 
 const useRowDataDialogStyles = makeTableDialogStyle();
 
@@ -183,7 +184,22 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
         startTime: new Date(data.startDateTime),
         endTime: new Date(data.endDateTime),
         seriesMasterId: data.seriesMasterId,
-        recurrence: data.recurrence,
+        recurrence: !!data.recurrence
+          ? ({
+              pattern: {
+                type: data.recurrence.pattern.type,
+                interval: data.recurrence.pattern.interval,
+                daysOfWeek: data.recurrence.pattern.daysOfWeek,
+                dayOfMonth: data.recurrence.pattern.dayOfMonth,
+                index: data.recurrence.pattern.index,
+              },
+              range: {
+                type: data.recurrence.range.type,
+                startDate: data.recurrence.range.startDate,
+                endDate: data.recurrence.range.endDate,
+              },
+            } as PatternedRecurrenceInput)
+          : undefined,
       });
     } else {
       reset(_.cloneDeep(getDefaultValues(addDefault?.start, addDefault?.roomId, addDefault?.usageRange)));
@@ -325,6 +341,13 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
     activeSearchButton();
   };
 
+  // 会議室選択活性化 (定期イベント用)
+  const activeRoomSelect = () => {
+    if (getValues('mode') === 'upd') return; // 更新時、会議室変更は出来ないため非対応
+    setHiddenRooms(false);
+    setRoomsUrl(defaultRoomsUrl + `&usagerange=${getValues('usageRange')}`);
+  };
+
   // 削除確認アクション
   const handleDelConfClose = (deleteOk: boolean) => {
     setDelConfOpen(false);
@@ -417,7 +440,7 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
                 />
               </Box>
 
-              <Grid container spacing={1}>
+              <Grid container spacing={1} style={!!getValues('recurrence') ? { display: 'none' } : undefined}>
                 <Grid item xs={5}>
                   <ControllerDateTimePicker
                     name="startTime"
@@ -451,9 +474,16 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
                   </Button>
                 </Grid>
               </Grid>
+
               {!data?.seriesMasterId && (
                 <Grid>
-                  <ControllerRecurrence control={control} getValues={getValues} setValue={setValue} errors={errors}></ControllerRecurrence>
+                  <ControllerRecurrence
+                    activeRoomSelect={activeRoomSelect}
+                    activeSearchButton={activeSearchButton}
+                    getValues={getValues}
+                    setValue={setValue}
+                    errors={errors}
+                  ></ControllerRecurrence>
                 </Grid>
               )}
             </Box>

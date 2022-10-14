@@ -1,3 +1,4 @@
+import { PatternedRecurrence, PatternedRecurrenceInput } from './PatternedRecurrence';
 import { UsageRangeForVisitor } from './Room';
 import { EmailAddress, UserStatus } from './User';
 
@@ -16,7 +17,6 @@ export type VisitorInfo = {
   comment: string;
   contactAddr: string;
   seriesMasterId: string | undefined;
-  recurrence: object | undefined; // TODO:あとで
 };
 
 export type VisitorInfoResourcies = {
@@ -41,6 +41,7 @@ export type VisitorInfoReadOnly = {
     [room: string]: ResourciesReadOnly;
   };
   lastUpdated: number;
+  recurrence: PatternedRecurrence | undefined;
   eventType: GraphApiEventType;
 };
 export type GraphApiEventType = 'singleInstance' | 'occurrence' | 'exception' | 'seriesMaster';
@@ -58,6 +59,7 @@ export type EventInputType = {
   resourcies: {
     [room: string]: ResourciesInputType;
   };
+  recurrence: PatternedRecurrenceInput | undefined;
 };
 export type ResourciesInputType = {
   roomForEdit: string;
