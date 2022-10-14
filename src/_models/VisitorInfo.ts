@@ -41,7 +41,10 @@ export type VisitorInfoReadOnly = {
     [room: string]: ResourciesReadOnly;
   };
   lastUpdated: number;
+  eventType: GraphApiEventType;
 };
+export type GraphApiEventType = 'singleInstance' | 'occurrence' | 'exception' | 'seriesMaster';
+
 export type ResourciesReadOnly = {
   roomName: string; // outlook情報
   roomEmail: string; // outlook情報

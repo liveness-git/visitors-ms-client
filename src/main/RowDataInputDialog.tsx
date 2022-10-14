@@ -7,7 +7,6 @@ import { Box, Grid, Button, List, Typography } from '@material-ui/core';
 import { makeStyles, createStyles, createTheme, ThemeProvider } from '@material-ui/core/styles';
 import { grey } from '@material-ui/core/colors';
 
-import LoopIcon from '@material-ui/icons/Loop';
 import DeleteIcon from '@material-ui/icons/Delete';
 import SaveIcon from '@material-ui/icons/Save';
 
@@ -38,6 +37,7 @@ import { RoomReadFields, strRoomStatus } from './RoomReadFields';
 import { ControllerDateTimePicker } from './ControllerDateTimePicker';
 import ReservationNameField from './ReservationNameField';
 import { LastUpdatedField } from './LastUpdatedField';
+import { ControllerRecurrence } from './ControllerRecurrence';
 
 const useRowDataDialogStyles = makeTableDialogStyle();
 
@@ -269,11 +269,11 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
           url = '/event/create';
           break;
         case 'upd':
-          url = `/event/update${!!formData.recurrence ? '/seriesmaster' : ''}`;
+          url = '/event/update';
           // url = !data?.visitorId ? '/visitor/create' : '/visitor/update';
           break;
         case 'del':
-          url = `/event/delete${!!formData.recurrence ? '/seriesmaster' : ''}`;
+          url = '/event/delete';
           // url = '/visitor/delete';
           break;
       }
@@ -451,11 +451,11 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
                   </Button>
                 </Grid>
               </Grid>
-              <Grid>
-                <Button size="small" color="primary" startIcon={<LoopIcon />}>
-                  {t('visitdialog.button.repeat')}
-                </Button>
-              </Grid>
+              {!data?.seriesMasterId && (
+                <Grid>
+                  <ControllerRecurrence control={control} getValues={getValues} setValue={setValue} errors={errors}></ControllerRecurrence>
+                </Grid>
+              )}
             </Box>
 
             {!data ? (
