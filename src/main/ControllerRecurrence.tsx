@@ -141,7 +141,6 @@ export function ControllerRecurrence(props: ControllerRecurrenceProps) {
     if (open) {
       if (!!getValues('recurrence')) {
         // recurrenceオブジェクトから取得
-        //TODO:とりま
         setInputValues({
           pattern: {
             type: getValues('recurrence')!.pattern.type,
@@ -201,7 +200,6 @@ export function ControllerRecurrence(props: ControllerRecurrenceProps) {
     // 曜日チェックボックスの値をRecurrenceオブジェクト用に加工する
     const daysOfWeek = Object.keys(inputValues.pattern.daysOfWeek).filter((week) => inputValues.pattern.daysOfWeek[week as DayOfWeek]) as DayOfWeek[];
 
-    //TODO:とりま
     let pattern = { type: inputValues.pattern.type, interval: inputValues.pattern.interval } as RecurrencePattern;
     switch (inputValues.pattern.type) {
       case 'daily':
@@ -242,7 +240,6 @@ export function ControllerRecurrence(props: ControllerRecurrenceProps) {
       default:
         break;
     }
-
     setValue('recurrence', { pattern: pattern, range: range } as PatternedRecurrenceInput, { shouldDirty: true });
 
     activeRoomSelect();
@@ -432,6 +429,8 @@ export function ControllerRecurrence(props: ControllerRecurrenceProps) {
           </IconButton>
         </DialogTitle>
         <DialogContent dividers>
+          <Box p={2}>時間</Box>
+
           <Box px={2}>
             <TextField
               label={t('recurrence-dialog.header.pattern.type')}
@@ -530,6 +529,8 @@ export function ControllerRecurrence(props: ControllerRecurrenceProps) {
               </Grid>
             </Grid>
           </Box>
+
+          <Box p={2}>期間</Box>
 
           <Box p={2}>
             <Grid container justifyContent="space-between" spacing={2}>
