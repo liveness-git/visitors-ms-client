@@ -43,6 +43,7 @@ import {
   RecurrenceRangeType,
   WeekIndex,
 } from '_models/PatternedRecurrence';
+import { addMonths } from 'date-fns';
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -89,8 +90,10 @@ const defaultCheckBoxWeek = nameOfDayOfWeek.reduce((newObj, week) => {
   return newObj;
 }, {} as CheckBoxWeek);
 
-//TODO:とりま
-const getDefaultValues = () => {
+const endDateAddAmount = 3;
+
+const getDefaultValues = (start?: Date) => {
+  const startDate = start ? start : new Date();
   return {
     pattern: {
       type: nameOfRecurrencePatternType[0] as RecurrencePatternType,
@@ -102,8 +105,8 @@ const getDefaultValues = () => {
     },
     range: {
       type: nameOfRecurrenceRangeType[0] as RecurrenceRangeType,
-      startDate: new Date(),
-      endDate: new Date(),
+      startDate: startDate,
+      endDate: addMonths(new Date(), endDateAddAmount),
       numberOfOccurrences: 1,
     },
   } as InitValuesType;
@@ -156,10 +159,12 @@ export function ControllerRecurrence(props: ControllerRecurrenceProps) {
             month: (!!getValues('recurrence')!.pattern.month ? getValues('recurrence')!.pattern.month : defaultValues.pattern.month) as number,
           },
           range: {
-            type: nameOfRecurrenceRangeType[0],
-            startDate: new Date(),
-            endDate: new Date(),
-            numberOfOccurrences: 1,
+            type: getValues('recurrence')!.range.type,
+            startDate: getValues('recurrence')!.range.startDate,
+            endDate: getValues('recurrence')!.range.endDate ? getValues('recurrence')!.range.endDate! : defaultValues.range.endDate,
+            numberOfOccurrences: getValues('recurrence')!.range.numberOfOccurrences
+              ? getValues('recurrence')!.range.numberOfOccurrences!
+              : defaultValues.range.numberOfOccurrences,
           },
         });
       } else {
@@ -229,8 +234,8 @@ export function ControllerRecurrence(props: ControllerRecurrenceProps) {
       case 'endDate':
         range.endDate = inputValues.range.endDate;
         break;
-      case 'noEnd':
-        break;
+      // case 'noEnd':
+      //   break;
       case 'numbered':
         range.numberOfOccurrences = inputValues.range.numberOfOccurrences;
         break;
