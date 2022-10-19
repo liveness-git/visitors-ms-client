@@ -86,7 +86,7 @@
 	"recurrence-dialog.header.range.number-of-occurrences":"反復回数",
 	"recurrence-dialog.label.pattern.interval.daily":"日ごと",
 	"recurrence-dialog.label.pattern.interval.weekly":"週ごと",
-	"recurrence-dialog.label.pattern.interval.absoluteMonthly":"か月ごとの",
+	"recurrence-dialog.label.pattern.interval.absoluteMonthly":"か月ごと",
 	"recurrence-dialog.label.pattern.interval.relativeMonthly":"か月ごと",
 	"recurrence-dialog.label.pattern.interval.absoluteYearly":"年ごと",
 	"recurrence-dialog.label.pattern.interval.relativeYearly":"年ごと",

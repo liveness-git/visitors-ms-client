@@ -454,7 +454,7 @@ export function ControllerRecurrence(props: ControllerRecurrenceProps) {
             </TextField>
 
             <Grid container>
-              <Grid item xs={4} container spacing={1} alignItems="center">
+              <Grid item xs={12} md={4} container spacing={1} alignItems="center">
                 <Grid item>
                   <TextField
                     className={classes.inputInterval}
@@ -476,30 +476,63 @@ export function ControllerRecurrence(props: ControllerRecurrenceProps) {
                 </Grid>
               </Grid>
 
-              <Grid
-                item
-                xs={8}
-                container
-                spacing={1}
-                alignItems="center"
-                style={inputValues.pattern.type === 'absoluteMonthly' ? undefined : { display: 'none' }}
-              >
-                <Grid item>{DayOfMonthText}</Grid>
-                <Grid item>
-                  <Typography>{t(`recurrence-dialog.label.pattern.day-of-month.absolute`)}</Typography>
+              <Grid item style={inputValues.pattern.type === 'weekly' ? undefined : { display: 'none' }}>
+                <FormControl error={!!errors.recurrence?.pattern?.daysOfWeek}>
+                  {WeekCheckBox}
+                  <FormHelperText>{!!errors.recurrence?.pattern?.daysOfWeek && errors.recurrence?.pattern?.daysOfWeek[0].message}</FormHelperText>
+                </FormControl>
+              </Grid>
+
+              <Grid item style={inputValues.pattern.type === 'absoluteMonthly' ? undefined : { display: 'none' }}>
+                <Grid item container spacing={1} alignItems="center">
+                  <Grid item>{DayOfMonthText}</Grid>
+                  <Grid item>
+                    <Typography>{t(`recurrence-dialog.label.pattern.day-of-month.absolute`)}</Typography>
+                  </Grid>
+                </Grid>
+              </Grid>
+
+              <Grid item style={inputValues.pattern.type === 'relativeMonthly' ? undefined : { display: 'none' }}>
+                <Grid item container spacing={1} alignItems="center">
+                  <Grid item>{IndexSelectBox}</Grid>
+                  <Grid item>{WeekSelectBox}</Grid>
+                  <Grid item>
+                    <Typography>{t(`recurrence-dialog.label.pattern.day-of-month.relative`)}</Typography>
+                  </Grid>
+                </Grid>
+              </Grid>
+
+              <Grid item style={inputValues.pattern.type === 'absoluteYearly' ? undefined : { display: 'none' }}>
+                <Grid item container spacing={1} alignItems="center">
+                  <Grid item>{MonthSelectBox}</Grid>
+                  <Grid item>{DayOfMonthText}</Grid>
+                  <Grid item>
+                    <Typography>{t(`recurrence-dialog.label.pattern.day-of-month.absolute`)}</Typography>
+                  </Grid>
+                </Grid>
+              </Grid>
+
+              <Grid item style={inputValues.pattern.type === 'relativeYearly' ? undefined : { display: 'none' }}>
+                <Grid item container spacing={1} alignItems="center">
+                  <Grid item>{MonthSelectBox}</Grid>
+                  <Grid item>{IndexSelectBox}</Grid>
+                  <Grid item>{WeekSelectBox}</Grid>
+                  <Grid item>
+                    <Typography>{t(`recurrence-dialog.label.pattern.day-of-month.relative`)}</Typography>
+                  </Grid>
                 </Grid>
               </Grid>
             </Grid>
           </Box>
 
-          <Box px={2} style={inputValues.pattern.type === 'weekly' ? undefined : { display: 'none' }}>
+          {/* <Box px={2} style={inputValues.pattern.type === 'weekly' ? undefined : { display: 'none' }}>
             <FormControl error={!!errors.recurrence?.pattern?.daysOfWeek}>
               {WeekCheckBox}
               <FormHelperText>{!!errors.recurrence?.pattern?.daysOfWeek && errors.recurrence?.pattern?.daysOfWeek[0].message}</FormHelperText>
             </FormControl>
-          </Box>
+          </Box> */}
 
-          <Box px={2} style={inputValues.pattern.type === 'relativeMonthly' ? undefined : { display: 'none' }}>
+          {/* <Box px={2} style={inputValues.pattern.type === 'relativeMonthly' ? undefined : { display: 'none' }}>
             <Grid container spacing={1} alignItems="center">
               <Grid item>{IndexSelectBox}</Grid>
               <Grid item>{WeekSelectBox}</Grid>
@@ -507,9 +540,9 @@ export function ControllerRecurrence(props: ControllerRecurrenceProps) {
                 <Typography>{t(`recurrence-dialog.label.pattern.day-of-month.relative`)}</Typography>
               </Grid>
             </Grid>
-          </Box>
+          </Box> */}
 
-          <Box px={2} style={inputValues.pattern.type === 'absoluteYearly' ? undefined : { display: 'none' }}>
+          {/* <Box px={2} style={inputValues.pattern.type === 'absoluteYearly' ? undefined : { display: 'none' }}>
             <Grid container spacing={1} alignItems="center">
               <Grid item>{MonthSelectBox}</Grid>
               <Grid item>{DayOfMonthText}</Grid>
@@ -517,9 +550,9 @@ export function ControllerRecurrence(props: ControllerRecurrenceProps) {
                 <Typography>{t(`recurrence-dialog.label.pattern.day-of-month.absolute`)}</Typography>
               </Grid>
             </Grid>
-          </Box>
+          </Box> */}
 
-          <Box px={2} style={inputValues.pattern.type === 'relativeYearly' ? undefined : { display: 'none' }}>
+          {/* <Box px={2} style={inputValues.pattern.type === 'relativeYearly' ? undefined : { display: 'none' }}>
             <Grid container spacing={1} alignItems="center">
               <Grid item>{MonthSelectBox}</Grid>
               <Grid item>{IndexSelectBox}</Grid>
@@ -528,7 +561,7 @@ export function ControllerRecurrence(props: ControllerRecurrenceProps) {
                 <Typography>{t(`recurrence-dialog.label.pattern.day-of-month.relative`)}</Typography>
               </Grid>
             </Grid>
-          </Box>
+          </Box> */}
 
           <Box p={2}>期間</Box>
 
