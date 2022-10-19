@@ -17,26 +17,25 @@ export type DayOfWeek = typeof nameOfDayOfWeek[number];
 export const nameOfWeekIndex = ['first', 'second', 'third', 'fourth', 'last'] as const;
 export type WeekIndex = typeof nameOfWeekIndex[number];
 
-type RecurrencePattern = {
+export type RecurrencePattern = {
   type: RecurrencePatternType;
   interval: number;
   daysOfWeek?: DayOfWeek[]; // weekly, relativeMonthly, relativeYearly
   dayOfMonth?: number; // absoluteMonthly, absoluteYearly
-  index?: WeekIndex; // absoluteMonthly, absoluteYearly
+  index?: WeekIndex; // relativeMonthly, relativeYearly
+  month?: number; // absoluteYearly, relativeYearly
 };
 type RecurrencePatternReadOnly = {
-  month: number;
   firstDayOfWeek?: DayOfWeek; //weekly
 };
 
 export const nameOfRecurrenceRangeType = ['endDate', 'noEnd', 'numbered'] as const;
 export type RecurrenceRangeType = typeof nameOfRecurrenceRangeType[number];
 
-type RecurrenceRange = {
+export type RecurrenceRange = {
   type: RecurrenceRangeType;
   startDate: Date;
   endDate?: Date;
+  numberOfOccurrences?: number;
 };
-type RecurrenceRangeReadOnly = {
-  numberOfOccurrences: number;
-};
+type RecurrenceRangeReadOnly = {};

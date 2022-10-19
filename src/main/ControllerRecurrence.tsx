@@ -1,8 +1,24 @@
-import { MouseEventHandler, useEffect, useState } from 'react';
+import { MouseEventHandler, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import i18next from 'i18next';
 
-import { Box, Button, createStyles, Grid, IconButton, makeStyles, MenuItem, TextField } from '@material-ui/core';
+import _ from 'lodash';
+
+import {
+  Box,
+  Button,
+  Checkbox,
+  createStyles,
+  FormControl,
+  FormControlLabel,
+  FormGroup,
+  FormHelperText,
+  Grid,
+  IconButton,
+  makeStyles,
+  MenuItem,
+  TextField,
+  Typography,
+} from '@material-ui/core';
 import Dialog from '@material-ui/core/Dialog';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
@@ -14,7 +30,19 @@ import { DeepMap, DeepPartial, FieldError, UseFormGetValues, UseFormSetValue } f
 
 import { Inputs } from './RowDataInputDialog';
 
-import { nameOfRecurrencePatternType, PatternedRecurrenceInput, RecurrencePatternType } from '_models/PatternedRecurrence';
+import {
+  DayOfWeek,
+  nameOfDayOfWeek,
+  nameOfRecurrencePatternType,
+  nameOfRecurrenceRangeType,
+  nameOfWeekIndex,
+  PatternedRecurrenceInput,
+  RecurrencePattern,
+  RecurrencePatternType,
+  RecurrenceRange,
+  RecurrenceRangeType,
+  WeekIndex,
+} from '_models/PatternedRecurrence';
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -29,12 +57,57 @@ const useStyles = makeStyles((theme) =>
       top: theme.spacing(0.75),
       color: theme.palette.grey[500],
     },
+    inputInterval: {
+      width: 70,
+    },
+    inputDayOfMonth: {
+      width: 70,
+    },
   })
 );
 
-const patternTypeList = nameOfRecurrencePatternType.map((value) => {
-  return { label: i18next.t(`recurrence-dialog.pattern.type.${value}`), value: value };
-});
+type InitValuesType = {
+  pattern: {
+    type: RecurrencePatternType;
+    interval: number;
+    daysOfWeek: CheckBoxWeek;
+    dayOfMonth: number;
+    index: WeekIndex;
+    month: number;
+  };
+  range: {
+    type: RecurrenceRangeType;
+    startDate: Date;
+    endDate: Date;
+    numberOfOccurrences: number;
+  };
+};
+type CheckBoxWeek = { [K in DayOfWeek]: boolean };
+
+const defaultCheckBoxWeek = nameOfDayOfWeek.reduce((newObj, week) => {
+  newObj[week] = false;
+  return newObj;
+}, {} as CheckBoxWeek);
+
+//TODO:とりま
+const getDefaultValues = () => {
+  return {
+    pattern: {
+      type: nameOfRecurrencePatternType[0] as RecurrencePatternType,
+      interval: 1,
+      daysOfWeek: _.cloneDeep(defaultCheckBoxWeek),
+      dayOfMonth: 1,
+      index: nameOfWeekIndex[0] as WeekIndex,
+      month: 1,
+    },
+    range: {
+      type: nameOfRecurrenceRangeType[0] as RecurrenceRangeType,
+      startDate: new Date(),
+      endDate: new Date(),
+      numberOfOccurrences: 1,
+    },
+  } as InitValuesType;
+};
 
 type ControllerRecurrenceProps = {
   activeRoomSelect: () => void;
@@ -50,19 +123,50 @@ export function ControllerRecurrence(props: ControllerRecurrenceProps) {
   const { t } = useTranslation();
   const classes = useStyles();
 
-  const [patternType, setPatternType] = useState<RecurrencePatternType>('daily'); //TODO:とりま
-
   // 定期パターン文章
   const [patternInfo, setPatternInfo] = useState('');
 
   //ダイアログの状態
   const [open, setOpen] = useState(false);
 
-  // 初期値の設定
+  // 入力値の状態
+  const [inputValues, setInputValues] = useState<InitValuesType>(_.cloneDeep(getDefaultValues()));
+
+  // 初期値設定
   useEffect(() => {
+    const defaultValues = { ...getDefaultValues() };
     if (open) {
-      const type = !!getValues('recurrence') ? getValues('recurrence')!.pattern.type : nameOfRecurrencePatternType[0];
-      setPatternType(type);
+      if (!!getValues('recurrence')) {
+        // recurrenceオブジェクトから取得
+        //TODO:とりま
+        setInputValues({
+          pattern: {
+            type: getValues('recurrence')!.pattern.type,
+            interval: getValues('recurrence')!.pattern.interval,
+            daysOfWeek: !!getValues('recurrence')!.pattern.daysOfWeek
+              ? getValues('recurrence')!.pattern.daysOfWeek!.reduce((newObj, week) => {
+                  newObj[week] = true;
+                  return newObj;
+                }, {} as CheckBoxWeek)
+              : defaultValues.pattern.daysOfWeek,
+            dayOfMonth: (!!getValues('recurrence')!.pattern.dayOfMonth
+              ? getValues('recurrence')!.pattern.dayOfMonth
+              : defaultValues.pattern.dayOfMonth) as number,
+            index: (!!getValues('recurrence')!.pattern.index ? getValues('recurrence')!.pattern.index : defaultValues.pattern.index) as WeekIndex,
+            month: (!!getValues('recurrence')!.pattern.month ? getValues('recurrence')!.pattern.month : defaultValues.pattern.month) as number,
+          },
+          range: {
+            type: nameOfRecurrenceRangeType[0],
+            startDate: new Date(),
+            endDate: new Date(),
+            numberOfOccurrences: 1,
+          },
+        });
+      } else {
+        setInputValues(_.cloneDeep(defaultValues));
+      }
+    } else {
+      setInputValues(_.cloneDeep(defaultValues));
     }
   }, [getValues, open]);
 
@@ -89,10 +193,52 @@ export function ControllerRecurrence(props: ControllerRecurrenceProps) {
 
   // OKアクション
   const handleOk = () => {
-    //TODO: newValuesを数パターン作ってひとまずpostしてみる。
-    const newValues = { pattern: { type: patternType }, range: {} } as PatternedRecurrenceInput;
+    // 曜日チェックボックスの値をRecurrenceオブジェクト用に加工する
+    const daysOfWeek = Object.keys(inputValues.pattern.daysOfWeek).filter((week) => inputValues.pattern.daysOfWeek[week as DayOfWeek]) as DayOfWeek[];
 
-    setValue('recurrence', newValues, { shouldDirty: true });
+    //TODO:とりま
+    let pattern = { type: inputValues.pattern.type, interval: inputValues.pattern.interval } as RecurrencePattern;
+    switch (inputValues.pattern.type) {
+      case 'daily':
+        break;
+      case 'weekly':
+        pattern.daysOfWeek = daysOfWeek;
+        break;
+      case 'absoluteMonthly':
+        pattern.dayOfMonth = inputValues.pattern.dayOfMonth;
+        break;
+      case 'relativeMonthly':
+        pattern.daysOfWeek = daysOfWeek;
+        pattern.index = inputValues.pattern.index;
+        break;
+      case 'absoluteYearly':
+        pattern.dayOfMonth = inputValues.pattern.dayOfMonth;
+        pattern.index = inputValues.pattern.index;
+        pattern.month = inputValues.pattern.month;
+        break;
+      case 'relativeYearly':
+        pattern.daysOfWeek = daysOfWeek;
+        pattern.index = inputValues.pattern.index;
+        pattern.month = inputValues.pattern.month;
+        break;
+      default:
+        break;
+    }
+    let range = { type: inputValues.range.type, startDate: inputValues.range.startDate } as RecurrenceRange;
+    switch (inputValues.range.type) {
+      case 'endDate':
+        range.endDate = inputValues.range.endDate;
+        break;
+      case 'noEnd':
+        break;
+      case 'numbered':
+        range.numberOfOccurrences = inputValues.range.numberOfOccurrences;
+        break;
+      default:
+        break;
+    }
+
+    setValue('recurrence', { pattern: pattern, range: range } as PatternedRecurrenceInput, { shouldDirty: true });
 
     activeRoomSelect();
     setOpen(false);
@@ -109,6 +255,153 @@ export function ControllerRecurrence(props: ControllerRecurrenceProps) {
     activeSearchButton();
     setOpen(false);
   };
+
+  const patternTypeList = nameOfRecurrencePatternType.map((value) => {
+    return { label: t(`recurrence-dialog.pattern.type.${value}`), value: value };
+  });
+  const dayOfWeekList = nameOfDayOfWeek.map((value) => {
+    return { label: t(`recurrence-dialog.pattern.day-of-week.${value}`), value: value };
+  });
+  const weekIndexList = nameOfWeekIndex.map((value) => {
+    return { label: t(`recurrence-dialog.pattern.index.${value}`), value: value };
+  });
+  const monthList = [...Array(12)]
+    .map((_, i) => i + 1)
+    .map((value) => {
+      return { label: t(`recurrence-dialog.pattern.month.${value}`), value: value };
+    });
+
+  // 曜日チェックボックス
+  const WeekCheckBox = useMemo(() => {
+    return (
+      <FormGroup row>
+        {nameOfDayOfWeek.map((week, index) => {
+          return (
+            <FormControlLabel
+              key={index}
+              control={
+                <Checkbox
+                  checked={inputValues.pattern.daysOfWeek[week]}
+                  onChange={(e) => {
+                    setInputValues((values) => {
+                      return {
+                        ...values,
+                        pattern: {
+                          ...values.pattern,
+                          daysOfWeek: { ...values.pattern.daysOfWeek, [e.target.name as DayOfWeek]: e.target.checked },
+                        },
+                      };
+                    });
+                  }}
+                  name={week}
+                  color="primary"
+                />
+              }
+              label={t(`recurrence-dialog.pattern.day-of-week.${week}`)}
+            />
+          );
+        })}
+      </FormGroup>
+    );
+  }, [inputValues, t]);
+
+  // 曜日セレクトボックス
+  const WeekSelectBox = useMemo(() => {
+    return (
+      <TextField
+        label={t('recurrence-dialog.header.pattern.days-of-week')}
+        select={true}
+        value={
+          Object.keys(inputValues.pattern.daysOfWeek).filter((week) => inputValues.pattern.daysOfWeek[week as DayOfWeek]).length > 0
+            ? Object.keys(inputValues.pattern.daysOfWeek).filter((week) => inputValues.pattern.daysOfWeek[week as DayOfWeek])
+            : nameOfDayOfWeek[0]
+        }
+        onChange={(e) => {
+          const value = _.cloneDeep(defaultCheckBoxWeek);
+          value[e.target.value as DayOfWeek] = true;
+          setInputValues((values) => {
+            return { ...values, pattern: { ...values.pattern, daysOfWeek: _.cloneDeep(value) } };
+          });
+        }}
+        error={!!errors.recurrence?.pattern?.daysOfWeek}
+        helperText={!!errors.recurrence?.pattern?.daysOfWeek && errors.recurrence?.pattern?.daysOfWeek[0].message}
+      >
+        {dayOfWeekList.map((option, index) => (
+          <MenuItem key={index} value={option.value}>
+            {option.label}
+          </MenuItem>
+        ))}
+      </TextField>
+    );
+  }, [dayOfWeekList, errors.recurrence?.pattern?.daysOfWeek, inputValues, t]);
+
+  // 週数セレクトボックス
+  const IndexSelectBox = useMemo(() => {
+    return (
+      <TextField
+        label={t('recurrence-dialog.header.pattern.index')}
+        select={true}
+        value={inputValues.pattern.index}
+        onChange={(e) => {
+          setInputValues((values) => {
+            return { ...values, pattern: { ...values.pattern, index: e.target.value as WeekIndex } };
+          });
+        }}
+        error={!!errors.recurrence?.pattern?.index}
+        helperText={!!errors.recurrence?.pattern?.index && errors.recurrence?.pattern?.index.message}
+      >
+        {weekIndexList.map((option, index) => (
+          <MenuItem key={index} value={option.value}>
+            {option.label}
+          </MenuItem>
+        ))}
+      </TextField>
+    );
+  }, [errors.recurrence?.pattern?.index, inputValues, t, weekIndexList]);
+
+  // 日付インプットフィールド
+  const DayOfMonthText = useMemo(() => {
+    return (
+      <TextField
+        className={classes.inputDayOfMonth}
+        label={t('recurrence-dialog.header.pattern.day-of-month')}
+        type="number"
+        InputProps={{ inputProps: { min: 1 } }}
+        value={inputValues.pattern.dayOfMonth}
+        onChange={(e) => {
+          setInputValues((values) => {
+            return { ...values, pattern: { ...values.pattern, dayOfMonth: Number(e.target.value) } };
+          });
+        }}
+        error={!!errors.recurrence?.pattern?.dayOfMonth}
+        helperText={!!errors.recurrence?.pattern?.dayOfMonth && errors.recurrence?.pattern?.dayOfMonth.message}
+      ></TextField>
+    );
+  }, [classes.inputDayOfMonth, errors.recurrence?.pattern?.dayOfMonth, inputValues, t]);
+
+  // 月セレクトボックス
+  const MonthSelectBox = useMemo(() => {
+    return (
+      <TextField
+        label={t('recurrence-dialog.header.pattern.month')}
+        select={true}
+        value={inputValues.pattern.month}
+        onChange={(e) => {
+          setInputValues((values) => {
+            return { ...values, pattern: { ...values.pattern, month: Number(e.target.value) } };
+          });
+        }}
+        error={!!errors.recurrence?.pattern?.month}
+        helperText={!!errors.recurrence?.pattern?.month && errors.recurrence?.pattern?.month.message}
+      >
+        {monthList.map((option, index) => (
+          <MenuItem key={index} value={option.value}>
+            {option.label}
+          </MenuItem>
+        ))}
+      </TextField>
+    );
+  }, [errors.recurrence?.pattern?.month, inputValues, t, monthList]);
 
   return (
     <>
@@ -138,19 +431,99 @@ export function ControllerRecurrence(props: ControllerRecurrenceProps) {
             <TextField
               label={t('recurrence-dialog.header.pattern.type')}
               select={true}
-              value={patternType}
+              value={inputValues.pattern.type}
               onChange={(e) => {
-                setPatternType(e.target.value as RecurrencePatternType);
+                const defaultValues = { ...getDefaultValues() };
+                defaultValues.pattern.type = e.target.value as RecurrencePatternType;
+                setInputValues((values) => {
+                  return { ...values, pattern: { ...defaultValues.pattern } }; // patternの中身は全置換え(リセット)
+                });
               }}
               error={!!errors.recurrence?.pattern?.type}
               helperText={!!errors.recurrence?.pattern?.type && errors.recurrence?.pattern?.type.message}
             >
               {patternTypeList.map((option, index) => (
-                <MenuItem key={`patternTypeList-${index}`} value={option.value}>
+                <MenuItem key={index} value={option.value}>
                   {option.label}
                 </MenuItem>
               ))}
             </TextField>
+
+            <Grid container>
+              <Grid item xs={4} container spacing={1} alignItems="center">
+                <Grid item>
+                  <TextField
+                    className={classes.inputInterval}
+                    label={t('recurrence-dialog.header.pattern.interval')}
+                    type="number"
+                    InputProps={{ inputProps: { min: 1 } }}
+                    value={inputValues.pattern.interval}
+                    onChange={(e) => {
+                      setInputValues((values) => {
+                        return { ...values, pattern: { ...values.pattern, interval: Number(e.target.value) } };
+                      });
+                    }}
+                    error={!!errors.recurrence?.pattern?.interval}
+                    helperText={!!errors.recurrence?.pattern?.interval && errors.recurrence?.pattern?.interval.message}
+                  />
+                </Grid>
+                <Grid item>
+                  <Typography>{t(`recurrence-dialog.label.pattern.interval.${inputValues.pattern.type}`)}</Typography>
+                </Grid>
+              </Grid>
+
+              <Grid
+                item
+                xs={8}
+                container
+                spacing={1}
+                alignItems="center"
+                style={inputValues.pattern.type === 'absoluteMonthly' ? undefined : { display: 'none' }}
+              >
+                <Grid item>{DayOfMonthText}</Grid>
+                <Grid item>
+                  <Typography>{t(`recurrence-dialog.label.pattern.day-of-month.absolute`)}</Typography>
+                </Grid>
+              </Grid>
+            </Grid>
+          </Box>
+
+          <Box px={2} style={inputValues.pattern.type === 'weekly' ? undefined : { display: 'none' }}>
+            <FormControl error={!!errors.recurrence?.pattern?.daysOfWeek}>
+              {WeekCheckBox}
+              <FormHelperText>{!!errors.recurrence?.pattern?.daysOfWeek && errors.recurrence?.pattern?.daysOfWeek[0].message}</FormHelperText>
+            </FormControl>
+          </Box>
+
+          <Box px={2} style={inputValues.pattern.type === 'relativeMonthly' ? undefined : { display: 'none' }}>
+            <Grid container spacing={1} alignItems="center">
+              <Grid item>{IndexSelectBox}</Grid>
+              <Grid item>{WeekSelectBox}</Grid>
+              <Grid item>
+                <Typography>{t(`recurrence-dialog.label.pattern.day-of-month.relative`)}</Typography>
+              </Grid>
+            </Grid>
+          </Box>
+
+          <Box px={2} style={inputValues.pattern.type === 'absoluteYearly' ? undefined : { display: 'none' }}>
+            <Grid container spacing={1} alignItems="center">
+              <Grid item>{MonthSelectBox}</Grid>
+              <Grid item>{DayOfMonthText}</Grid>
+              <Grid item>
+                <Typography>{t(`recurrence-dialog.label.pattern.day-of-month.absolute`)}</Typography>
+              </Grid>
+            </Grid>
+          </Box>
+
+          <Box px={2} style={inputValues.pattern.type === 'relativeYearly' ? undefined : { display: 'none' }}>
+            <Grid container spacing={1} alignItems="center">
+              <Grid item>{MonthSelectBox}</Grid>
+              <Grid item>{IndexSelectBox}</Grid>
+              <Grid item>{WeekSelectBox}</Grid>
+              <Grid item>
+                <Typography>{t(`recurrence-dialog.label.pattern.day-of-month.relative`)}</Typography>
+              </Grid>
+            </Grid>
           </Box>
 
           <Box p={2}>
