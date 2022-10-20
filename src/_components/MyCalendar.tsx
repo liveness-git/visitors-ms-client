@@ -1,6 +1,6 @@
 import { makeStyles } from '@material-ui/core';
 import { KeyboardDatePicker } from '@material-ui/pickers';
-import { FieldError } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 
 const useStyles = makeStyles({
   keyboardDatePicker: {
@@ -12,10 +12,14 @@ type MyCalendarProps = {
   label: string;
   date: Date | null;
   onChange: (date: Date | null) => void;
-  errors?: FieldError;
+  disablePast?: boolean;
+  maxDate?: Date | null;
+  minDate?: Date | null;
+  errMsg?: string[];
 };
 
-function MyCalendar({ label, date, onChange, errors }: MyCalendarProps) {
+function MyCalendar({ label, date, onChange, disablePast, maxDate, minDate, errMsg }: MyCalendarProps) {
+  const { t } = useTranslation();
   const classes = useStyles();
   return (
     <KeyboardDatePicker
@@ -24,6 +28,11 @@ function MyCalendar({ label, date, onChange, errors }: MyCalendarProps) {
       label={label}
       format="yyyy/MM/dd"
       showTodayButton
+      disablePast={disablePast}
+      maxDate={!!maxDate ? maxDate : undefined}
+      maxDateMessage={t('my-calendar.error.max-date-message')}
+      minDate={!!minDate ? minDate : undefined}
+      minDateMessage={t('my-calendar.error.min-date-message')}
       value={date}
       onChange={onChange}
       KeyboardButtonProps={{
@@ -36,8 +45,8 @@ function MyCalendar({ label, date, onChange, errors }: MyCalendarProps) {
           width: 85,
         },
       }}
-      error={!!errors}
-      helperText={errors && errors.message}
+      error={!!errMsg}
+      helperText={!!errMsg && errMsg}
     />
   );
 }

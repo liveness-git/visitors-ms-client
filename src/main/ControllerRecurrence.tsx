@@ -1,4 +1,4 @@
-import { MouseEventHandler, useCallback, useEffect, useMemo, useState } from 'react';
+import { MouseEventHandler, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import _ from 'lodash';
@@ -27,7 +27,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import CloseIcon from '@material-ui/icons/Close';
 import LoopIcon from '@material-ui/icons/Loop';
 
-import { DeepMap, DeepPartial, FieldError, UseFormGetValues, UseFormSetValue } from 'react-hook-form';
+import { DeepMap, DeepPartial, UseFormGetValues, UseFormSetValue } from 'react-hook-form';
 
 import { Inputs } from './RowDataInputDialog';
 
@@ -44,7 +44,7 @@ import {
   RecurrenceRangeType,
   WeekIndex,
 } from '_models/PatternedRecurrence';
-import { addMonths } from 'date-fns';
+import { addMonths, addYears } from 'date-fns';
 import MyCalendar from '_components/MyCalendar';
 
 const useStyles = makeStyles((theme) =>
@@ -90,12 +90,15 @@ type InitValuesType = {
 };
 type CheckBoxWeek = { [K in DayOfWeek]: boolean };
 
+type InputErrorType = DeepMap<DeepPartial<InitValuesType>, string[]> | undefined;
+
 const defaultCheckBoxWeek = nameOfDayOfWeek.reduce((newObj, week) => {
   newObj[week] = false;
   return newObj;
 }, {} as CheckBoxWeek);
 
 const endDateAddAmount = 3;
+const maxRepeatYear = 5;
 
 const getDefaultValues = (start?: Date) => {
   const startDate = start ? start : new Date();
@@ -122,11 +125,10 @@ type ControllerRecurrenceProps = {
   activeSearchButton: () => void;
   getValues: UseFormGetValues<Inputs>;
   setValue: UseFormSetValue<Inputs>;
-  errors: DeepMap<DeepPartial<Inputs>, FieldError>;
 };
 
 export function ControllerRecurrence(props: ControllerRecurrenceProps) {
-  const { activeRoomSelect, activeSearchButton, getValues, setValue, errors } = props;
+  const { activeRoomSelect, activeSearchButton, getValues, setValue } = props;
 
   const { t } = useTranslation();
   const classes = useStyles();
@@ -139,6 +141,9 @@ export function ControllerRecurrence(props: ControllerRecurrenceProps) {
 
   // 入力値の状態
   const [inputValues, setInputValues] = useState<InitValuesType>(_.cloneDeep(getDefaultValues()));
+
+  // エラー値の状態
+  const [errMsg, setErrMsg] = useState<InputErrorType>(undefined);
 
   // 初期値設定
   useEffect(() => {
@@ -178,6 +183,31 @@ export function ControllerRecurrence(props: ControllerRecurrenceProps) {
       setInputValues(_.cloneDeep(defaultValues));
     }
   }, [getValues, open]);
+
+  // 期間の入力チェック
+  useEffect(() => {
+    const newEndDate = addYears(inputValues.range.startDate, maxRepeatYear);
+
+    let value;
+    if (inputValues.range.startDate.getTime() > inputValues.range.endDate.getTime()) {
+      //大小関係エラー
+
+      value = [`${t('recurrence-dialog.error.range')}`];
+      setErrMsg({ ...errMsg, range: { ...errMsg?.range, startDate: value, endDate: value } });
+      console.log('a');
+    } else if (newEndDate.getTime() < inputValues.range.endDate.getTime()) {
+      //最長予約年数チェック
+
+      value = [`${t('recurrence-dialog.error.range.maximum-period')}`];
+      setErrMsg({ ...errMsg, range: { ...errMsg?.range, startDate: value, endDate: value } });
+      console.log('b');
+    } else if (!!errMsg && !!errMsg.range && !!errMsg.range?.startDate && !!errMsg.range.endDate) {
+      setErrMsg({ ...errMsg, range: { ...errMsg?.range, startDate: undefined, endDate: undefined } });
+      console.log('c');
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [inputValues.range.startDate, inputValues.range.endDate]);
 
   // ダイアログを閉じたとき、定期パターンの内容を文章化
   useEffect(() => {
@@ -330,8 +360,8 @@ export function ControllerRecurrence(props: ControllerRecurrenceProps) {
             return { ...values, pattern: { ...values.pattern, daysOfWeek: _.cloneDeep(value) } };
           });
         }}
-        error={!!errors.recurrence?.pattern?.daysOfWeek}
-        helperText={!!errors.recurrence?.pattern?.daysOfWeek && errors.recurrence?.pattern?.daysOfWeek[0].message}
+        error={!!errMsg?.pattern?.daysOfWeek}
+        helperText={errMsg?.pattern?.daysOfWeek}
       >
         {dayOfWeekList.map((option, index) => (
           <MenuItem key={index} value={option.value}>
@@ -340,7 +370,7 @@ export function ControllerRecurrence(props: ControllerRecurrenceProps) {
         ))}
       </TextField>
     );
-  }, [dayOfWeekList, errors.recurrence?.pattern?.daysOfWeek, inputValues, t]);
+  }, [dayOfWeekList, errMsg?.pattern?.daysOfWeek, inputValues, t]);
 
   // 週数セレクトボックス
   const IndexSelectBox = useMemo(() => {
@@ -354,8 +384,8 @@ export function ControllerRecurrence(props: ControllerRecurrenceProps) {
             return { ...values, pattern: { ...values.pattern, index: e.target.value as WeekIndex } };
           });
         }}
-        error={!!errors.recurrence?.pattern?.index}
-        helperText={!!errors.recurrence?.pattern?.index && errors.recurrence?.pattern?.index.message}
+        error={!!errMsg?.pattern?.index}
+        helperText={errMsg?.pattern?.index}
       >
         {weekIndexList.map((option, index) => (
           <MenuItem key={index} value={option.value}>
@@ -364,7 +394,7 @@ export function ControllerRecurrence(props: ControllerRecurrenceProps) {
         ))}
       </TextField>
     );
-  }, [errors.recurrence?.pattern?.index, inputValues, t, weekIndexList]);
+  }, [errMsg?.pattern?.index, inputValues, t, weekIndexList]);
 
   // 日付インプットフィールド
   const DayOfMonthText = useMemo(() => {
@@ -380,11 +410,11 @@ export function ControllerRecurrence(props: ControllerRecurrenceProps) {
             return { ...values, pattern: { ...values.pattern, dayOfMonth: Number(e.target.value) } };
           });
         }}
-        error={!!errors.recurrence?.pattern?.dayOfMonth}
-        helperText={!!errors.recurrence?.pattern?.dayOfMonth && errors.recurrence?.pattern?.dayOfMonth.message}
+        error={!!errMsg?.pattern?.dayOfMonth}
+        helperText={errMsg?.pattern?.dayOfMonth}
       ></TextField>
     );
-  }, [classes.inputDayOfMonth, errors.recurrence?.pattern?.dayOfMonth, inputValues, t]);
+  }, [classes.inputDayOfMonth, errMsg?.pattern?.dayOfMonth, inputValues, t]);
 
   // 月セレクトボックス
   const MonthSelectBox = useMemo(() => {
@@ -398,8 +428,8 @@ export function ControllerRecurrence(props: ControllerRecurrenceProps) {
             return { ...values, pattern: { ...values.pattern, month: Number(e.target.value) } };
           });
         }}
-        error={!!errors.recurrence?.pattern?.month}
-        helperText={!!errors.recurrence?.pattern?.month && errors.recurrence?.pattern?.month.message}
+        error={!!errMsg?.pattern?.month}
+        helperText={errMsg?.pattern?.month}
       >
         {monthList.map((option, index) => (
           <MenuItem key={index} value={option.value}>
@@ -408,7 +438,7 @@ export function ControllerRecurrence(props: ControllerRecurrenceProps) {
         ))}
       </TextField>
     );
-  }, [errors.recurrence?.pattern?.month, inputValues, t, monthList]);
+  }, [errMsg?.pattern?.month, inputValues, t, monthList]);
 
   return (
     <>
@@ -452,8 +482,8 @@ export function ControllerRecurrence(props: ControllerRecurrenceProps) {
                   return { ...values, pattern: { ...defaultValues.pattern } }; // patternの中身は全置換え(リセット)
                 });
               }}
-              error={!!errors.recurrence?.pattern?.type}
-              helperText={!!errors.recurrence?.pattern?.type && errors.recurrence?.pattern?.type.message}
+              error={!!errMsg?.pattern?.type}
+              helperText={errMsg?.pattern?.type}
             >
               {patternTypeList.map((option, index) => (
                 <MenuItem key={index} value={option.value}>
@@ -476,8 +506,8 @@ export function ControllerRecurrence(props: ControllerRecurrenceProps) {
                         return { ...values, pattern: { ...values.pattern, interval: Number(e.target.value) } };
                       });
                     }}
-                    error={!!errors.recurrence?.pattern?.interval}
-                    helperText={!!errors.recurrence?.pattern?.interval && errors.recurrence?.pattern?.interval.message}
+                    error={!!errMsg?.pattern?.interval}
+                    helperText={errMsg?.pattern?.interval}
                   />
                 </Grid>
                 <Grid item>
@@ -486,9 +516,9 @@ export function ControllerRecurrence(props: ControllerRecurrenceProps) {
               </Grid>
 
               <Grid item style={inputValues.pattern.type === 'weekly' ? undefined : { display: 'none' }}>
-                <FormControl error={!!errors.recurrence?.pattern?.daysOfWeek}>
+                <FormControl error={!!errMsg?.pattern?.daysOfWeek}>
                   {WeekCheckBox}
-                  <FormHelperText>{!!errors.recurrence?.pattern?.daysOfWeek && errors.recurrence?.pattern?.daysOfWeek[0].message}</FormHelperText>
+                  <FormHelperText>{errMsg?.pattern?.daysOfWeek}</FormHelperText>
                 </FormControl>
               </Grid>
 
@@ -542,13 +572,14 @@ export function ControllerRecurrence(props: ControllerRecurrenceProps) {
                 <MyCalendar
                   label={t('recurrence-dialog.header.range.start-date')}
                   date={inputValues.range.startDate}
+                  disablePast={true}
                   onChange={(e) => {
                     if (!e) return;
                     setInputValues((values) => {
                       return { ...values, range: { ...values.range, startDate: e } };
                     });
                   }}
-                  errors={errors.recurrence?.range?.startDate}
+                  errMsg={errMsg?.range?.startDate}
                 />
               </Grid>
               <Grid item className={classes.datePicker}>
@@ -561,7 +592,10 @@ export function ControllerRecurrence(props: ControllerRecurrenceProps) {
                       return { ...values, range: { ...values.range, endDate: e } };
                     });
                   }}
-                  errors={errors.recurrence?.range?.endDate}
+                  disablePast={true}
+                  maxDate={addYears(inputValues.range.startDate, maxRepeatYear)}
+                  minDate={inputValues.range.startDate}
+                  errMsg={errMsg?.range?.endDate}
                 />
               </Grid>
             </Grid>
@@ -570,7 +604,7 @@ export function ControllerRecurrence(props: ControllerRecurrenceProps) {
           <Box p={2}>
             <Grid container justifyContent="space-between" spacing={2}>
               <Grid item xs={4}>
-                <Button variant="contained" color="secondary" fullWidth onClick={handleOk}>
+                <Button variant="contained" color="secondary" fullWidth onClick={handleOk} disabled={!errMsg}>
                   {t('common.button.ok')}
                 </Button>
               </Grid>
