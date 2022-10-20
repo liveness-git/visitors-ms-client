@@ -8,6 +8,7 @@ import {
   Button,
   Checkbox,
   createStyles,
+  Divider,
   FormControl,
   FormControlLabel,
   FormGroup,
@@ -44,6 +45,7 @@ import {
   WeekIndex,
 } from '_models/PatternedRecurrence';
 import { addMonths } from 'date-fns';
+import MyCalendar from '_components/MyCalendar';
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -63,6 +65,9 @@ const useStyles = makeStyles((theme) =>
     },
     inputDayOfMonth: {
       width: 70,
+    },
+    datePicker: {
+      margin: 'auto 0',
     },
   })
 );
@@ -429,9 +434,13 @@ export function ControllerRecurrence(props: ControllerRecurrenceProps) {
           </IconButton>
         </DialogTitle>
         <DialogContent dividers>
-          <Box p={2}>時間</Box>
+          <Box px={2} py={1}>
+            時間
+          </Box>
 
-          <Box px={2}>
+          <Divider />
+
+          <Box px={2} py={1}>
             <TextField
               label={t('recurrence-dialog.header.pattern.type')}
               select={true}
@@ -525,7 +534,38 @@ export function ControllerRecurrence(props: ControllerRecurrenceProps) {
             </Grid>
           </Box>
 
-          <Box p={2}>期間</Box>
+          <Divider />
+
+          <Box px={2} py={1}>
+            <Grid container spacing={2}>
+              <Grid item className={classes.datePicker}>
+                <MyCalendar
+                  label={t('recurrence-dialog.header.range.start-date')}
+                  date={inputValues.range.startDate}
+                  onChange={(e) => {
+                    if (!e) return;
+                    setInputValues((values) => {
+                      return { ...values, range: { ...values.range, startDate: e } };
+                    });
+                  }}
+                  errors={errors.recurrence?.range?.startDate}
+                />
+              </Grid>
+              <Grid item className={classes.datePicker}>
+                <MyCalendar
+                  label={t('recurrence-dialog.header.range.end-date')}
+                  date={inputValues.range.endDate}
+                  onChange={(e) => {
+                    if (!e) return;
+                    setInputValues((values) => {
+                      return { ...values, range: { ...values.range, endDate: e } };
+                    });
+                  }}
+                  errors={errors.recurrence?.range?.endDate}
+                />
+              </Grid>
+            </Grid>
+          </Box>
 
           <Box p={2}>
             <Grid container justifyContent="space-between" spacing={2}>

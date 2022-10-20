@@ -76,6 +76,13 @@ const inputformTheme = createTheme({
       minRows: 4,
     },
   },
+  overrides: {
+    MuiOutlinedInput: {
+      adornedEnd: {
+        paddingRight: 0,
+      },
+    },
+  },
 });
 
 const startTimeBufferMinute = 0;
