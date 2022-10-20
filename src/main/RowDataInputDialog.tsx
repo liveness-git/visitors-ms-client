@@ -489,6 +489,7 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
                     activeSearchButton={activeSearchButton}
                     getValues={getValues}
                     setValue={setValue}
+                    errors={errors}
                   ></ControllerRecurrence>
                 </Grid>
               )}
