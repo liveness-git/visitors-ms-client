@@ -525,44 +525,6 @@ export function ControllerRecurrence(props: ControllerRecurrenceProps) {
             </Grid>
           </Box>
 
-          {/* <Box px={2} style={inputValues.pattern.type === 'weekly' ? undefined : { display: 'none' }}>
-            <FormControl error={!!errors.recurrence?.pattern?.daysOfWeek}>
-              {WeekCheckBox}
-              <FormHelperText>{!!errors.recurrence?.pattern?.daysOfWeek && errors.recurrence?.pattern?.daysOfWeek[0].message}</FormHelperText>
-            </FormControl>
-          </Box> */}
-
-          {/* <Box px={2} style={inputValues.pattern.type === 'relativeMonthly' ? undefined : { display: 'none' }}>
-            <Grid container spacing={1} alignItems="center">
-              <Grid item>{IndexSelectBox}</Grid>
-              <Grid item>{WeekSelectBox}</Grid>
-              <Grid item>
-                <Typography>{t(`recurrence-dialog.label.pattern.day-of-month.relative`)}</Typography>
-              </Grid>
-            </Grid>
-          </Box> */}
-
-          {/* <Box px={2} style={inputValues.pattern.type === 'absoluteYearly' ? undefined : { display: 'none' }}>
-            <Grid container spacing={1} alignItems="center">
-              <Grid item>{MonthSelectBox}</Grid>
-              <Grid item>{DayOfMonthText}</Grid>
-              <Grid item>
-                <Typography>{t(`recurrence-dialog.label.pattern.day-of-month.absolute`)}</Typography>
-              </Grid>
-            </Grid>
-          </Box> */}
-
-          {/* <Box px={2} style={inputValues.pattern.type === 'relativeYearly' ? undefined : { display: 'none' }}>
-            <Grid container spacing={1} alignItems="center">
-              <Grid item>{MonthSelectBox}</Grid>
-              <Grid item>{IndexSelectBox}</Grid>
-              <Grid item>{WeekSelectBox}</Grid>
-              <Grid item>
-                <Typography>{t(`recurrence-dialog.label.pattern.day-of-month.relative`)}</Typography>
-              </Grid>
-            </Grid>
-          </Box> */}
-
           <Box p={2}>期間</Box>
 
           <Box p={2}>
