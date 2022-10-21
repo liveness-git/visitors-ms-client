@@ -1,22 +1,26 @@
-import { makeStyles } from '@material-ui/core';
+import { FormHelperText, makeStyles } from '@material-ui/core';
 import { KeyboardDatePicker } from '@material-ui/pickers';
-import { FieldError } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 
 const useStyles = makeStyles({
   keyboardDatePicker: {
     '& .MuiOutlinedInput-adornedEnd': { paddingRight: 0 },
   },
+  helperText: { marginLeft: 0, marginRight: 0, textAlign: 'center' },
 });
 
 type MyCalendarProps = {
   label: string;
   date: Date | null;
   onChange: (date: Date | null) => void;
-  errors?: FieldError;
+  disablePast?: boolean;
+  error?: boolean;
 };
 
-function MyCalendar({ label, date, onChange, errors }: MyCalendarProps) {
+function MyCalendar({ label, date, onChange, disablePast, error }: MyCalendarProps) {
+  const { t } = useTranslation();
   const classes = useStyles();
+
   return (
     <KeyboardDatePicker
       margin="normal"
@@ -24,6 +28,7 @@ function MyCalendar({ label, date, onChange, errors }: MyCalendarProps) {
       label={label}
       format="yyyy/MM/dd"
       showTodayButton
+      disablePast={disablePast}
       value={date}
       onChange={onChange}
       KeyboardButtonProps={{
@@ -36,8 +41,22 @@ function MyCalendar({ label, date, onChange, errors }: MyCalendarProps) {
           width: 85,
         },
       }}
-      error={!!errors}
-      helperText={errors && errors.message}
+      error={error}
+      invalidDateMessage={
+        <FormHelperText className={classes.helperText} error>
+          {t('common.error.Invalid-date')}
+        </FormHelperText>
+      }
+      minDateMessage={
+        <FormHelperText className={classes.helperText} error>
+          {t('common.error.Invalid-min-date')}
+        </FormHelperText>
+      }
+      maxDateMessage={
+        <FormHelperText className={classes.helperText} error>
+          {t('common.error.Invalid-max-date')}
+        </FormHelperText>
+      }
     />
   );
 }
