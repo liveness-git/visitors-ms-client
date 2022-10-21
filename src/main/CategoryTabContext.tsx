@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useRouteMatch } from 'react-router-dom';
 import { LocationParams } from '_models/Location';
 import { Category } from '_models/Category';
@@ -15,7 +16,10 @@ export function CategoryTabContext(props: CategoryTabContextProps) {
   const match = useRouteMatch<LocationParams>();
 
   // カテゴリ取得
-  const [{ data }] = useLoadData<Category[]>(`/category/choices?location=${match.params.location}`, []);
+  const [{ data }, , setUrl] = useLoadData<Category[]>('', []);
+  useEffect(() => {
+    setUrl(`/category/choices?location=${match.params.location}`);
+  }, [match.params.location, setUrl]);
 
   return <>{!!data?.length && <MyTabContext data={data} tabPanelContent={tabPanelContent} selected={selected} />}</>;
 }

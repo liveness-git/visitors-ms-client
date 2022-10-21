@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useRouteMatch } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
@@ -11,6 +11,7 @@ import { useLoadData } from '_utils/useLoadData';
 
 import { DataDialogAction, DataDialogState, DataTableBase, RowDataType } from '../DataTableBase';
 import { RowDataFrontDialog } from './RowDataFrontDialog';
+import { UseDataTable } from 'main/UseDataTable';
 
 import { LocationParams } from '_models/Location';
 import { VisitorInfoFront } from '_models/VisitorInfo';
@@ -45,35 +46,25 @@ export function DataTable(props: DataTableProps) {
   const match = useRouteMatch<LocationParams>();
 
   // データ取得
-  const [{ data, isLoading, isError }, reload] = useLoadData<FrontRowData[]>(
-    `/front/visitlist?timestamp=${currentDate!.getTime()}&location=${match.params.location}`,
-    []
-  );
+  const [{ data, isLoading, isError }, reload, setUrl] = useLoadData<FrontRowData[]>('', []);
+  useEffect(() => {
+    setUrl(`/front/visitlist?timestamp=${currentDate!.getTime()}&location=${match.params.location}`);
+  }, [currentDate, match.params.location, setUrl]);
 
   // フロント用ダイアログの状態
   const [frontDialogOpen, setFrontDialogOpen] = useState(false);
 
   // 選択行の状態
-  const [currentRow, setCurrentRow] = useState<FrontRowData | null>(null);
-
-  // ダイアログを開く
-  const handleDialogOpen = useCallback(
-    (selectedRow: FrontRowData) => {
-      if (selectedRow.isAuthor) {
-        dataDialogHook.dispatch({ type: 'inputOpen' });
-      } else {
-        dataDialogHook.dispatch({ type: 'readOpen' });
-      }
-      setCurrentRow(selectedRow);
-    },
-    [dataDialogHook]
-  );
+  const [{ currentRow }, setCurrentRow, handleDialogOpen] = UseDataTable<FrontRowData>({ dataDialogHook: dataDialogHook });
 
   // フロント用ダイアログを開く
-  const handleFrontDialogOpen = useCallback((selectedRow: FrontRowData) => {
-    setFrontDialogOpen(true);
-    setCurrentRow(selectedRow);
-  }, []);
+  const handleFrontDialogOpen = useCallback(
+    (selectedRow: FrontRowData) => {
+      setFrontDialogOpen(true);
+      setCurrentRow(selectedRow);
+    },
+    [setCurrentRow]
+  );
   // フロント用ダイアログを閉じる
   const handleFrontDialogClose = async () => {
     setFrontDialogOpen(false);

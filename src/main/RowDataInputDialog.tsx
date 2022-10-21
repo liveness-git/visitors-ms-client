@@ -222,7 +222,7 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
 
   // 空き会議室一覧の取得
   const defaultRoomsUrl = `/room/choices?location=${match.params.location}`;
-  const [{ data: rooms }, , setUrl] = useLoadData<Room[]>(defaultRoomsUrl, []);
+  const [{ data: rooms }, , setUrl] = useLoadData<Room[]>('', []);
 
   // 空き会議室一覧のURL更新
   const buildRoomsUrl = useCallback(() => {

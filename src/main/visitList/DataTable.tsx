@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useRouteMatch } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
@@ -12,6 +12,7 @@ import { cellStyle, makeVisitorTableStyles } from '_styles/VisitorTableStyle';
 import { tableTheme } from '_styles/TableTheme';
 
 import { DataDialogAction, DataDialogState, DataTableBase, RowDataType } from '../DataTableBase';
+import { UseDataTable } from 'main/UseDataTable';
 
 const useStyles = makeVisitorTableStyles(false);
 
@@ -36,45 +37,13 @@ export function DataTable(props: DataTableProps) {
   const match = useRouteMatch<LocationParams>();
 
   // データ取得
-  const [{ data, isLoading, isError }, reload] = useLoadData<RowDataType[]>(
-    `/event/visitlist?timestamp=${currentDate!.getTime()}&location=${match.params.location}`,
-    []
-  );
+  const [{ data, isLoading, isError }, reload, setUrl] = useLoadData<RowDataType[]>('', []);
+  useEffect(() => {
+    setUrl(`/event/visitlist?timestamp=${currentDate!.getTime()}&location=${match.params.location}`);
+  }, [currentDate, match.params.location, setUrl]);
 
   // 選択行の状態
-  const [currentRow, setCurrentRow] = useState<RowDataType | null>(null);
-
-  // ダイアログを開く
-  const handleDialogOpen = useCallback(
-    (selectedRow: RowDataType) => {
-      if (selectedRow.isAuthor) {
-        dataDialogHook.dispatch({ type: 'inputOpen' });
-      } else {
-        dataDialogHook.dispatch({ type: 'readOpen' });
-      }
-      if (!!selectedRow.seriesMasterId) {
-        // 定期イベントの場合は先に確認ダイアログを表示
-        dataDialogHook.dispatch({ type: 'recConfOpen' });
-      }
-      setCurrentRow(selectedRow);
-    },
-    [dataDialogHook]
-  );
-
-  // 定期イベント確認メッセージを閉じる
-  const handleRecConfClose = useCallback(
-    (isCancel: boolean, master?: RowDataType) => {
-      if (isCancel) {
-        dataDialogHook.dispatch({ type: 'recConfCancel' });
-        return;
-      }
-      if (master) {
-        setCurrentRow(master);
-      }
-      dataDialogHook.dispatch({ type: 'recConfClose' });
-    },
-    [dataDialogHook]
-  );
+  const [{ currentRow }, , handleDialogOpen, handleRecConfClose] = UseDataTable({ dataDialogHook: dataDialogHook });
 
   const columns: Columns[] = [
     { title: t('visittable.header.appt-time'), field: 'apptTime' },
