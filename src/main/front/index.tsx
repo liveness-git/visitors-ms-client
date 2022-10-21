@@ -67,6 +67,7 @@ export function Front() {
         <Box p={2}>
           <HeaderActions
             title={t('main.front.title')}
+            subtitle={t('main.front.subtitle')}
             date={selectedDate}
             onDateChange={handleDateChange}
             dispatch={dataDialogDispatch}
