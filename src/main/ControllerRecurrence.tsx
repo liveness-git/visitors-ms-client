@@ -173,7 +173,6 @@ export function ControllerRecurrence(props: ControllerRecurrenceProps) {
 
   // 入力値の状態
   const [inputValues, setInputValues] = useState<InitValuesType>(_.cloneDeep(getDefaultValues()));
-
   // エラー値の状態
   const [errMsg, setErrMsg] = useState<InputErrorType>(_.cloneDeep(defaultInputError));
 
@@ -187,12 +186,13 @@ export function ControllerRecurrence(props: ControllerRecurrenceProps) {
           pattern: {
             type: getValues('recurrence')!.pattern.type,
             interval: getValues('recurrence')!.pattern.interval,
-            daysOfWeek: !!getValues('recurrence')!.pattern.daysOfWeek
-              ? getValues('recurrence')!.pattern.daysOfWeek!.reduce((newObj, week) => {
-                  newObj[week] = true;
-                  return newObj;
-                }, {} as CheckBoxWeek)
-              : defaultValues.pattern.daysOfWeek,
+            daysOfWeek:
+              !!getValues('recurrence')!.pattern.daysOfWeek && getValues('recurrence')!.pattern.daysOfWeek!.length > 0
+                ? nameOfDayOfWeek.reduce((newObj, week) => {
+                    newObj[week] = getValues('recurrence')!.pattern.daysOfWeek!.filter((value) => value === week).length > 0;
+                    return newObj;
+                  }, {} as CheckBoxWeek)
+                : defaultValues.pattern.daysOfWeek,
             dayOfMonth: (!!getValues('recurrence')!.pattern.dayOfMonth
               ? getValues('recurrence')!.pattern.dayOfMonth
               : defaultValues.pattern.dayOfMonth) as number,
@@ -201,8 +201,8 @@ export function ControllerRecurrence(props: ControllerRecurrenceProps) {
           },
           range: {
             type: getValues('recurrence')!.range.type,
-            startDate: getValues('recurrence')!.range.startDate,
-            endDate: getValues('recurrence')!.range.endDate ? getValues('recurrence')!.range.endDate! : defaultValues.range.endDate,
+            startDate: new Date(getValues('recurrence')!.range.startDate),
+            endDate: getValues('recurrence')!.range.endDate ? new Date(getValues('recurrence')!.range.endDate!) : defaultValues.range.endDate,
             numberOfOccurrences: getValues('recurrence')!.range.numberOfOccurrences
               ? getValues('recurrence')!.range.numberOfOccurrences!
               : defaultValues.range.numberOfOccurrences,
@@ -240,11 +240,11 @@ export function ControllerRecurrence(props: ControllerRecurrenceProps) {
 
   // OKアクション
   const handleOk = () => {
-    const newEndDate = addYears(inputValues.range.startDate, maxRepeatYear);
-
     // 入力チェック
     let isError = false;
     const errorMsg = _.cloneDeep(defaultInputError);
+    const newEndDate = addYears(inputValues.range.startDate, maxRepeatYear);
+
     if (inputValues.range.startDate.getTime() > inputValues.range.endDate.getTime()) {
       //大小関係エラー
       errorMsg.range.startDate = [`${t('recurrence-dialog.error.range.date')}`];
@@ -256,8 +256,6 @@ export function ControllerRecurrence(props: ControllerRecurrenceProps) {
       errorMsg.range.endDate = [`${t('recurrence-dialog.error.range.date.max')}`];
       isError = true;
     }
-
-    console.log(errorMsg);
     setErrMsg(errorMsg);
 
     if (isError) return;
@@ -297,7 +295,7 @@ export function ControllerRecurrence(props: ControllerRecurrenceProps) {
       case 'endDate':
         range.endDate = inputValues.range.endDate;
         break;
-      // case 'noEnd':
+      // case 'noEnd'://TODO: noEnd未対応（最大５年問題）
       //   break;
       case 'numbered':
         range.numberOfOccurrences = inputValues.range.numberOfOccurrences;

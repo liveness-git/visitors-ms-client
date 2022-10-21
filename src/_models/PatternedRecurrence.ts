@@ -29,7 +29,8 @@ type RecurrencePatternReadOnly = {
   firstDayOfWeek?: DayOfWeek; //weekly
 };
 
-export const nameOfRecurrenceRangeType = ['endDate', 'noEnd', 'numbered'] as const;
+// export const nameOfRecurrenceRangeType = ['endDate', 'noEnd', 'numbered'] as const;//TODO: noEnd未対応（最大５年問題）
+export const nameOfRecurrenceRangeType = ['endDate', 'numbered'] as const;
 export type RecurrenceRangeType = typeof nameOfRecurrenceRangeType[number];
 
 export type RecurrenceRange = {
