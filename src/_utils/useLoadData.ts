@@ -7,7 +7,9 @@ import { get } from '_utils/Http';
  * @param initialData データ取得前の初期表示データ
  * @returns
  */
-export function useLoadData<T>(url: string, initialData: T | undefined) {
+export function useLoadData<T>(initUrl: string, initialData: T | undefined) {
+  //URLの状態
+  const [url, setUrl] = useState(initUrl);
   // データの状態
   const [data, setData] = useState<T | undefined>(initialData);
   // ローディングの状態
@@ -17,11 +19,12 @@ export function useLoadData<T>(url: string, initialData: T | undefined) {
 
   // データ取得
   const fetchData = useCallback(async () => {
+    if (!url) return; // urlがない場合は処理しない
     setIsError(false);
     setIsLoading(true);
     try {
       const result = await get<T>(url);
-      // console.log(url); // TODO: debug
+      console.log(url); // TODO: debug
       // console.log(result.parsedBody); // TODO: debug
       if (result.parsedBody) setData(result.parsedBody);
     } catch (error) {
@@ -39,5 +42,5 @@ export function useLoadData<T>(url: string, initialData: T | undefined) {
     fetchData();
   }, [fetchData]);
 
-  return [{ data, isLoading, isError }, reload] as const;
+  return [{ data, isLoading, isError }, reload, setUrl] as const;
 }
