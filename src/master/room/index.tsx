@@ -70,6 +70,7 @@ export function RoomSettings() {
     type: 'rooms',
     sort: '',
     teaSupply: false,
+    comment: '',
     location: '',
     category: '',
   };

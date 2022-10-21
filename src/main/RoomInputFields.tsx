@@ -1,10 +1,19 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Control, Controller, DeepMap, DeepPartial, FieldError, UseFormSetValue, useWatch } from 'react-hook-form';
-import { Box, FormControlLabel, Grid, MenuItem, Switch, TextField } from '@material-ui/core';
+import { Box, FormControlLabel, Grid, makeStyles, MenuItem, Switch, TextField, Typography } from '@material-ui/core';
 import { Room } from '_models/Room';
 import { Inputs } from './RowDataInputDialog';
 import { get } from 'lodash';
+
+const useStyles = makeStyles({
+  roomComment: {
+    whiteSpace: 'pre-line',
+    fontSize: '0.75rem',
+    lineHeight: '1rem',
+    padding: '0 5px 5px 5px',
+  },
+});
 
 type RoomInputFieldsProps = {
   control: Control<Inputs, object>;
@@ -20,6 +29,7 @@ export function RoomInputFields(props: RoomInputFieldsProps) {
   const { control, setValue, rooms, roomId, disabledVisitor, disabledRoom, errors } = props;
 
   const { t } = useTranslation();
+  const classes = useStyles();
 
   // 給茶選択の制御
   const [disabledTeaSupply, setDisabledTeaSupply] = useState(false);
@@ -60,6 +70,18 @@ export function RoomInputFields(props: RoomInputFieldsProps) {
       setValue(`resourcies.${roomId}.numberOfVisitor`, 0, { shouldDirty: true });
     }
   }, [setValue, disabledVisitor, roomId]);
+
+  //会議室の説明文
+  const [roomComment, setRoomComment] = useState('');
+  useEffect(() => {
+    if (!!roomWatch && !!rooms) {
+      const room = rooms.filter((room) => room.id === roomWatch && !!room.comment)[0];
+      const comment = !!room ? room.comment : '';
+      setRoomComment(comment);
+    } else {
+      setRoomComment('');
+    }
+  }, [roomWatch, rooms]);
 
   // 多階層になっている場合の取得回避策
   const getNestedError = (name: string): FieldError => {
@@ -103,6 +125,9 @@ export function RoomInputFields(props: RoomInputFieldsProps) {
           </TextField>
         )}
       />
+      <Typography component="div" className={classes.roomComment}>
+        {roomComment}
+      </Typography>
 
       <Grid container spacing={1} style={disabledTeaSupply ? { display: 'none' } : undefined}>
         <Grid item xs={4}>

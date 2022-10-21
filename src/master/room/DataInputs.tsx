@@ -112,6 +112,7 @@ export function DataInputs({ locations, categories }: DataInputsProps) {
         })}
         errors={errors}
       />
+      <ControllerTextField name="comment" control={control} label={t('settings.header.room.comment')} multiline errors={errors} />
     </>
   );
 }

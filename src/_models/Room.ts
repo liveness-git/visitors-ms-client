@@ -14,6 +14,7 @@ export type Room = {
   usageRange: UsageRange;
   type: RoomType;
   teaSupply: boolean;
+  comment: string;
   location: string;
   category: string;
 };
