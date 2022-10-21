@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 
-import { Box, Button, Grid, IconButton, makeStyles, Typography } from '@material-ui/core';
+import { Box, Button, Grid, IconButton, makeStyles } from '@material-ui/core';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
 import ArrowLeftIcon from '@material-ui/icons/ArrowLeft';
 import ArrowRIghtIcon from '@material-ui/icons/ArrowRight';
@@ -10,11 +10,11 @@ import { DataDialogAction } from './DataTableBase';
 
 const useStyles = makeStyles(() => ({
   arrowLeft: {
-    paddingTop: 10,
+    paddingTop: 7,
     marginRight: -5,
   },
   arrowRight: {
-    paddingTop: 10,
+    paddingTop: 7,
     marginLeft: -5,
   },
   arrowIcon: {
@@ -34,12 +34,14 @@ type HeaderActionsProps = {
   subtitle?: string;
   date: Date | null;
   onDateChange: (date: Date | null) => void;
+  onDatePrev: () => void;
+  onDateNext: () => void;
   dispatch: React.Dispatch<DataDialogAction>;
   actionButtons?: React.ReactNode[];
 };
 
 export function HeaderActions(props: HeaderActionsProps) {
-  const { title, subtitle, date, onDateChange, dispatch, actionButtons } = props;
+  const { subtitle, date, onDateChange, onDatePrev, onDateNext, dispatch, actionButtons } = props;
 
   const { t } = useTranslation();
   const classes = useStyles();
@@ -54,14 +56,14 @@ export function HeaderActions(props: HeaderActionsProps) {
       <Grid container alignItems="stretch" justifyContent="space-between">
         <Grid container alignItems="center" item xs={12} sm={!!actionButtons ? 6 : 9}>
           <Grid item className={classes.arrowLeft}>
-            <IconButton className={classes.arrowIcon}>
+            <IconButton className={classes.arrowIcon} onClick={onDatePrev}>
               <ArrowLeftIcon fontSize="large" />
             </IconButton>
           </Grid>
           <Grid item className={classes.datePicker}>
             <MyCalendar label={t('main.header.picker-label')} date={date} onChange={onDateChange} />
           </Grid>
-          <Grid item className={classes.arrowRight}>
+          <Grid item className={classes.arrowRight} onClick={onDateNext}>
             <IconButton className={classes.arrowIcon}>
               <ArrowRIghtIcon fontSize="large" />
             </IconButton>

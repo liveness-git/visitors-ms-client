@@ -1,3 +1,4 @@
+import { addDays } from 'date-fns';
 import { useEffect, useState } from 'react';
 import { getReloadStateFlg, saveReloadState } from './SessionStrage';
 
@@ -17,5 +18,15 @@ export function useSelectedDate() {
   }, [selectedDate]);
   // ================================
 
-  return [selectedDate, setSelectedDate] as const;
+  const handleDateChange = (date: Date | null) => {
+    setSelectedDate(date);
+  };
+  const handleDatePrev = () => {
+    setSelectedDate((date) => (!!date ? addDays(date!, -1) : date));
+  };
+  const handleDateNext = () => {
+    setSelectedDate((date) => (!!date ? addDays(date!, 1) : date));
+  };
+
+  return [selectedDate, setSelectedDate, handleDateChange, handleDatePrev, handleDateNext] as const;
 }

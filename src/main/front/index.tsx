@@ -17,10 +17,7 @@ export function Front() {
   const { t } = useTranslation();
 
   // カレンダー選択日の状態
-  const [selectedDate, setSelectedDate] = useSelectedDate();
-  const handleDateChange = (date: Date | null) => {
-    setSelectedDate(date);
-  };
+  const [selectedDate, setSelectedDate, handleDateChange, handleDatePrev, handleDateNext] = useSelectedDate();
 
   // ダイアログの初期値
   const initialState: DataDialogState = {
@@ -70,6 +67,8 @@ export function Front() {
             subtitle={t('main.front.subtitle')}
             date={selectedDate}
             onDateChange={handleDateChange}
+            onDatePrev={handleDatePrev}
+            onDateNext={handleDateNext}
             dispatch={dataDialogDispatch}
             actionButtons={[csvButton]}
           />

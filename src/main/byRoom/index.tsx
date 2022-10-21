@@ -46,10 +46,7 @@ export function ByRoom() {
   const { t } = useTranslation();
 
   // カレンダー選択日の状態
-  const [selectedDate, setSelectedDate] = useSelectedDate();
-  const handleDateChange = (date: Date | null) => {
-    setSelectedDate(date);
-  };
+  const [selectedDate, setSelectedDate, handleDateChange, handleDatePrev, handleDateNext] = useSelectedDate();
 
   // ダイアログの初期値
   const initialState: DataDialogState = {
@@ -107,6 +104,8 @@ export function ByRoom() {
             subtitle={t(byRoomState.subtitleLabel)}
             date={selectedDate}
             onDateChange={handleDateChange}
+            onDatePrev={handleDatePrev}
+            onDateNext={handleDateNext}
             dispatch={dataDialogDispatch}
           />
         </Box>
