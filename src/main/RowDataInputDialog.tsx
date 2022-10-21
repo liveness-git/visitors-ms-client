@@ -222,22 +222,21 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
 
   // 空き会議室一覧の取得
   const defaultRoomsUrl = `/room/choices?location=${match.params.location}`;
-  const [roomsUrl, setRoomsUrl] = useState(defaultRoomsUrl);
-  const [{ data: rooms }] = useLoadData<Room[]>(roomsUrl, []);
+  const [{ data: rooms }, , setUrl] = useLoadData<Room[]>(defaultRoomsUrl, []);
 
   // 空き会議室一覧のURL更新
   const buildRoomsUrl = useCallback(() => {
     if (getValues('mode') === 'upd') {
       // 更新時、会議室変更は出来ないためデフォルト値
-      setRoomsUrl(defaultRoomsUrl);
+      setUrl(defaultRoomsUrl);
     } else {
-      setRoomsUrl(
+      setUrl(
         defaultRoomsUrl +
           `&start=${getValues('startTime').getTime()}&end=${getValues('endTime').getTime()}` +
           `&usagerange=${getValues('usageRange')}`
       );
     }
-  }, [defaultRoomsUrl, getValues]);
+  }, [defaultRoomsUrl, getValues, setUrl]);
 
   // 空き会議室一覧のURLリセット
   useEffect(() => {
@@ -352,7 +351,7 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
   const activeRoomSelect = () => {
     if (getValues('mode') === 'upd') return; // 更新時、会議室変更は出来ないため非対応
     setHiddenRooms(false);
-    setRoomsUrl(defaultRoomsUrl + `&usagerange=${getValues('usageRange')}`);
+    setUrl(defaultRoomsUrl + `&usagerange=${getValues('usageRange')}`);
   };
 
   // 削除確認アクション

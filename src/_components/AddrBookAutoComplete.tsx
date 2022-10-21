@@ -28,7 +28,7 @@ export function AddrBookAutoComplete<TFieldValues extends FieldValues, TName ext
 
   // アドレス帳の取得
   const [filter, setFilter] = useState('');
-  const [{ data: addressbook, isLoading: loading }] = useLoadData<EmailAddress[]>(`/user/addressbook?filter=${filter}`, []);
+  const [{ data: addressbook, isLoading: loading }, , setUrl] = useLoadData<EmailAddress[]>('', []);
 
   // アドレス帳検索の状態
   const [open, setOpen] = useState(false);
@@ -39,6 +39,12 @@ export function AddrBookAutoComplete<TFieldValues extends FieldValues, TName ext
       setFilter('');
     }
   }, [open]);
+
+  useEffect(() => {
+    if (!!filter) {
+      setUrl(`/user/addressbook?filter=${filter}`);
+    }
+  }, [filter, setUrl]);
 
   // アドレス帳検索値のリアルタイム取得
   const onChangeHandle = async (value: string) => {

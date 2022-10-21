@@ -9,18 +9,15 @@ import { MyTabContext } from '_components/MyTabContext';
 type RoomTabContextProps = {
   tabPanelContent: React.ReactElement;
   selected?: string;
-  type?: RoomType;
 };
 
 export function RoomTabContext(props: RoomTabContextProps) {
-  const { tabPanelContent, type, selected } = props;
+  const { tabPanelContent, selected } = props;
 
   const match = useRouteMatch<LocationParams>();
 
-  const typeQuery = !!type ? `&type=${type}` : '';
-
   // カテゴリ取得
-  const [{ data }] = useLoadData<Room[]>(`/room/choices?location=${match.params.location}${typeQuery}`, []);
+  const [{ data }] = useLoadData<Room[]>(`/room/choices?location=${match.params.location}&samecategory=${selected}`, []);
 
   return <>{!!data?.length && <MyTabContext data={data} tabPanelContent={tabPanelContent} selected={selected} />}</>;
 }
