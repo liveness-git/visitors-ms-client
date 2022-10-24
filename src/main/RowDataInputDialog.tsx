@@ -73,7 +73,7 @@ const inputformTheme = createTheme({
       variant: 'outlined',
       margin: 'dense',
       fullWidth: true,
-      minRows: 4,
+      minRows: 2,
     },
   },
   overrides: {
@@ -123,6 +123,7 @@ const getDefaultValues = (start?: Date, roomId?: string, usage?: UsageRangeForVi
         roomForEdit: room,
         teaSupply: false,
         numberOfTeaSupply: 0,
+        teaDetails: '',
       },
     },
     comment: '',
@@ -185,6 +186,7 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
             roomForEdit: room,
             teaSupply: data.resourcies[room].teaSupply,
             numberOfTeaSupply: data.resourcies[room].numberOfTeaSupply,
+            teaDetails: data.resourcies[room].teaDetails,
           };
           return newObj;
         }, {} as RoomInputType),

@@ -60,6 +60,7 @@ export function RoomInputFields(props: RoomInputFieldsProps) {
   useEffect(() => {
     if (!teaWatch) {
       setValue(`resourcies.${roomId}.numberOfTeaSupply`, 0, { shouldDirty: true });
+      setValue(`resourcies.${roomId}.teaDetails`, '', { shouldDirty: true });
     }
     setDisabledTeaMember(!teaWatch);
   }, [teaWatch, setValue, roomId]);
@@ -164,6 +165,22 @@ export function RoomInputFields(props: RoomInputFieldsProps) {
             )}
           />
         </Grid>
+
+        <Controller
+          name={`resourcies.${roomId}.teaDetails`}
+          control={control}
+          render={({ field }) => (
+            <TextField
+              style={disabledTeaMember ? { display: 'none' } : undefined}
+              multiline
+              {...field}
+              disabled={disabledTeaMember}
+              label={t('visittable.header.tea-details')}
+              error={!!getNestedError('teaDetails')}
+              helperText={!!getNestedError('teaDetails') && getNestedError('teaDetails').message}
+            />
+          )}
+        />
       </Grid>
     </Box>
   );

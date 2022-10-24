@@ -57,6 +57,12 @@ export function RoomReadFields(props: RoomReadFieldsProps) {
                 {data.numberOfTeaSupply}
               </div>
             </li>
+            {data.teaSupply && (
+              <li key="tea-details" className={classes.list}>
+                <div className={classes.title}>{t('visittable.header.tea-details')}</div>
+                <div className={classes.field}>{data.teaDetails}</div>
+              </li>
+            )}
           </>
         )}
       </List>

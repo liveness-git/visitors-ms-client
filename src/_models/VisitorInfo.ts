@@ -24,6 +24,7 @@ export type VisitorInfo = {
 export type VisitorInfoResourcies = {
   teaSupply: boolean;
   numberOfTeaSupply: number;
+  teaDetails: string;
 };
 
 // 読み取り専用項目

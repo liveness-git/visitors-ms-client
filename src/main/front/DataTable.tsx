@@ -143,7 +143,26 @@ export function DataTable(props: DataTableProps) {
         </>
       ),
     },
-    { title: t('visittable.header.comment'), field: 'comment', width: '70%' },
+    {
+      title: `${t('visittable.header.tea-details')} / ${t('visittable.header.comment')}`,
+      field: 'comment',
+      render: (rowData) => {
+        const roomId = Object.keys(rowData.resourcies)[0]; // TODO:複数会議室未対応
+        const teaDetails = !!rowData.resourcies[roomId].teaDetails ? (
+          <>
+            <span style={{ color: 'red' }}>{rowData.resourcies[roomId].teaDetails}</span>
+            <br />
+          </>
+        ) : undefined;
+        return (
+          <>
+            {teaDetails}
+            {rowData.comment}
+          </>
+        );
+      },
+      width: '70%',
+    },
   ];
 
   // データ取得失敗した場合
