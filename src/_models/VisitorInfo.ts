@@ -10,6 +10,8 @@ export type VisitorInfo = {
   usageRange: UsageRangeForVisitor;
   visitCompany: string;
   visitorName: string;
+  numberOfVisitor: number;
+  numberOfEmployee: number;
   mailto: { authors: EmailAddress[]; required: EmailAddress[]; optional: EmailAddress[] };
   resourcies: {
     [room: string]: VisitorInfoResourcies;
@@ -21,8 +23,7 @@ export type VisitorInfo = {
 
 export type VisitorInfoResourcies = {
   teaSupply: boolean;
-  numberOfVisitor: number;
-  numberOfEmployee: number;
+  numberRequired: number;
 };
 
 // 読み取り専用項目
