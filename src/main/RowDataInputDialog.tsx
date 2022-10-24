@@ -504,6 +504,7 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
                 <RoomInputFields
                   control={control}
                   setValue={setValue}
+                  getValues={getValues}
                   rooms={rooms}
                   roomId={ADD_ROOM_KEY}
                   disabledVisitor={disabledVisitor}
@@ -518,6 +519,7 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
                     <RoomInputFields
                       control={control}
                       setValue={setValue}
+                      getValues={getValues}
                       rooms={rooms}
                       roomId={Object.keys(data.resourcies)[0]}
                       disabledRoom={true}

@@ -90,7 +90,7 @@ export function DataTable(props: DataTableProps) {
 
         return (
           <>
-            <span style={{ color: 'red' }}>{strNumOfTeaSupply}</span>
+            <span style={rowData.resourcies[roomId].teaSupply ? { color: 'red' } : undefined}>{strNumOfTeaSupply}</span>
             <br />
             {strNumOfVisitor}
             <br />

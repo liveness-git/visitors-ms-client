@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Control, Controller, DeepMap, DeepPartial, FieldError, UseFormSetValue, useWatch } from 'react-hook-form';
+import { Control, Controller, DeepMap, DeepPartial, FieldError, UseFormGetValues, UseFormSetValue, useWatch } from 'react-hook-form';
 import { Box, FormControlLabel, Grid, makeStyles, MenuItem, Switch, TextField, Typography } from '@material-ui/core';
 import { Room } from '_models/Room';
 import { Inputs } from './RowDataInputDialog';
@@ -18,6 +18,7 @@ const useStyles = makeStyles({
 type RoomInputFieldsProps = {
   control: Control<Inputs, object>;
   setValue: UseFormSetValue<Inputs>;
+  getValues: UseFormGetValues<Inputs>;
   rooms: Room[] | undefined;
   roomId: string;
   disabledVisitor: boolean;
@@ -26,7 +27,7 @@ type RoomInputFieldsProps = {
 };
 
 export function RoomInputFields(props: RoomInputFieldsProps) {
-  const { control, setValue, rooms, roomId, disabledVisitor, disabledRoom, errors } = props;
+  const { control, setValue, getValues, rooms, roomId, disabledVisitor, disabledRoom, errors } = props;
 
   const { t } = useTranslation();
   const classes = useStyles();
@@ -143,7 +144,13 @@ export function RoomInputFields(props: RoomInputFieldsProps) {
           <Controller
             name={`resourcies.${roomId}.numberRequired`}
             control={control}
-            rules={{ required: t('common.form.required') as string }}
+            rules={{
+              required: t('common.form.required') as string,
+              validate: () =>
+                (getValues(`resourcies.${roomId}.teaSupply`) && getValues(`resourcies.${roomId}.numberRequired`) > 0) ||
+                (!getValues(`resourcies.${roomId}.teaSupply`) && getValues(`resourcies.${roomId}.numberRequired`) === 0) ||
+                (t('visitdialog.form.error.number-required') as string),
+            }}
             render={({ field }) => (
               <TextField
                 type="number"
