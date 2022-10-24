@@ -23,7 +23,7 @@ export type VisitorInfo = {
 
 export type VisitorInfoResourcies = {
   teaSupply: boolean;
-  numberRequired: number;
+  numberOfTeaSupply: number;
 };
 
 // 読み取り専用項目

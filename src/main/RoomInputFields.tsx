@@ -59,7 +59,7 @@ export function RoomInputFields(props: RoomInputFieldsProps) {
   // 給茶人数のエフェクト
   useEffect(() => {
     if (!teaWatch) {
-      setValue(`resourcies.${roomId}.numberRequired`, 0, { shouldDirty: true });
+      setValue(`resourcies.${roomId}.numberOfTeaSupply`, 0, { shouldDirty: true });
     }
     setDisabledTeaMember(!teaWatch);
   }, [teaWatch, setValue, roomId]);
@@ -142,14 +142,14 @@ export function RoomInputFields(props: RoomInputFieldsProps) {
 
         <Grid item xs={4}>
           <Controller
-            name={`resourcies.${roomId}.numberRequired`}
+            name={`resourcies.${roomId}.numberOfTeaSupply`}
             control={control}
             rules={{
               required: t('common.form.required') as string,
               validate: () =>
-                (getValues(`resourcies.${roomId}.teaSupply`) && getValues(`resourcies.${roomId}.numberRequired`) > 0) ||
-                (!getValues(`resourcies.${roomId}.teaSupply`) && getValues(`resourcies.${roomId}.numberRequired`) === 0) ||
-                (t('visitdialog.form.error.number-required') as string),
+                (getValues(`resourcies.${roomId}.teaSupply`) && getValues(`resourcies.${roomId}.numberOfTeaSupply`) > 0) ||
+                (!getValues(`resourcies.${roomId}.teaSupply`) && getValues(`resourcies.${roomId}.numberOfTeaSupply`) === 0) ||
+                (t('visitdialog.form.error.number-of-tea-supply') as string),
             }}
             render={({ field }) => (
               <TextField
@@ -157,9 +157,9 @@ export function RoomInputFields(props: RoomInputFieldsProps) {
                 inputProps={{ min: 0, style: { textAlign: 'right' } }}
                 {...field}
                 disabled={disabledTeaMember}
-                label={t('visittable.header.number-required')}
-                error={!!getNestedError('numberRequired')}
-                helperText={!!getNestedError('numberRequired') && getNestedError('numberRequired').message}
+                label={t('visittable.header.number-of-tea-supply')}
+                error={!!getNestedError('numberOfTeaSupply')}
+                helperText={!!getNestedError('numberOfTeaSupply') && getNestedError('numberOfTeaSupply').message}
               />
             )}
           />

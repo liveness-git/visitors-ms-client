@@ -122,7 +122,7 @@ const getDefaultValues = (start?: Date, roomId?: string, usage?: UsageRangeForVi
       [ADD_ROOM_KEY]: {
         roomForEdit: room,
         teaSupply: false,
-        numberRequired: 0,
+        numberOfTeaSupply: 0,
       },
     },
     comment: '',
@@ -184,7 +184,7 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
           newObj[room] = {
             roomForEdit: room,
             teaSupply: data.resourcies[room].teaSupply,
-            numberRequired: data.resourcies[room].numberRequired,
+            numberOfTeaSupply: data.resourcies[room].numberOfTeaSupply,
           };
           return newObj;
         }, {} as RoomInputType),

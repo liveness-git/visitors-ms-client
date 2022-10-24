@@ -83,7 +83,7 @@ export function DataTable(props: DataTableProps) {
       field: 'teaSupply',
       render: (rowData) => {
         const roomId = Object.keys(rowData.resourcies)[0]; // TODO:複数会議室未対応
-        const strNumOfTeaSupply = `${t('visitdialog.view.tea-supply.number-of-tea-supply')}:${rowData.resourcies[roomId].numberRequired}`;
+        const strNumOfTeaSupply = `${t('visitdialog.view.tea-supply.number-of-tea-supply')}:${rowData.resourcies[roomId].numberOfTeaSupply}`;
 
         const strNumOfVisitor = `${t('visitdialog.view.tea-supply.number-of-visitor')}:${rowData.numberOfVisitor}`;
         const strNumOfEmployee = `${t('visitdialog.view.tea-supply.number-of-employee')}:${rowData.numberOfEmployee}`;

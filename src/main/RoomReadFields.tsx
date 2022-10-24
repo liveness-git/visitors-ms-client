@@ -51,10 +51,10 @@ export function RoomReadFields(props: RoomReadFieldsProps) {
                 {data.teaSupply ? t('visitdialog.form.tea-supply-yes') : t('visitdialog.form.tea-supply-no')}
               </div>
               <div className={classes.title} style={{ flexBasis: '25%', borderLeft: 'none' }}>
-                {t('visittable.header.number-required')}
+                {t('visittable.header.number-of-tea-supply')}
               </div>
               <div className={classes.field} style={{ flexBasis: '25%' }}>
-                {data.numberRequired}
+                {data.numberOfTeaSupply}
               </div>
             </li>
           </>
