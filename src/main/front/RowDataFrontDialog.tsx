@@ -160,12 +160,13 @@ export function RowDataFrontDialog(props: RowDataReadDialogProps) {
               <div className={classes.field}>{data.subject}</div>
             </li> */}
             <li key="visit-company" className={classes.list}>
-              <div className={classes.title}>{t('visittable.header.visit-company')}</div>
-              <div className={classes.field}>{data.visitCompany}</div>
-            </li>
-            <li key="visitor-name" className={classes.list}>
-              <div className={classes.title}>{t('visittable.header.visitor-name')}</div>
-              <div className={classes.field}>{data.visitorName}</div>
+              <div className={classes.title}>
+                {t('visittable.header.visit-company')} /<br />
+                {t('visittable.header.visitor-name')}
+              </div>
+              <div className={classes.field}>
+                {data.visitCompany} / {data.visitorName}
+              </div>
             </li>
             <li key="number-of-visitor" className={classes.list}>
               <div className={classes.title}>{t('visittable.header.number-of-visitor')}</div>

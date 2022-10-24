@@ -9,6 +9,8 @@ import { grey } from '@material-ui/core/colors';
 
 import DeleteIcon from '@material-ui/icons/Delete';
 import SaveIcon from '@material-ui/icons/Save';
+import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
+import RemoveCircleOutlineIcon from '@material-ui/icons/RemoveCircleOutline';
 
 import { addMinutes } from 'date-fns';
 import _ from 'lodash';
@@ -541,26 +543,42 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
             )}
 
             <Box p={2} style={disabledVisitor ? { display: 'none' } : undefined}>
-              <ControllerTextField
-                name="visitCompany"
-                control={control}
-                label={t('visittable.header.visit-company')}
-                required={!disabledVisitor}
-                disabled={disabledVisitor}
-                errors={errors}
-              />
-              <ControllerTextField
-                name="visitorName"
-                control={control}
-                label={t('visittable.header.visitor-name')}
-                disabled={disabledVisitor}
-                errors={errors}
-              />
+              <Grid container spacing={1}>
+                <Grid item xs={6}>
+                  <ControllerTextField
+                    name="visitCompany"
+                    control={control}
+                    label={t('visittable.header.visit-company')}
+                    required={!disabledVisitor}
+                    disabled={disabledVisitor}
+                    errors={errors}
+                  />
+                </Grid>
+                <Grid item xs={6}>
+                  <ControllerTextField
+                    name="visitorName"
+                    control={control}
+                    label={t('visittable.header.visitor-name')}
+                    disabled={disabledVisitor}
+                    errors={errors}
+                  />
+                </Grid>
+              </Grid>
             </Box>
 
             <Box px={2}>
               <Grid container spacing={1}>
-                <Grid item xs={4}></Grid>
+                <Grid item xs={4} style={{ margin: 'auto' }}>
+                  <Button
+                    // onClick={}
+                    startIcon={<AddCircleOutlineIcon />}
+                    variant="contained"
+                    color="primary"
+                    fullWidth
+                  >
+                    {t('visitdialog.button.add-visitor')}
+                  </Button>
+                </Grid>
 
                 <Grid item xs={4} style={disabledVisitor ? { opacity: 0 } : undefined}>
                   <Controller

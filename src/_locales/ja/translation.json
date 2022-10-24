@@ -67,6 +67,8 @@
 	"visitdialog.notes.user-status-accepted":"承諾",
 	"visitdialog.notes.user-status-declined":"辞退",
 	"visitdialog.notes.recurrence-info":"パターン",
+	"visitdialog.button.add-visitor":"複数社入力",
+	"visitdialog.button.remove-visitor":"単一来訪社",
 	"visitdialog.button.check-in":"チェックイン",
 	"visitdialog.button.check-out":"チェックアウト",
 	"visitdialog.button.set-recurrence":"定期的な予定にする",

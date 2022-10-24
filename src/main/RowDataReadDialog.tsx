@@ -85,13 +85,15 @@ export function RowDataReadDialog(props: RowDataReadDialogProps) {
       <Box px={2} pt={2} style={data.usageRange === 'inside' ? { display: 'none' } : undefined}>
         <List disablePadding={true}>
           <li key="visit-company" className={classes.list}>
-            <div className={classes.title}>{t('visittable.header.visit-company')}</div>
-            <div className={classes.field}>{data.visitCompany}</div>
+            <div className={classes.title}>
+              {t('visittable.header.visit-company')} /<br />
+              {t('visittable.header.visitor-name')}
+            </div>
+            <div className={classes.field}>
+              {data.visitCompany} / {data.visitorName}
+            </div>
           </li>
-          <li key="visitor-name" className={classes.list}>
-            <div className={classes.title}>{t('visittable.header.visitor-name')}</div>
-            <div className={classes.field}>{data.visitorName}</div>
-          </li>
+
           <li key="number-of-visitor" className={classes.list}>
             <div className={classes.title}>{t('visittable.header.number-of-visitor')}</div>
             <div className={classes.field} style={{ flexBasis: '25%', borderRight: 'none' }}>
