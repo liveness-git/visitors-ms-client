@@ -58,10 +58,18 @@ export function RoomInputFields(props: RoomInputFieldsProps) {
   // 給茶人数のエフェクト
   useEffect(() => {
     if (!teaWatch) {
-      setValue(`resourcies.${roomId}.numberRequired`, 0, { shouldDirty: true });
+      setValue(`resourcies.${roomId}.numberOfVisitor`, 0, { shouldDirty: true });
+      setValue(`resourcies.${roomId}.numberOfEmployee`, 0, { shouldDirty: true });
     }
     setDisabledTeaMember(!teaWatch);
   }, [teaWatch, setValue, roomId]);
+
+  // 利用範囲のエフェクト（来訪者数のリセット）
+  useEffect(() => {
+    if (disabledVisitor) {
+      setValue(`resourcies.${roomId}.numberOfVisitor`, 0, { shouldDirty: true });
+    }
+  }, [setValue, disabledVisitor, roomId]);
 
   //会議室の説明文
   const [roomComment, setRoomComment] = useState('');
@@ -137,11 +145,28 @@ export function RoomInputFields(props: RoomInputFieldsProps) {
           />
         </Grid>
 
-        <Grid item xs={4} style={disabledVisitor ? { opacity: 0 } : undefined}></Grid>
+        <Grid item xs={4} style={disabledVisitor ? { opacity: 0 } : undefined}>
+          <Controller
+            name={`resourcies.${roomId}.numberOfVisitor`}
+            control={control}
+            rules={{ required: t('common.form.required') as string }}
+            render={({ field }) => (
+              <TextField
+                type="number"
+                inputProps={{ min: 0, style: { textAlign: 'right' } }}
+                {...field}
+                disabled={disabledTeaMember || disabledVisitor}
+                label={t('visittable.header.number-of-visitor')}
+                error={!!getNestedError('numberOfVisitor')}
+                helperText={!!getNestedError('numberOfVisitor') && getNestedError('numberOfVisitor').message}
+              />
+            )}
+          />
+        </Grid>
 
         <Grid item xs={4}>
           <Controller
-            name={`resourcies.${roomId}.numberRequired`}
+            name={`resourcies.${roomId}.numberOfEmployee`}
             control={control}
             rules={{ required: t('common.form.required') as string }}
             render={({ field }) => (
@@ -150,9 +175,9 @@ export function RoomInputFields(props: RoomInputFieldsProps) {
                 inputProps={{ min: 0, style: { textAlign: 'right' } }}
                 {...field}
                 disabled={disabledTeaMember}
-                label={t('visittable.header.number-required')}
-                error={!!getNestedError('numberRequired')}
-                helperText={!!getNestedError('numberRequired') && getNestedError('numberRequired').message}
+                label={t('visittable.header.number-of-employee')}
+                error={!!getNestedError('numberOfEmployee')}
+                helperText={!!getNestedError('numberOfEmployee') && getNestedError('numberOfEmployee').message}
               />
             )}
           />

@@ -79,19 +79,14 @@ export function DataTable(props: DataTableProps) {
     },
     { title: t('visittable.header.room-name'), field: 'roomName' },
     {
-      title: t('visittable.header.number-of-people'),
+      title: t('visittable.header.tea-supply'),
       field: 'teaSupply',
       render: (rowData) => {
         const roomId = Object.keys(rowData.resourcies)[0]; // TODO:複数会議室未対応
-        const strNumOfTeaSupply = `${t('visitdialog.view.tea-supply.number-of-tea-supply')}:${rowData.resourcies[roomId].numberRequired}`;
-
-        const strNumOfVisitor = `${t('visitdialog.view.tea-supply.number-of-visitor')}:${rowData.numberOfVisitor}`;
-        const strNumOfEmployee = `${t('visitdialog.view.tea-supply.number-of-employee')}:${rowData.numberOfEmployee}`;
-
+        const strNumOfVisitor = `${t('visitdialog.view.tea-supply.number-of-visitor')}:${rowData.resourcies[roomId].numberOfVisitor}`;
+        const strNumOfEmployee = `${t('visitdialog.view.tea-supply.number-of-employee')}:${rowData.resourcies[roomId].numberOfEmployee}`;
         return (
           <>
-            <span style={{ color: 'red' }}>{strNumOfTeaSupply}</span>
-            <br />
             {strNumOfVisitor}
             <br />
             {strNumOfEmployee}

@@ -92,18 +92,6 @@ export function RowDataReadDialog(props: RowDataReadDialogProps) {
             <div className={classes.title}>{t('visittable.header.visitor-name')}</div>
             <div className={classes.field}>{data.visitorName}</div>
           </li>
-          <li key="number-of-visitor" className={classes.list}>
-            <div className={classes.title}>{t('visittable.header.number-of-visitor')}</div>
-            <div className={classes.field} style={{ flexBasis: '25%', borderRight: 'none' }}>
-              {data.numberOfVisitor}
-            </div>
-            <div className={classes.title} style={{ flexBasis: '25%', borderLeft: 'none' }}>
-              {t('visittable.header.number-of-employee')}
-            </div>
-            <div className={classes.field} style={{ flexBasis: '25%' }}>
-              {data.numberOfEmployee}
-            </div>
-          </li>
         </List>
       </Box>
 

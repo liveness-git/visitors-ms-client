@@ -1,9 +1,9 @@
 import { useCallback, useContext, useEffect, useState } from 'react';
 import { useRouteMatch } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Controller, SubmitHandler, useForm, useWatch } from 'react-hook-form';
+import { SubmitHandler, useForm, useWatch } from 'react-hook-form';
 
-import { Box, Grid, Button, List, Typography, TextField } from '@material-ui/core';
+import { Box, Grid, Button, List, Typography } from '@material-ui/core';
 import { makeStyles, createStyles, createTheme, ThemeProvider } from '@material-ui/core/styles';
 import { grey } from '@material-ui/core/colors';
 
@@ -114,15 +114,14 @@ const getDefaultValues = (start?: Date, roomId?: string, usage?: UsageRangeForVi
     visitorId: '',
     visitCompany: '',
     visitorName: '',
-    numberOfVisitor: 0,
-    numberOfEmployee: 0,
     mailto: { authors: [], required: [], optional: [] },
     usageRange: usageRange,
     resourcies: {
       [ADD_ROOM_KEY]: {
         roomForEdit: room,
         teaSupply: false,
-        numberRequired: 0,
+        numberOfVisitor: 0,
+        numberOfEmployee: 0,
       },
     },
     comment: '',
@@ -176,15 +175,14 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
         visitorId: data.visitorId,
         visitCompany: data.visitCompany,
         visitorName: data.visitorName,
-        numberOfVisitor: data.numberOfVisitor,
-        numberOfEmployee: data.numberOfEmployee,
         mailto: data.mailto,
         usageRange: data.usageRange,
         resourcies: Object.keys(data.resourcies).reduce((newObj, room) => {
           newObj[room] = {
             roomForEdit: room,
             teaSupply: data.resourcies[room].teaSupply,
-            numberRequired: data.resourcies[room].numberRequired,
+            numberOfVisitor: data.resourcies[room].numberOfVisitor,
+            numberOfEmployee: data.resourcies[room].numberOfEmployee,
           };
           return newObj;
         }, {} as RoomInputType),
@@ -224,7 +222,7 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
 
   // 空き会議室一覧の取得
   const defaultRoomsUrl = `/room/choices?location=${match.params.location}`;
-  const [{ data: rooms }, , setUrl] = useLoadData<Room[]>(defaultRoomsUrl, []); //更新時の呈茶switchに影響があるので初回からload
+  const [{ data: rooms }, , setUrl] = useLoadData<Room[]>('', []);
 
   // 空き会議室一覧のURL更新
   const buildRoomsUrl = useCallback(() => {
@@ -263,15 +261,12 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
     if (usageRangeWatch === 'inside') {
       setValue('visitCompany', '', { shouldDirty: true });
       setValue('visitorName', '', { shouldDirty: true });
-      setValue(`numberOfVisitor`, 0, { shouldDirty: true });
       setDisabledVisitor(true);
     } else {
       // 社外会議
       setDisabledVisitor(false);
     }
   }, [setValue, usageRangeWatch]);
-
-  // ::アクション処理 start -------------------------->
 
   // 保存アクション
   const handleSave = () => {
@@ -552,49 +547,6 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
                 disabled={disabledVisitor}
                 errors={errors}
               />
-            </Box>
-
-            <Box px={2}>
-              <Grid container spacing={1}>
-                <Grid item xs={4}></Grid>
-
-                <Grid item xs={4} style={disabledVisitor ? { opacity: 0 } : undefined}>
-                  <Controller
-                    name={`numberOfVisitor`}
-                    control={control}
-                    rules={{ required: t('common.form.required') as string }}
-                    render={({ field }) => (
-                      <TextField
-                        type="number"
-                        inputProps={{ min: 0, style: { textAlign: 'right' } }}
-                        {...field}
-                        disabled={disabledVisitor}
-                        label={t('visittable.header.number-of-visitor')}
-                        error={!!errors.numberOfVisitor}
-                        helperText={!!errors.numberOfVisitor && errors.numberOfVisitor.message}
-                      />
-                    )}
-                  />
-                </Grid>
-
-                <Grid item xs={4}>
-                  <Controller
-                    name={`numberOfEmployee`}
-                    control={control}
-                    rules={{ required: t('common.form.required') as string }}
-                    render={({ field }) => (
-                      <TextField
-                        type="number"
-                        inputProps={{ min: 0, style: { textAlign: 'right' } }}
-                        {...field}
-                        label={t('visittable.header.number-of-employee')}
-                        error={!!errors.numberOfEmployee}
-                        helperText={!!errors.numberOfEmployee && errors.numberOfEmployee.message}
-                      />
-                    )}
-                  />
-                </Grid>
-              </Grid>
             </Box>
 
             <Box p={2}>
