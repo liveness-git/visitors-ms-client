@@ -152,14 +152,14 @@ const defaultInputError = {
   },
 } as InputErrorType;
 
-type ControllerRecurrenceProps = {
+type RecurrenceFieldsProps = {
   activeRoomSelect: () => void;
   activeSearchButton: () => void;
   getValues: UseFormGetValues<Inputs>;
   setValue: UseFormSetValue<Inputs>;
 };
 
-export function ControllerRecurrence(props: ControllerRecurrenceProps) {
+export function RecurrenceFields(props: RecurrenceFieldsProps) {
   const { activeRoomSelect, activeSearchButton, getValues, setValue } = props;
 
   const { t } = useTranslation();
