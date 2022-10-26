@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 const useStyles = makeStyles({
   keyboardDatePicker: {
     '& .MuiOutlinedInput-adornedEnd': { paddingRight: 0 },
+    width: 'fit-content',
   },
   helperText: { marginLeft: 0, marginRight: 0, textAlign: 'center' },
 });

@@ -10,7 +10,6 @@ import { grey } from '@material-ui/core/colors';
 import DeleteIcon from '@material-ui/icons/Delete';
 import SaveIcon from '@material-ui/icons/Save';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
-import RemoveCircleOutlineIcon from '@material-ui/icons/RemoveCircleOutline';
 
 import { addMinutes } from 'date-fns';
 import _ from 'lodash';
@@ -31,6 +30,7 @@ import { ControllerTextField } from '_components/ControllerTextField';
 import { AddrBookAutoComplete } from '_components/AddrBookAutoComplete';
 import { MyDialog } from '_components/MyDialog';
 import { UserStatusIconNote } from '_components/UserStatusIconNote';
+import { change5MinuteIntervals, endTimeBufferMinute, startTimeBufferMinute } from '_components/MyTimePicker';
 
 import { RowDataType } from './DataTableBase';
 import { DeleteConfirmDialog } from './DeleteConfirmDialog';
@@ -39,8 +39,9 @@ import { RoomReadFields, strRoomStatus } from './RoomReadFields';
 import { ControllerDateTimePicker } from './ControllerDateTimePicker';
 import ReservationNameField from './ReservationNameField';
 import { LastUpdatedField } from './LastUpdatedField';
-import { ControllerRecurrence } from './ControllerRecurrence';
+import { RecurrenceFields } from './RecurrenceFields';
 import { PatternedRecurrenceInput } from '_models/PatternedRecurrence';
+import { DateTimePickerFields } from './DateTimePickerFields';
 
 const useRowDataDialogStyles = makeTableDialogStyle();
 
@@ -86,10 +87,6 @@ const inputformTheme = createTheme({
     },
   },
 });
-
-const startTimeBufferMinute = 0;
-const endTimeBufferMinute = 30; //TODO: Interval config化？
-const change5MinuteIntervals = (date: Date) => Math.ceil(date.getTime() / 1000 / 60 / 5) * 1000 * 60 * 5; //TODO: Interval config化？
 
 export type Inputs = {
   mode: 'ins' | 'upd' | 'del';
@@ -356,6 +353,26 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
     activeSearchButton();
   };
 
+  // 予約日の変更アクション(DateTimePicker用)
+  const handleDateChange = (date: Date) => {
+    setValue(
+      'startTime',
+      new Date(date.getFullYear(), date.getMonth(), date.getDate(), getValues('startTime').getHours(), getValues('startTime').getMinutes()),
+      { shouldDirty: true }
+    );
+    handleStartTimeChange();
+  };
+  //  開始時間の変更アクション(DateTimePicker用)
+  const handleStartChange = (date: Date) => {
+    setValue('startTime', date, { shouldDirty: true });
+    handleStartTimeChange();
+  };
+  //  終了時間の変更アクション(DateTimePicker用)
+  const handleEndChange = (date: Date) => {
+    setValue('endTime', date, { shouldDirty: true });
+    handleEndTimeChange();
+  };
+
   // 会議室選択活性化 (定期イベント用)
   const activeRoomSelect = () => {
     if (getValues('mode') === 'upd') return; // 更新時、会議室変更は出来ないため非対応
@@ -455,6 +472,15 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
                 />
               </Box>
 
+              <DateTimePickerFields
+                label={t('visittable.header.appt-date-time')}
+                start={getValues('startTime')}
+                end={getValues('endTime')}
+                onDateChange={handleDateChange}
+                onStartChange={handleStartChange}
+                onEndChange={handleEndChange}
+              ></DateTimePickerFields>
+
               <Grid container spacing={1} style={!!getValues('recurrence') ? { display: 'none' } : undefined}>
                 <Grid item xs={5}>
                   <ControllerDateTimePicker
@@ -492,12 +518,12 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
 
               {!data?.seriesMasterId && (
                 <Grid>
-                  <ControllerRecurrence
+                  <RecurrenceFields
                     activeRoomSelect={activeRoomSelect}
                     activeSearchButton={activeSearchButton}
                     getValues={getValues}
                     setValue={setValue}
-                  ></ControllerRecurrence>
+                  ></RecurrenceFields>
                 </Grid>
               )}
             </Box>
