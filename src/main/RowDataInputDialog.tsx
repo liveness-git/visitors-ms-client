@@ -272,6 +272,10 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
     }
   }, [setValue, usageRangeWatch]);
 
+  // 予約日時を監視
+  const startTimeWatch = useWatch({ control, name: 'startTime' });
+  const endTimeWatch = useWatch({ control, name: 'endTime' });
+
   // ::アクション処理 start -------------------------->
 
   // 保存アクション
@@ -425,7 +429,7 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
           )}
 
           <form>
-            <Box p={2}>
+            <Box p={2} pb={0}>
               <ControllerTextField name="subject" control={control} label={t('visittable.header.event-subject')} required errors={errors} />
 
               {!!data && (
@@ -472,17 +476,8 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
                 />
               </Box>
 
-              <DateTimePickerFields
-                label={t('visittable.header.appt-date-time')}
-                start={getValues('startTime')}
-                end={getValues('endTime')}
-                onDateChange={handleDateChange}
-                onStartChange={handleStartChange}
-                onEndChange={handleEndChange}
-              ></DateTimePickerFields>
-
               <Grid container spacing={1} style={!!getValues('recurrence') ? { display: 'none' } : undefined}>
-                <Grid item xs={5}>
+                <Grid item xs={5} style={{ display: 'none' }}>
                   <ControllerDateTimePicker
                     name="startTime"
                     control={control}
@@ -492,7 +487,7 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
                     errors={errors}
                   />
                 </Grid>
-                <Grid item xs={5}>
+                <Grid item xs={5} style={{ display: 'none' }}>
                   <ControllerDateTimePicker
                     name="endTime"
                     control={control}
@@ -501,6 +496,17 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
                     handleDateTimeChange={handleEndTimeChange}
                     errors={errors}
                   />
+                </Grid>
+                <Grid item xs={10}>
+                  <DateTimePickerFields
+                    label={t('visittable.header.appt-date-time')}
+                    start={startTimeWatch}
+                    end={endTimeWatch}
+                    onDateChange={handleDateChange}
+                    onStartChange={handleStartChange}
+                    onEndChange={handleEndChange}
+                    errMsg={errors['startTime']?.message ? [errors['startTime']?.message] : undefined}
+                  ></DateTimePickerFields>
                 </Grid>
                 <Grid item xs={2} style={{ margin: 'auto' }}>
                   <Button
@@ -568,7 +574,7 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
               </>
             )}
 
-            <Box p={2} style={disabledVisitor ? { display: 'none' } : undefined}>
+            <Box px={2} pt={1} style={disabledVisitor ? { display: 'none' } : undefined}>
               <Grid container spacing={1}>
                 <Grid item xs={6}>
                   <ControllerTextField

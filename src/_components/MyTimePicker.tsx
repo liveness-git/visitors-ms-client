@@ -30,10 +30,11 @@ const minutesList = [...Array(12)]
 type MyTimePickerProps = {
   selected: Date;
   onChange: (date: Date) => void;
+  error: boolean;
 };
 
 function MyTimePicker(props: MyTimePickerProps) {
-  const { selected, onChange } = props;
+  const { selected, onChange, error } = props;
 
   const classes = useStyles();
 
@@ -48,6 +49,7 @@ function MyTimePicker(props: MyTimePickerProps) {
             onChange(new Date(selected.getFullYear(), selected.getMonth(), selected.getDate(), Number(e.target.value), selected.getMinutes()));
           }}
           inputProps={{ className: classes.timerSelect }}
+          error={error}
         >
           {hoursList.map((option, index) => (
             <MenuItem key={`hour-${index}`} value={option.value}>
@@ -68,6 +70,7 @@ function MyTimePicker(props: MyTimePickerProps) {
             onChange(new Date(selected.getFullYear(), selected.getMonth(), selected.getDate(), selected.getHours(), Number(e.target.value)));
           }}
           inputProps={{ className: classes.timerSelect }}
+          error={error}
         >
           {minutesList.map((option, index) => (
             <MenuItem key={`minute-${index}`} value={option.value}>
