@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouteMatch } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
@@ -54,17 +54,16 @@ export function DataTable(props: DataTableProps) {
   // フロント用ダイアログの状態
   const [frontDialogOpen, setFrontDialogOpen] = useState(false);
 
-  // 選択行の状態
-  const [{ currentRow }, setCurrentRow, handleDialogOpen] = UseDataTable<FrontRowData>({ dataDialogHook: dataDialogHook });
+  // 編集用選択行の状態
+  const [{ currentRow }, , handleDialogOpen, handleRecConfClose] = UseDataTable({ dataDialogHook: dataDialogHook });
+  // フロント用選択行の状態
+  const [fronCurrentRow, setFronCurrentRow] = useState<FrontRowData | null>(null);
 
   // フロント用ダイアログを開く
-  const handleFrontDialogOpen = useCallback(
-    (selectedRow: FrontRowData) => {
-      setFrontDialogOpen(true);
-      setCurrentRow(selectedRow);
-    },
-    [setCurrentRow]
-  );
+  const handleFrontDialogOpen = (selectedRow: FrontRowData) => {
+    setFrontDialogOpen(true);
+    setFronCurrentRow(selectedRow);
+  };
   // フロント用ダイアログを閉じる
   const handleFrontDialogClose = async () => {
     setFrontDialogOpen(false);
@@ -171,7 +170,7 @@ export function DataTable(props: DataTableProps) {
   }
 
   return (
-    <DataTableBase currentRow={currentRow} dataDialogHook={dataDialogHook} isLoading={isLoading} reload={reload}>
+    <DataTableBase currentRow={currentRow} dataDialogHook={dataDialogHook} isLoading={isLoading} reload={reload} onRecConfClose={handleRecConfClose}>
       <MaterialTable
         columns={columns as Column<FrontRowData>[]}
         components={{
@@ -200,7 +199,7 @@ export function DataTable(props: DataTableProps) {
         }}
         icons={tableIcons}
       />
-      {currentRow && <RowDataFrontDialog open={frontDialogOpen} onClose={handleFrontDialogClose} data={currentRow} reload={reload} />}
+      {fronCurrentRow && <RowDataFrontDialog open={frontDialogOpen} onClose={handleFrontDialogClose} data={fronCurrentRow} reload={reload} />}
     </DataTableBase>
   );
 }
