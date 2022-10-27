@@ -42,6 +42,7 @@ import { LastUpdatedField } from './LastUpdatedField';
 import { RecurrenceFields } from './RecurrenceFields';
 import { PatternedRecurrenceInput } from '_models/PatternedRecurrence';
 import { DateTimePickerFields } from './DateTimePickerFields';
+import { SessionStrageContext } from '_components/BaseTemplate';
 
 const useRowDataDialogStyles = makeTableDialogStyle();
 
@@ -148,6 +149,7 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
   const { t } = useTranslation();
   const classes = { ...useRowDataDialogStyles(), ...useStyles() };
   const snackberContext = useContext(MySnackberContext); // スナックバー取得用
+  const sessionStrageContext = useContext(SessionStrageContext); // sessionStrage取得用
   const match = useRouteMatch<LocationParams>();
 
   // 削除確認メッセージの状態
@@ -522,7 +524,7 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
                 </Grid>
               </Grid>
 
-              {!data?.seriesMasterId && (
+              {!data?.seriesMasterId && sessionStrageContext.userStorage.isFront && (
                 <Grid>
                   <RecurrenceFields
                     activeRoomSelect={activeRoomSelect}
