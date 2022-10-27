@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
 
-import { DataDialogAction, DataDialogState, RowDataType } from './DataTableBase';
+import { DataDialogAction, DataDialogState, RowDataType } from '../main/DataTableBase';
 
 type DataTableProps = {
   dataDialogHook: {

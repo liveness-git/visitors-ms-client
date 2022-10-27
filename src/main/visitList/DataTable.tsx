@@ -6,13 +6,13 @@ import MaterialTable, { MTableCell } from '@material-table/core';
 
 import { tableIcons, pageingOntions } from '_utils/MaterialTableIcons';
 import { useLoadData } from '_utils/useLoadData';
+import { UseDataTable } from '_utils/UseDataTable';
 
 import { LocationParams } from '_models/Location';
 import { cellStyle, makeVisitorTableStyles } from '_styles/VisitorTableStyle';
 import { tableTheme } from '_styles/TableTheme';
 
 import { DataDialogAction, DataDialogState, DataTableBase, RowDataType } from '../DataTableBase';
-import { UseDataTable } from 'main/UseDataTable';
 
 const useStyles = makeVisitorTableStyles(false);
 

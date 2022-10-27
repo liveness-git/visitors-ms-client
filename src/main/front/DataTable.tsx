@@ -8,10 +8,10 @@ import BorderColorIcon from '@material-ui/icons/BorderColor';
 
 import { pageingOntions, tableIcons } from '_utils/MaterialTableIcons';
 import { useLoadData } from '_utils/useLoadData';
+import { UseDataTable } from '_utils/UseDataTable';
 
 import { DataDialogAction, DataDialogState, DataTableBase, RowDataType } from '../DataTableBase';
 import { RowDataFrontDialog } from './RowDataFrontDialog';
-import { UseDataTable } from 'main/UseDataTable';
 
 import { LocationParams } from '_models/Location';
 import { VisitorInfoFront } from '_models/VisitorInfo';

@@ -6,10 +6,10 @@ import { LocationParams } from '_models/Location';
 import { Schedule } from '_models/Schedule';
 
 import { useLoadData } from '_utils/useLoadData';
+import { UseDataTable } from '_utils/UseDataTable';
 
 import { DataDialogAction, DataDialogState, DataTableBase, RowDataType } from '../DataTableBase';
 import { TimeBar } from '../TimeBar';
-import { UseDataTable } from 'main/UseDataTable';
 
 type TimeBarDataType = {
   events: RowDataType[];
