@@ -11,12 +11,12 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import SaveIcon from '@material-ui/icons/Save';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 
-import { addMinutes } from 'date-fns';
 import _ from 'lodash';
 
 import { VisitorInfo, EventInputType, RoomInputType } from '_models/VisitorInfo';
 import { nameOfUsageRangeForVisitor, Room, UsageRangeForVisitor } from '_models/Room';
 import { LocationParams } from '_models/Location';
+import { PatternedRecurrenceInput } from '_models/PatternedRecurrence';
 
 import { defaultPrimary } from '_styles/Theme';
 import { tableTheme, makeTableDialogStyle } from '_styles/TableTheme';
@@ -30,7 +30,8 @@ import { ControllerTextField } from '_components/ControllerTextField';
 import { AddrBookAutoComplete } from '_components/AddrBookAutoComplete';
 import { MyDialog } from '_components/MyDialog';
 import { UserStatusIconNote } from '_components/UserStatusIconNote';
-import { change5MinuteIntervals, endTimeBufferMinute, startTimeBufferMinute } from '_components/MyTimePicker';
+import { calcEndTimeFromStartTime, calcStartTime } from '_components/MyTimePicker';
+import { SessionStrageContext } from '_components/BaseTemplate';
 
 import { RowDataType } from './DataTableBase';
 import { DeleteConfirmDialog } from './DeleteConfirmDialog';
@@ -40,9 +41,7 @@ import { ControllerDateTimePicker } from './ControllerDateTimePicker';
 import ReservationNameField from './ReservationNameField';
 import { LastUpdatedField } from './LastUpdatedField';
 import { RecurrenceFields } from './RecurrenceFields';
-import { PatternedRecurrenceInput } from '_models/PatternedRecurrence';
 import { DateTimePickerFields } from './DateTimePickerFields';
-import { SessionStrageContext } from '_components/BaseTemplate';
 
 const useRowDataDialogStyles = makeTableDialogStyle();
 
@@ -128,8 +127,8 @@ const getDefaultValues = (start?: Date, roomId?: string, usage?: UsageRangeForVi
     },
     comment: '',
     contactAddr: '',
-    startTime: addMinutes(change5MinuteIntervals(startDate), startTimeBufferMinute),
-    endTime: addMinutes(change5MinuteIntervals(startDate), startTimeBufferMinute + endTimeBufferMinute),
+    startTime: calcStartTime(startDate),
+    endTime: calcEndTimeFromStartTime(startDate),
     seriesMasterId: undefined,
     recurrence: undefined,
   } as Inputs;
@@ -350,7 +349,7 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
   };
   // 開始日時の変更アクション
   const handleStartTimeChange = () => {
-    const endTime = addMinutes(change5MinuteIntervals(getValues('startTime')), startTimeBufferMinute + endTimeBufferMinute);
+    const endTime = calcEndTimeFromStartTime(getValues('startTime'));
     setValue('endTime', endTime, { shouldDirty: true });
     activeSearchButton();
   };
@@ -507,6 +506,7 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
                     onDateChange={handleDateChange}
                     onStartChange={handleStartChange}
                     onEndChange={handleEndChange}
+                    disablePast={!data}
                     errMsg={errors['startTime']?.message ? [errors['startTime']?.message] : undefined}
                   ></DateTimePickerFields>
                 </Grid>
@@ -602,7 +602,7 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
 
             <Box px={2}>
               <Grid container spacing={1}>
-                <Grid item xs={4} style={{ margin: 'auto' }}>
+                <Grid item xs={4} style={disabledVisitor ? { opacity: 0 } : { margin: 'auto' }}>
                   <Button
                     // onClick={}
                     startIcon={<AddCircleOutlineIcon />}

@@ -21,11 +21,12 @@ type DateTimePickerFieldsProps = {
   onDateChange: (date: Date) => void;
   onStartChange: (date: Date) => void;
   onEndChange: (date: Date) => void;
+  disablePast?: boolean;
   errMsg?: string[];
 };
 
 export function DateTimePickerFields(props: DateTimePickerFieldsProps) {
-  const { label, start, end, onDateChange, onStartChange, onEndChange, errMsg } = props;
+  const { label, start, end, onDateChange, onStartChange, onEndChange, disablePast, errMsg } = props;
 
   const classes = useStyles();
 
@@ -38,7 +39,7 @@ export function DateTimePickerFields(props: DateTimePickerFieldsProps) {
     <Grid container>
       <Grid item container justifyContent="flex-start" spacing={1}>
         <Grid item xs={5}>
-          <MyCalendar label={label} date={start} disablePast={true} onChange={handleDateChange} error={!!errMsg} />
+          <MyCalendar label={label} date={start} disablePast={disablePast} onChange={handleDateChange} error={!!errMsg} />
         </Grid>
         <Grid container item xs={7}>
           <Grid item className={classes.time}>

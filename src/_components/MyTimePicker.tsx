@@ -1,4 +1,5 @@
 import { Grid, makeStyles, MenuItem, TextField } from '@material-ui/core';
+import { addMinutes } from 'date-fns';
 
 const useStyles = makeStyles({
   timerSelectRoot: {
@@ -13,7 +14,8 @@ const useStyles = makeStyles({
 export const startTimeBufferMinute = 0;
 export const endTimeBufferMinute = 30; //TODO: Interval config化？
 export const change5MinuteIntervals = (date: Date) => Math.ceil(date.getTime() / 1000 / 60 / 5) * 1000 * 60 * 5; //TODO: Interval config化？
-// const adjustDate = new Date(change5MinuteIntervals(selected));
+export const calcStartTime = (start: Date) => addMinutes(change5MinuteIntervals(start), startTimeBufferMinute);
+export const calcEndTimeFromStartTime = (start: Date) => addMinutes(change5MinuteIntervals(start), startTimeBufferMinute + endTimeBufferMinute);
 
 const hoursList = [...Array(24)]
   .map((_, i) => i)
