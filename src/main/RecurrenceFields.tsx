@@ -44,7 +44,7 @@ import {
   RecurrenceRangeType,
   WeekIndex,
 } from '_models/PatternedRecurrence';
-import { addMonths, addYears } from 'date-fns';
+import { addMonths, addYears, startOfDay } from 'date-fns';
 import MyCalendar from '_components/MyCalendar';
 
 const useStyles = makeStyles((theme) =>
@@ -83,7 +83,6 @@ type InitValuesType = {
   };
   range: {
     type: RecurrenceRangeType;
-    startDate: Date;
     endDate: Date;
     numberOfOccurrences: number;
   };
@@ -101,7 +100,6 @@ type InputErrorType = {
   };
   range: {
     type: string[] | undefined;
-    startDate: string[] | undefined;
     endDate: string[] | undefined;
     numberOfOccurrences: string[] | undefined;
   };
@@ -115,8 +113,7 @@ const defaultCheckBoxWeek = nameOfDayOfWeek.reduce((newObj, week) => {
 const endDateAddAmount = 3;
 const maxRepeatYear = 5;
 
-const getDefaultValues = (start?: Date) => {
-  const startDate = start ? start : new Date();
+const getDefaultValues = (startTime: Date) => {
   return {
     pattern: {
       type: nameOfRecurrencePatternType[0] as RecurrencePatternType,
@@ -128,8 +125,7 @@ const getDefaultValues = (start?: Date) => {
     },
     range: {
       type: nameOfRecurrenceRangeType[0] as RecurrenceRangeType,
-      startDate: startDate,
-      endDate: addMonths(new Date(), endDateAddAmount),
+      endDate: addMonths(startOfDay(startTime), endDateAddAmount),
       numberOfOccurrences: 1,
     },
   } as InitValuesType;
@@ -146,7 +142,6 @@ const defaultInputError = {
   },
   range: {
     type: undefined,
-    startDate: undefined,
     endDate: undefined,
     numberOfOccurrences: undefined,
   },
@@ -157,10 +152,13 @@ type RecurrenceFieldsProps = {
   activeSearchButton: () => void;
   getValues: UseFormGetValues<Inputs>;
   setValue: UseFormSetValue<Inputs>;
+  startTime: Date;
+  validateDatTime: () => Promise<boolean>;
+  dateTimePickerFields: JSX.Element;
 };
 
 export function RecurrenceFields(props: RecurrenceFieldsProps) {
-  const { activeRoomSelect, activeSearchButton, getValues, setValue } = props;
+  const { activeRoomSelect, activeSearchButton, getValues, setValue, startTime, validateDatTime, dateTimePickerFields } = props;
 
   const { t } = useTranslation();
   const classes = useStyles();
@@ -172,13 +170,13 @@ export function RecurrenceFields(props: RecurrenceFieldsProps) {
   const [open, setOpen] = useState(false);
 
   // 入力値の状態
-  const [inputValues, setInputValues] = useState<InitValuesType>(_.cloneDeep(getDefaultValues()));
+  const [inputValues, setInputValues] = useState<InitValuesType>(_.cloneDeep(getDefaultValues(startTime)));
   // エラー値の状態
   const [errMsg, setErrMsg] = useState<InputErrorType>(_.cloneDeep(defaultInputError));
 
   // 初期値設定
   useEffect(() => {
-    const defaultValues = { ...getDefaultValues() };
+    const defaultValues = { ...getDefaultValues(startTime) };
     if (open) {
       if (!!getValues('recurrence')) {
         // recurrenceオブジェクトから取得
@@ -201,7 +199,6 @@ export function RecurrenceFields(props: RecurrenceFieldsProps) {
           },
           range: {
             type: getValues('recurrence')!.range.type,
-            startDate: new Date(getValues('recurrence')!.range.startDate),
             endDate: getValues('recurrence')!.range.endDate ? new Date(getValues('recurrence')!.range.endDate!) : defaultValues.range.endDate,
             numberOfOccurrences: getValues('recurrence')!.range.numberOfOccurrences
               ? getValues('recurrence')!.range.numberOfOccurrences!
@@ -215,7 +212,7 @@ export function RecurrenceFields(props: RecurrenceFieldsProps) {
       setInputValues(_.cloneDeep(defaultValues));
     }
     setErrMsg(_.cloneDeep(defaultInputError));
-  }, [getValues, open]);
+  }, [getValues, open, startTime]);
 
   // ダイアログを閉じたとき、定期パターンの内容を文章化
   useEffect(() => {
@@ -228,6 +225,13 @@ export function RecurrenceFields(props: RecurrenceFieldsProps) {
     }
   }, [getValues, open]);
 
+  // 開始日変更に伴う終了日変更
+  useEffect(() => {
+    setInputValues((values) => {
+      return { ...values, range: { ...values.range, endDate: addMonths(startOfDay(startTime), endDateAddAmount) } };
+    });
+  }, [startTime]);
+
   // dialogOpen
   const handleOpen = () => {
     setOpen(true);
@@ -239,20 +243,24 @@ export function RecurrenceFields(props: RecurrenceFieldsProps) {
   };
 
   // OKアクション
-  const handleOk = () => {
+  const handleOk = async () => {
     // 入力チェック
     let isError = false;
     const errorMsg = _.cloneDeep(defaultInputError);
-    const newEndDate = addYears(inputValues.range.startDate, maxRepeatYear);
 
-    if (inputValues.range.startDate.getTime() > inputValues.range.endDate.getTime()) {
-      //大小関係エラー
-      errorMsg.range.startDate = [`${t('recurrence-dialog.error.range.date')}`];
-      errorMsg.range.endDate = [`${t('recurrence-dialog.error.range.date')}`];
+    const start = startOfDay(startTime);
+    const end = startOfDay(inputValues.range.endDate);
+    const maxEnd = addYears(start, maxRepeatYear);
+
+    if (start.getTime() > end.getTime()) {
+      //日にちの大小関係エラー
+      errorMsg.range.endDate = [`${t('recurrence-dialog.error.range.end-date')}`];
       isError = true;
-    } else if (newEndDate.getTime() < inputValues.range.endDate.getTime()) {
+    } else if (!(await validateDatTime())) {
+      //時刻の大小関係エラー
+      isError = true;
+    } else if (maxEnd.getTime() < end.getTime()) {
       //最長予約年数チェック
-      errorMsg.range.startDate = [`${t('recurrence-dialog.error.range.date.max')}`];
       errorMsg.range.endDate = [`${t('recurrence-dialog.error.range.date.max')}`];
       isError = true;
     }
@@ -290,7 +298,7 @@ export function RecurrenceFields(props: RecurrenceFieldsProps) {
       default:
         break;
     }
-    let range = { type: inputValues.range.type, startDate: inputValues.range.startDate } as RecurrenceRange;
+    let range = { type: inputValues.range.type } as RecurrenceRange;
     switch (inputValues.range.type) {
       case 'endDate':
         range.endDate = inputValues.range.endDate;
@@ -493,7 +501,7 @@ export function RecurrenceFields(props: RecurrenceFieldsProps) {
         </DialogTitle>
         <DialogContent dividers>
           <Box px={2} py={1}>
-            時間
+            {dateTimePickerFields}
           </Box>
 
           <Divider />
@@ -504,7 +512,7 @@ export function RecurrenceFields(props: RecurrenceFieldsProps) {
               select={true}
               value={inputValues.pattern.type}
               onChange={(e) => {
-                const defaultValues = { ...getDefaultValues() };
+                const defaultValues = { ...getDefaultValues(startTime) };
                 defaultValues.pattern.type = e.target.value as RecurrencePatternType;
                 setInputValues((values) => {
                   return { ...values, pattern: { ...defaultValues.pattern } }; // patternの中身は全置換え(リセット)
@@ -598,20 +606,6 @@ export function RecurrenceFields(props: RecurrenceFieldsProps) {
             <Grid container spacing={2}>
               <Grid item className={classes.datePicker}>
                 <MyCalendar
-                  label={t('recurrence-dialog.header.range.start-date')}
-                  date={inputValues.range.startDate}
-                  disablePast={true}
-                  onChange={(e) => {
-                    if (!e) return;
-                    setInputValues((values) => {
-                      return { ...values, range: { ...values.range, startDate: e } };
-                    });
-                  }}
-                  error={!!errMsg.range.startDate}
-                />
-              </Grid>
-              <Grid item className={classes.datePicker}>
-                <MyCalendar
                   label={t('recurrence-dialog.header.range.end-date')}
                   date={inputValues.range.endDate}
                   disablePast={true}
@@ -625,7 +619,7 @@ export function RecurrenceFields(props: RecurrenceFieldsProps) {
                 />
               </Grid>
             </Grid>
-            {!!errMsg.range.startDate && <FormHelperText error>{errMsg.range.startDate}</FormHelperText>}
+            {!!errMsg.range.endDate && <FormHelperText error>{errMsg.range.endDate}</FormHelperText>}
           </Box>
 
           <Box p={2}>

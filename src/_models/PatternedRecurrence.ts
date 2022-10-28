@@ -35,8 +35,7 @@ export type RecurrenceRangeType = typeof nameOfRecurrenceRangeType[number];
 
 export type RecurrenceRange = {
   type: RecurrenceRangeType;
-  startDate: Date;
   endDate?: Date;
   numberOfOccurrences?: number;
 };
-type RecurrenceRangeReadOnly = {};
+type RecurrenceRangeReadOnly = { startDate: Date };
