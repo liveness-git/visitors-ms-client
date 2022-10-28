@@ -333,14 +333,9 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
     }
   };
 
-  // 開始日時と終了日時の関係性チェック
-  const validateDatTime = async () => {
-    return await trigger(['startTime', 'endTime']); //validate
-  };
-
   // 検索ボタンアクション
   const handleSearch = async () => {
-    const result = await validateDatTime(); //validate
+    const result = await trigger(['startTime', 'endTime']); //validate
     if (!result) return;
     buildRoomsUrl();
     setHiddenRooms(false);
@@ -388,7 +383,7 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
   const activeRoomSelect = () => {
     if (getValues('mode') === 'upd') return; // 更新時、会議室変更は出来ないため非対応
     setHiddenRooms(false);
-    setUrl(defaultRoomsUrl + `&usagerange=${getValues('usageRange')}`); // 定期イベントの場合、空き会議室の検索なし
+    setUrl(defaultRoomsUrl + `&usagerange=${getValues('usageRange')}`);
   };
 
   // 削除確認アクション
@@ -536,19 +531,6 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
                     activeSearchButton={activeSearchButton}
                     getValues={getValues}
                     setValue={setValue}
-                    startTime={startTimeWatch}
-                    validateDatTime={validateDatTime}
-                    dateTimePickerFields={
-                      <DateTimePickerFields
-                        label={t('recurrence-dialog.header.appt-date-time')}
-                        start={startTimeWatch}
-                        end={endTimeWatch}
-                        onDateChange={handleDateChange}
-                        onStartChange={handleStartChange}
-                        onEndChange={handleEndChange}
-                        errMsg={errors['startTime']?.message ? [errors['startTime']?.message] : undefined}
-                      ></DateTimePickerFields>
-                    }
                   ></RecurrenceFields>
                 </Grid>
               )}
