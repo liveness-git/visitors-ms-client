@@ -67,6 +67,8 @@ export function RowDataFrontDialog(props: RowDataReadDialogProps) {
     if (open) {
       reset({
         id: data.visitorId,
+        iCalUId: data.iCalUId,
+        seriesMasterId: data.seriesMasterId,
         checkIn: data.checkIn,
         checkOut: data.checkOut,
         visitorCardNumber: data.visitorCardNumber,

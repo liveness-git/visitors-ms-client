@@ -80,4 +80,6 @@ export type VisitorInfoFront = {
 // フロントの編集画面用
 export type FrontInputType = {
   id: string;
+  iCalUId: string;
+  seriesMasterId: string | undefined;
 };
