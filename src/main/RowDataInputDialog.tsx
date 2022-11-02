@@ -277,7 +277,7 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
   const startTimeWatch = useWatch({ control, name: 'startTime' });
   const endTimeWatch = useWatch({ control, name: 'endTime' });
 
-  // ::アクション処理 start -------------------------->
+  // ::アクション処理 start-->
 
   // 保存アクション
   const handleSave = () => {
@@ -699,7 +699,10 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
         open={delConfOpen}
         onClose={handleDelConfClose}
         // title={t('visitorinfoform.delete-confirm-title')}
-        message={t('visitorinfoform.delete-confirm-message')}
+        message={
+          data?.eventType === 'seriesMaster' ? t('visitorinfoform.delete-confirm-message.series-master') : t('visitorinfoform.delete-confirm-message')
+        }
+        color="secondary"
       ></MyConfirmDialog>
     </>
   );
