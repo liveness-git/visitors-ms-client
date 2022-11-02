@@ -203,6 +203,7 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
                 daysOfWeek: data.recurrence.pattern.daysOfWeek,
                 dayOfMonth: data.recurrence.pattern.dayOfMonth,
                 index: data.recurrence.pattern.index,
+                month: data.recurrence.pattern.month,
               },
               range: {
                 type: data.recurrence.range.type,

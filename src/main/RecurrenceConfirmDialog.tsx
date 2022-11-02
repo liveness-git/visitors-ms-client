@@ -32,6 +32,7 @@ export function RecurrenceConfirmDialog(props: RecurrenceConfirmDialogProps) {
   const handleOkClose = async () => {
     if (answer === 'master') {
       const result = await get<RowDataType>(`/event/visitInfo/${seriesMasterId}`);
+      console.log('seriesMaster', result.parsedBody); // TODO: debug
       onClose(false, result.parsedBody);
     } else {
       onClose(false);

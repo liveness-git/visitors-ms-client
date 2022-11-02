@@ -51,6 +51,7 @@ import { MyConfirmDialog } from '_components/MyConfirmDialog';
 
 import { Inputs } from './RowDataInputDialog';
 import { DateTimePickerFields } from './DateTimePickerFields';
+import { getRecurrenceInfo } from '_utils/RecurrenceInfo';
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -118,7 +119,7 @@ type InputErrorType = {
   };
 };
 
-const defaultCheckBoxWeek = nameOfDayOfWeek.reduce((newObj, week) => {
+const initCheckBoxWeek = nameOfDayOfWeek.reduce((newObj, week) => {
   newObj[week] = false;
   return newObj;
 }, {} as CheckBoxWeek);
@@ -127,13 +128,16 @@ const endDateAddAmount = 3;
 const maxRepeatYear = 5;
 
 const getDefaultValues = (startTime: Date, endTime: Date) => {
+  const checkBoxWeek = _.cloneDeep(initCheckBoxWeek);
+  const week = nameOfDayOfWeek[new Date().getDay()];
+  checkBoxWeek[week] = true;
   return {
     startTime: startTime,
     endTime: endTime,
     pattern: {
       type: nameOfRecurrencePatternType[0] as RecurrencePatternType,
       interval: 1,
-      daysOfWeek: _.cloneDeep(defaultCheckBoxWeek),
+      daysOfWeek: checkBoxWeek,
       dayOfMonth: 1,
       index: nameOfWeekIndex[0] as WeekIndex,
       month: 1,
@@ -196,6 +200,7 @@ export function RecurrenceFields(props: RecurrenceFieldsProps) {
     if (open) {
       if (!!getValues('recurrence')) {
         // recurrenceオブジェクトから取得
+        console.log('set', getValues('recurrence'));
         setInputValues({
           startTime: getValues('startTime'),
           endTime: getValues('endTime'),
@@ -237,7 +242,7 @@ export function RecurrenceFields(props: RecurrenceFieldsProps) {
   useEffect(() => {
     if (!open) {
       if (!!getValues('recurrence')) {
-        setPatternInfo(getValues('recurrence')?.pattern.type as string); //TODO:とりま
+        setPatternInfo(getRecurrenceInfo(getValues('recurrence')!)); //TODO:とりま
       } else {
         setPatternInfo('');
       }
@@ -329,7 +334,7 @@ export function RecurrenceFields(props: RecurrenceFieldsProps) {
         break;
       case 'absoluteYearly':
         pattern.dayOfMonth = inputValues.pattern.dayOfMonth;
-        pattern.index = inputValues.pattern.index;
+        // pattern.index = inputValues.pattern.index;
         pattern.month = inputValues.pattern.month;
         break;
       case 'relativeYearly':
@@ -468,7 +473,7 @@ export function RecurrenceFields(props: RecurrenceFieldsProps) {
             : nameOfDayOfWeek[0]
         }
         onChange={(e) => {
-          const value = _.cloneDeep(defaultCheckBoxWeek);
+          const value = _.cloneDeep(initCheckBoxWeek);
           value[e.target.value as DayOfWeek] = true;
           setInputValues((values) => {
             return { ...values, pattern: { ...values.pattern, daysOfWeek: _.cloneDeep(value) } };
