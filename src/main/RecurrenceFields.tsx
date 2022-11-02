@@ -5,6 +5,8 @@ import { UseFormGetValues, UseFormSetValue } from 'react-hook-form';
 import { addMonths, addYears, startOfDay } from 'date-fns';
 import _ from 'lodash';
 
+import { renderToString } from 'react-dom/server';
+
 import {
   Box,
   Button,
@@ -51,7 +53,7 @@ import { MyConfirmDialog } from '_components/MyConfirmDialog';
 
 import { Inputs } from './RowDataInputDialog';
 import { DateTimePickerFields } from './DateTimePickerFields';
-import { getRecurrenceInfo } from '_utils/RecurrenceInfo';
+import { RecurrenceInfo } from './RecurrenceInfo';
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -181,9 +183,6 @@ export function RecurrenceFields(props: RecurrenceFieldsProps) {
   const { t } = useTranslation();
   const classes = useStyles();
 
-  // 定期パターン文章
-  const [patternInfo, setPatternInfo] = useState('');
-
   // ダイアログの状態
   const [open, setOpen] = useState(false);
   // 確認ダイアログの状態
@@ -200,7 +199,6 @@ export function RecurrenceFields(props: RecurrenceFieldsProps) {
     if (open) {
       if (!!getValues('recurrence')) {
         // recurrenceオブジェクトから取得
-        console.log('set', getValues('recurrence'));
         setInputValues({
           startTime: getValues('startTime'),
           endTime: getValues('endTime'),
@@ -238,17 +236,6 @@ export function RecurrenceFields(props: RecurrenceFieldsProps) {
     setErrMsg(_.cloneDeep(defaultInputError));
   }, [getValues, open]);
 
-  // ダイアログを閉じたとき、定期パターンの内容を文章化
-  useEffect(() => {
-    if (!open) {
-      if (!!getValues('recurrence')) {
-        setPatternInfo(getRecurrenceInfo(getValues('recurrence')!)); //TODO:とりま
-      } else {
-        setPatternInfo('');
-      }
-    }
-  }, [getValues, open]);
-
   // dialogOpen
   const handleOpen = () => {
     setOpen(true);
@@ -279,7 +266,6 @@ export function RecurrenceFields(props: RecurrenceFieldsProps) {
           return;
         }
       }
-
       handleOk(); // OKアクション実行
     } catch (error) {
       console.log(error);
@@ -334,7 +320,6 @@ export function RecurrenceFields(props: RecurrenceFieldsProps) {
         break;
       case 'absoluteYearly':
         pattern.dayOfMonth = inputValues.pattern.dayOfMonth;
-        // pattern.index = inputValues.pattern.index;
         pattern.month = inputValues.pattern.month;
         break;
       case 'relativeYearly':
@@ -568,7 +553,14 @@ export function RecurrenceFields(props: RecurrenceFieldsProps) {
       )}
       {!!getValues('recurrence') && (
         <>
-          <TextField label={t('visitdialog.notes.recurrence-info')} value={patternInfo} disabled></TextField>
+          <TextField
+            label={t('visitdialog.notes.recurrence-info')}
+            value={renderToString(
+              <RecurrenceInfo recurrence={getValues('recurrence')!} start={getValues('startTime')} end={getValues('endTime')}></RecurrenceInfo>
+            )}
+            disabled
+          ></TextField>
+          <RecurrenceInfo recurrence={getValues('recurrence')!} start={getValues('startTime')} end={getValues('endTime')}></RecurrenceInfo>
           <Button size="small" color="primary" startIcon={<LoopIcon />} onClick={handleOpen}>
             {t('visitdialog.button.edit-recurrence')}
           </Button>

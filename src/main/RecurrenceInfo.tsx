@@ -1,8 +1,11 @@
+import format from 'date-fns/format';
 import i18next from 'i18next';
 import { PatternedRecurrenceInput } from '_models/PatternedRecurrence';
 
-export const getRecurrenceInfo = (recurrence: PatternedRecurrenceInput) => {
-  console.log('recurrence', recurrence);
+type RecurrenceInfoProps = { recurrence: PatternedRecurrenceInput; start: Date; end: Date };
+
+export const RecurrenceInfo = (props: RecurrenceInfoProps) => {
+  const { recurrence, start, end } = props;
 
   // 曜日
   const daysOfWeek = recurrence.pattern.daysOfWeek?.map((week) => i18next.t(`recurrence-dialog.pattern.day-of-week.${week}`)).join(', ');
@@ -48,5 +51,11 @@ export const getRecurrenceInfo = (recurrence: PatternedRecurrenceInput) => {
   const interval = num + i18next.t(`recurrence-info.pattern.interval.${every + patternType}`);
 
   const pattern = interval + ' ' + detail;
-  return pattern;
+  const apptTime = format(start, 'HH:mm') + '-' + format(end, 'HH:mm');
+
+  // const startDate = format(recurrence.range.startDate, 'yyyy/MM/dd', { locale: locale });
+  // const endDate = !!recurrence.range.endDate ? format(recurrence.range.endDate, 'yyyy/MM/dd', { locale: locale }) : '';
+  // const range = startDate + '-' + endDate;
+
+  return <>{pattern + ' ' + apptTime + ' '}</>;
 };
