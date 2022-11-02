@@ -32,9 +32,9 @@ import { MyDialog } from '_components/MyDialog';
 import { UserStatusIconNote } from '_components/UserStatusIconNote';
 import { calcEndTimeFromStartTime, calcStartTime } from '_components/MyTimePicker';
 import { SessionStrageContext } from '_components/BaseTemplate';
+import { MyConfirmDialog } from '_components/MyConfirmDialog';
 
 import { RowDataType } from './DataTableBase';
-import { DeleteConfirmDialog } from './DeleteConfirmDialog';
 import { RoomInputFields } from './RoomInputFields';
 import { RoomReadFields, strRoomStatus } from './RoomReadFields';
 import { ControllerDateTimePicker } from './ControllerDateTimePicker';
@@ -695,7 +695,12 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
           </form>
         </ThemeProvider>
       </MyDialog>
-      <DeleteConfirmDialog open={delConfOpen} onClose={handleDelConfClose}></DeleteConfirmDialog>
+      <MyConfirmDialog
+        open={delConfOpen}
+        onClose={handleDelConfClose}
+        // title={t('visitorinfoform.delete-confirm-title')}
+        message={t('visitorinfoform.delete-confirm-message')}
+      ></MyConfirmDialog>
     </>
   );
 }

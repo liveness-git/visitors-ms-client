@@ -17,8 +17,7 @@ import { fetchPostData } from '_utils/FetchPostData';
 import { MySnackberContext } from '_components/MySnackbarContext';
 import { Spinner } from '_components/Spinner';
 import { MyDialog } from '_components/MyDialog';
-
-import { DeleteConfirmDialog } from './DeleteConfirmDialog';
+import { MyConfirmDialog } from '_components/MyConfirmDialog';
 
 const useStyles = makeStyles((tableTheme) => {
   return createStyles({
@@ -208,7 +207,7 @@ export function RowDataInputDialog<RowData>(props: RowDataInputDialogProps<RowDa
           </FormProvider>
         </ThemeProvider>
       </MyDialog>
-      <DeleteConfirmDialog open={delConfOpen} onClose={handleDelConfClose}></DeleteConfirmDialog>
+      <MyConfirmDialog open={delConfOpen} onClose={handleDelConfClose} message={t('common.msg.delete-confirm')}></MyConfirmDialog>
     </>
   );
 }
