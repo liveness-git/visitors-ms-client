@@ -9,11 +9,12 @@ type MyConfirmDialogPorps = {
   open: boolean;
   onClose: (ok: boolean) => void;
   title?: string;
-  message: string;
+  message: string | React.ReactNode;
+  color?: 'inherit' | 'default' | 'primary' | 'secondary';
 };
 
 export function MyConfirmDialog(props: MyConfirmDialogPorps) {
-  const { open, onClose, title, message } = props;
+  const { open, onClose, title, message, color } = props;
 
   const handleClose = () => {
     onClose(false);
@@ -33,10 +34,10 @@ export function MyConfirmDialog(props: MyConfirmDialogPorps) {
           <DialogContentText id="alert-dialog-description">{message}</DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleOkClose} color="secondary">
+          <Button onClick={handleOkClose} color={color}>
             OK
           </Button>
-          <Button onClick={handleCancelClose} color="secondary" autoFocus>
+          <Button onClick={handleCancelClose} color={color} autoFocus>
             CANCEL
           </Button>
         </DialogActions>

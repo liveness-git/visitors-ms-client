@@ -207,7 +207,7 @@ export function RowDataInputDialog<RowData>(props: RowDataInputDialogProps<RowDa
           </FormProvider>
         </ThemeProvider>
       </MyDialog>
-      <MyConfirmDialog open={delConfOpen} onClose={handleDelConfClose} message={t('common.msg.delete-confirm')}></MyConfirmDialog>
+      <MyConfirmDialog open={delConfOpen} onClose={handleDelConfClose} message={t('common.msg.delete-confirm')} color="secondary"></MyConfirmDialog>
     </>
   );
 }

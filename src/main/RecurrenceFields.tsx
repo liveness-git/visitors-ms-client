@@ -43,8 +43,11 @@ import {
   WeekIndex,
 } from '_models/PatternedRecurrence';
 
+import { get } from '_utils/Http';
+
 import MyCalendar from '_components/MyCalendar';
 import { calcEndTimeFromStartTime } from '_components/MyTimePicker';
+import { MyConfirmDialog } from '_components/MyConfirmDialog';
 
 import { Inputs } from './RowDataInputDialog';
 import { DateTimePickerFields } from './DateTimePickerFields';
@@ -73,6 +76,8 @@ const useStyles = makeStyles((theme) =>
     },
   })
 );
+
+type CheckInstances = { isIncludesException: boolean };
 
 type InputValuesType = {
   startTime: Date;
@@ -175,8 +180,10 @@ export function RecurrenceFields(props: RecurrenceFieldsProps) {
   // 定期パターン文章
   const [patternInfo, setPatternInfo] = useState('');
 
-  //ダイアログの状態
+  // ダイアログの状態
   const [open, setOpen] = useState(false);
+  // 確認ダイアログの状態
+  const [confOpen, setConfOpen] = useState(false);
 
   // 入力値の状態
   const [inputValues, setInputValues] = useState<InputValuesType>(_.cloneDeep(getDefaultValues(getValues('startTime'), getValues('endTime'))));
@@ -245,6 +252,28 @@ export function RecurrenceFields(props: RecurrenceFieldsProps) {
   const handleClose = (_event: MouseEventHandler, reason: string) => {
     if (reason && reason === 'backdropClick') return;
     handleCancel();
+  };
+
+  // confirmDialogClose
+  const handleConfClose = (ok: boolean) => {
+    setConfOpen(false);
+    if (ok) {
+      handleOk(); // OKアクション実行
+    }
+  };
+  // OKアクションの前に確認
+  const handleConfirmOk = async () => {
+    try {
+      // exceptionの予定を含むかチェック
+      const result = await get<CheckInstances>(`/event/checkinstances/${getValues('iCalUId')}`);
+      const checkInstances = result.parsedBody;
+      console.log('get', checkInstances); // TODO: debug
+      if (checkInstances?.isIncludesException) {
+        setConfOpen(true);
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   // OKアクション
@@ -678,7 +707,7 @@ export function RecurrenceFields(props: RecurrenceFieldsProps) {
           <Box p={2}>
             <Grid container justifyContent="space-between" spacing={2}>
               <Grid item xs={4}>
-                <Button variant="contained" color="secondary" fullWidth onClick={handleOk}>
+                <Button variant="contained" color="secondary" fullWidth onClick={handleConfirmOk}>
                   {t('common.button.ok')}
                 </Button>
               </Grid>
@@ -689,13 +718,25 @@ export function RecurrenceFields(props: RecurrenceFieldsProps) {
               </Grid>
               <Grid item xs={4}>
                 <Button variant="contained" color="secondary" fullWidth onClick={handleRelease} disabled={getValues('recurrence') === undefined}>
-                  {t('visitdialog.button.release-recurrence')}
+                  {t('recurrence-dialog.button.release-recurrence')}
                 </Button>
               </Grid>
             </Grid>
           </Box>
         </DialogContent>
       </Dialog>
+
+      <MyConfirmDialog
+        open={confOpen}
+        onClose={handleConfClose}
+        message={
+          <>
+            {t('recurrence-dialog.confirm-message-1')}
+            <br />
+            {t('recurrence-dialog.confirm-message-2')}
+          </>
+        }
+      ></MyConfirmDialog>
     </>
   );
 }
