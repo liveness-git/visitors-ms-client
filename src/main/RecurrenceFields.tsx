@@ -264,13 +264,18 @@ export function RecurrenceFields(props: RecurrenceFieldsProps) {
   // OKアクションの前に確認
   const handleConfirmOk = async () => {
     try {
-      // exceptionの予定を含むかチェック
-      const result = await get<CheckInstances>(`/event/checkinstances/${getValues('iCalUId')}`);
-      const checkInstances = result.parsedBody;
-      console.log('get', checkInstances); // TODO: debug
-      if (checkInstances?.isIncludesException) {
-        setConfOpen(true);
+      const iCalUId = getValues('iCalUId');
+      if (!!iCalUId) {
+        const result = await get<CheckInstances>(`/event/checkinstances/${iCalUId}`);
+        const checkInstances = result.parsedBody;
+        // exceptionの予定を含む場合
+        if (checkInstances?.isIncludesException) {
+          setConfOpen(true); // 確認メッセージへ
+          return;
+        }
       }
+
+      handleOk(); // OKアクション実行
     } catch (error) {
       console.log(error);
     }
