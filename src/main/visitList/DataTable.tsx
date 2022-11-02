@@ -13,12 +13,14 @@ import { cellStyle, makeVisitorTableStyles } from '_styles/VisitorTableStyle';
 import { tableTheme } from '_styles/TableTheme';
 
 import { DataDialogAction, DataDialogState, DataTableBase, RowDataType } from '../DataTableBase';
+import { EventTypeIcon } from '../EventTypeIcon';
 
 const useStyles = makeVisitorTableStyles(false);
 
 export type Columns = {
   title: string;
   field: string;
+  render?: (rowData: RowDataType) => any;
 };
 
 type DataTableProps = {
@@ -46,7 +48,16 @@ export function DataTable(props: DataTableProps) {
   const [{ currentRow }, , handleDialogOpen, handleRecConfClose] = UseDataTable({ dataDialogHook: dataDialogHook });
 
   const columns: Columns[] = [
-    { title: t('visittable.header.appt-time'), field: 'apptTime' },
+    {
+      title: t('visittable.header.appt-time'),
+      field: 'apptTime',
+      render: (rowData) => (
+        <>
+          {rowData.apptTime}
+          <EventTypeIcon type={rowData.eventType} />
+        </>
+      ),
+    },
     { title: t('visittable.header.room-name'), field: 'roomName' },
     { title: t('visittable.header.event-subject'), field: 'subject' },
     { title: t('visittable.header.visit-company'), field: 'visitCompany' },
