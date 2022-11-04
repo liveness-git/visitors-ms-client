@@ -124,7 +124,7 @@ export function RoomInputFields(props: RoomInputFieldsProps) {
       </Typography>
 
       <Grid container spacing={1} style={disabledTeaSupply ? { display: 'none' } : undefined}>
-        <Grid item xs={4}>
+        <Grid item xs={5} sm={4}>
           <FormControlLabel
             control={
               <Controller
@@ -139,9 +139,9 @@ export function RoomInputFields(props: RoomInputFieldsProps) {
           />
         </Grid>
 
-        <Grid item xs={4} style={disabledVisitor ? { opacity: 0 } : undefined}></Grid>
+        <Grid item xs={2} sm={4} style={disabledVisitor ? { opacity: 0 } : undefined}></Grid>
 
-        <Grid item xs={4}>
+        <Grid item xs={5} sm={4}>
           <Controller
             name={`resourcies.${roomId}.numberOfTeaSupply`}
             control={control}

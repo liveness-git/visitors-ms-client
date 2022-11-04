@@ -581,16 +581,20 @@ export function RecurrenceFields(props: RecurrenceFieldsProps) {
         </DialogTitle>
         <DialogContent dividers>
           <Box px={2} py={1}>
-            <DateTimePickerFields
-              label={t('recurrence-dialog.header.appt-date-time')}
-              start={inputValues.startTime}
-              end={inputValues.endTime}
-              onDateChange={handleDateChange}
-              onStartChange={handleStartChange}
-              onEndChange={handleEndChange}
-              disablePast={getValues('mode') === 'ins'}
-              errMsg={errMsg.startTime ? errMsg.startTime : undefined}
-            ></DateTimePickerFields>
+            <Grid container>
+              <Grid item xs={12} sm={10}>
+                <DateTimePickerFields
+                  label={t('recurrence-dialog.header.appt-date-time')}
+                  start={inputValues.startTime}
+                  end={inputValues.endTime}
+                  onDateChange={handleDateChange}
+                  onStartChange={handleStartChange}
+                  onEndChange={handleEndChange}
+                  disablePast={getValues('mode') === 'ins'}
+                  errMsg={errMsg.startTime ? errMsg.startTime : undefined}
+                ></DateTimePickerFields>
+              </Grid>
+            </Grid>
           </Box>
 
           <Divider />

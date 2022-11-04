@@ -4,10 +4,11 @@ import MyCalendar from '_components/MyCalendar';
 
 const useStyles = makeStyles({
   time: {
-    marginTop: 7,
+    marginTop: 'auto',
+    marginBottom: 'auto',
   },
   timeBetween: {
-    margin: 'auto 10px',
+    margin: 'auto',
   },
   error: {
     marginTop: -5,
@@ -37,11 +38,11 @@ export function DateTimePickerFields(props: DateTimePickerFieldsProps) {
 
   return (
     <Grid container>
-      <Grid item container justifyContent="flex-start" spacing={1}>
-        <Grid item xs={5}>
+      <Grid item container>
+        <Grid item xs={12} sm={5}>
           <MyCalendar label={label} date={start} disablePast={disablePast} onChange={handleDateChange} error={!!errMsg} />
         </Grid>
-        <Grid container item xs={7}>
+        <Grid container item xs={12} sm={7}>
           <Grid item className={classes.time}>
             <MyTimePicker selected={start} onChange={onStartChange} error={!!errMsg}></MyTimePicker>
           </Grid>

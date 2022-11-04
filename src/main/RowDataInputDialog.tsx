@@ -499,7 +499,7 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
                     errors={errors}
                   />
                 </Grid>
-                <Grid item xs={10}>
+                <Grid item xs={12} sm={10}>
                   <DateTimePickerFields
                     label={t('visittable.header.appt-date-time')}
                     start={startTimeWatch}
@@ -511,7 +511,7 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
                     errMsg={errors['startTime']?.message ? [errors['startTime']?.message] : undefined}
                   ></DateTimePickerFields>
                 </Grid>
-                <Grid item xs={2} style={{ margin: 'auto' }}>
+                <Grid item xs={12} sm={2} style={{ margin: 'auto' }}>
                   <Button
                     onClick={handleSearch}
                     variant="contained"
@@ -603,7 +603,7 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
 
             <Box px={2}>
               <Grid container spacing={1}>
-                <Grid item xs={4} style={disabledVisitor ? { opacity: 0 } : { margin: 'auto' }}>
+                <Grid item xs={12} sm={4} style={disabledVisitor ? { opacity: 0 } : { margin: 'auto' }}>
                   <Button
                     // onClick={}
                     startIcon={<AddCircleOutlineIcon />}
@@ -615,7 +615,7 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
                   </Button>
                 </Grid>
 
-                <Grid item xs={4} style={disabledVisitor ? { opacity: 0 } : undefined}>
+                <Grid item xs={6} sm={4} style={disabledVisitor ? { opacity: 0 } : undefined}>
                   <Controller
                     name={`numberOfVisitor`}
                     control={control}
@@ -634,7 +634,7 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
                   />
                 </Grid>
 
-                <Grid item xs={4}>
+                <Grid item xs={6} sm={4}>
                   <Controller
                     name={`numberOfEmployee`}
                     control={control}
