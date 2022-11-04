@@ -12,6 +12,7 @@ import { AddrBookUserDisplay } from '_components/AddrBookUserDisplay';
 import { UserStatusIconNote } from '_components/UserStatusIconNote';
 import ReservationNameField from './ReservationNameField';
 import { LastUpdatedField } from './LastUpdatedField';
+import { RecurrenceInfo } from './RecurrenceInfo';
 
 const useRowDataDialogStyles = makeTableDialogStyle();
 
@@ -44,10 +45,24 @@ export function RowDataReadDialog(props: RowDataReadDialogProps) {
             <div className={classes.title}>{t('visittable.header.event-subject')}</div>
             <div className={classes.field}>{data.subject}</div>
           </li>
-          <li key="app-time" className={classes.list}>
-            <div className={classes.title}>{t('visittable.header.appt-time')}</div>
-            <div className={classes.field}>{data.apptTime}</div>
-          </li>
+          {!data?.recurrence && (
+            <li key="app-time" className={classes.list}>
+              <div className={classes.title}>{t('visittable.header.appt-time')}</div>
+              <div className={classes.field}>{data.apptTime}</div>
+            </li>
+          )}
+          {!!data?.recurrence && (
+            <li key="app-time" className={classes.list}>
+              <div className={classes.title}>{t('visitdialog.notes.recurrence-info')}</div>
+              <div className={classes.field}>
+                <RecurrenceInfo
+                  recurrence={data?.recurrence}
+                  start={new Date(data?.startDateTime)}
+                  end={new Date(data?.endDateTime)}
+                ></RecurrenceInfo>
+              </div>
+            </li>
+          )}
           <li key="reservation-name" className={classes.list}>
             <div className={classes.title}>{t('visittable.header.reservation-name')}</div>
             <div className={classes.field}>
