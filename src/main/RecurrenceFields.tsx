@@ -1,8 +1,8 @@
-import { MouseEventHandler, useEffect, useMemo, useState } from 'react';
+import { MouseEventHandler, useContext, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { UseFormGetValues, UseFormSetValue } from 'react-hook-form';
 
-import { addMonths, addYears, startOfDay } from 'date-fns';
+import { addMonths, addYears, format, startOfDay } from 'date-fns';
 import _ from 'lodash';
 
 import { renderToString } from 'react-dom/server';
@@ -27,6 +27,7 @@ import {
 import Dialog from '@material-ui/core/Dialog';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import { MuiPickersContext } from '@material-ui/pickers';
 
 import CloseIcon from '@material-ui/icons/Close';
 import LoopIcon from '@material-ui/icons/Loop';
@@ -181,6 +182,7 @@ export function RecurrenceFields(props: RecurrenceFieldsProps) {
   const { activeRoomSelect, activeSearchButton, getValues, setValue } = props;
 
   const { t } = useTranslation();
+  const muiPickContext = useContext(MuiPickersContext); // locale取得用
   const classes = useStyles();
 
   // ダイアログの状態
@@ -330,10 +332,10 @@ export function RecurrenceFields(props: RecurrenceFieldsProps) {
       default:
         break;
     }
-    let range = { type: inputValues.range.type, startDate: startDate } as RecurrenceRange;
+    let range = { type: inputValues.range.type, startDate: strDate(startDate) } as RecurrenceRange;
     switch (inputValues.range.type) {
       case 'endDate':
-        range.endDate = inputValues.range.endDate;
+        range.endDate = strDate(inputValues.range.endDate);
         break;
       // case 'noEnd'://TODO: noEnd未対応（最大５年問題）
       //   break;
@@ -396,6 +398,8 @@ export function RecurrenceFields(props: RecurrenceFieldsProps) {
       };
     });
   };
+
+  const strDate = (date: Date): string => format(date, 'yyyy-MM-dd', { locale: muiPickContext?.locale });
 
   const patternTypeList = nameOfRecurrencePatternType.map((value) => {
     return { label: t(`recurrence-dialog.pattern.type.${value}`), value: value };
@@ -558,9 +562,10 @@ export function RecurrenceFields(props: RecurrenceFieldsProps) {
             value={renderToString(
               <RecurrenceInfo recurrence={getValues('recurrence')!} start={getValues('startTime')} end={getValues('endTime')}></RecurrenceInfo>
             )}
+            multiline
             disabled
+            inputProps={{ minRows: 1 }}
           ></TextField>
-          <RecurrenceInfo recurrence={getValues('recurrence')!} start={getValues('startTime')} end={getValues('endTime')}></RecurrenceInfo>
           <Button size="small" color="primary" startIcon={<LoopIcon />} onClick={handleOpen}>
             {t('visitdialog.button.edit-recurrence')}
           </Button>

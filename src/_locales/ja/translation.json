@@ -148,6 +148,8 @@
 	"recurrence-info.pattern.interval.month":"か月ごと",
 	"recurrence-info.pattern.interval.year":"年ごと",
 	"recurrence-info.pattern.day-of-month":"日",
+	"recurrence-info.range.to":"から",
+	"recurrence-info.range.valid-from":"まで有効",
 	"visitorinfoform.title":"来訪情報",
 	"visitorinfoform.delete-confirm-title":"来訪情報を削除しますか？",
 	"visitorinfoform.delete-confirm-message":"予約情報を削除しますか？",
