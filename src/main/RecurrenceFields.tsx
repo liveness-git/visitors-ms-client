@@ -1,6 +1,6 @@
 import { MouseEventHandler, useContext, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { UseFormGetValues, UseFormSetValue } from 'react-hook-form';
+import { DeepMap, DeepPartial, FieldError, UseFormClearErrors, UseFormGetValues, UseFormSetValue } from 'react-hook-form';
 
 import { addMonths, addYears, format, startOfDay } from 'date-fns';
 import _ from 'lodash';
@@ -77,6 +77,10 @@ const useStyles = makeStyles((theme) =>
     },
     datePicker: {
       margin: 'auto 0',
+    },
+    error: {
+      margin: '-2px 10px',
+      lineHeight: '1.4em',
     },
   })
 );
@@ -176,10 +180,12 @@ type RecurrenceFieldsProps = {
   activeSearchButton: () => void;
   getValues: UseFormGetValues<Inputs>;
   setValue: UseFormSetValue<Inputs>;
+  clearErrors: UseFormClearErrors<Inputs>;
+  errors: DeepMap<DeepPartial<Inputs>, FieldError>;
 };
 
 export function RecurrenceFields(props: RecurrenceFieldsProps) {
-  const { activeRoomSelect, activeSearchButton, getValues, setValue } = props;
+  const { activeRoomSelect, activeSearchButton, getValues, setValue, clearErrors, errors } = props;
 
   const { t } = useTranslation();
   const muiPickContext = useContext(MuiPickersContext); // locale取得用
@@ -305,6 +311,10 @@ export function RecurrenceFields(props: RecurrenceFieldsProps) {
 
     // 曜日チェックボックスの値をRecurrenceオブジェクト用に加工する
     const daysOfWeek = Object.keys(inputValues.pattern.daysOfWeek).filter((week) => inputValues.pattern.daysOfWeek[week as DayOfWeek]) as DayOfWeek[];
+    if (daysOfWeek.length === 0) {
+      // 曜日チェックボックスが未選択だった場合、今日の曜日をセット
+      daysOfWeek.push(nameOfDayOfWeek[new Date().getDay()]);
+    }
 
     let pattern = { type: inputValues.pattern.type, interval: inputValues.pattern.interval } as RecurrencePattern;
     switch (inputValues.pattern.type) {
@@ -345,6 +355,7 @@ export function RecurrenceFields(props: RecurrenceFieldsProps) {
       default:
         break;
     }
+    clearErrors('recurrence');
     setValue('recurrence', { pattern: pattern, range: range } as PatternedRecurrenceInput, { shouldDirty: true });
     setValue('startTime', inputValues.startTime, { shouldDirty: true });
     setValue('endTime', inputValues.endTime, { shouldDirty: true });
@@ -360,6 +371,7 @@ export function RecurrenceFields(props: RecurrenceFieldsProps) {
 
   // 解除アクション
   const handleRelease = () => {
+    clearErrors('recurrence');
     setValue('recurrence', undefined, { shouldDirty: true });
     activeSearchButton();
     setOpen(false);
@@ -511,11 +523,14 @@ export function RecurrenceFields(props: RecurrenceFieldsProps) {
         className={classes.inputDayOfMonth}
         label={t('recurrence-dialog.header.pattern.day-of-month')}
         type="number"
-        inputProps={{ min: 1, style: { textAlign: 'right' } }}
+        inputProps={{ min: 1, max: 31, style: { textAlign: 'right' } }}
         value={inputValues.pattern.dayOfMonth}
         onChange={(e) => {
+          let num = Number(e.target.value);
+          if (num < 1) num = 1;
+          if (num > 31) num = 31;
           setInputValues((values) => {
-            return { ...values, pattern: { ...values.pattern, dayOfMonth: Number(e.target.value) } };
+            return { ...values, pattern: { ...values.pattern, dayOfMonth: num } };
           });
         }}
         error={!!errMsg.pattern.dayOfMonth}
@@ -565,7 +580,13 @@ export function RecurrenceFields(props: RecurrenceFieldsProps) {
             multiline
             disabled
             inputProps={{ minRows: 1 }}
+            error={!!errors.recurrence}
           ></TextField>
+          {!!errors.recurrence && (
+            <FormHelperText error className={classes.error}>
+              {errors.recurrence.message}
+            </FormHelperText>
+          )}
           <Button size="small" color="primary" startIcon={<LoopIcon />} onClick={handleOpen}>
             {t('visitdialog.button.edit-recurrence')}
           </Button>
@@ -631,8 +652,9 @@ export function RecurrenceFields(props: RecurrenceFieldsProps) {
                     inputProps={{ min: 1, style: { textAlign: 'right' } }}
                     value={inputValues.pattern.interval}
                     onChange={(e) => {
+                      const num = Number(e.target.value) > 0 ? Number(e.target.value) : 1;
                       setInputValues((values) => {
-                        return { ...values, pattern: { ...values.pattern, interval: Number(e.target.value) } };
+                        return { ...values, pattern: { ...values.pattern, interval: num } };
                       });
                     }}
                     error={!!errMsg.pattern.interval}

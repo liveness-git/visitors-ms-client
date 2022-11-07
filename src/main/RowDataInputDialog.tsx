@@ -164,6 +164,7 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
     setValue,
     trigger,
     setError,
+    clearErrors,
     formState: { errors, isDirty, isSubmitting, dirtyFields },
   } = useForm<Inputs>({ defaultValues, reValidateMode: 'onSubmit' });
 
@@ -532,6 +533,8 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
                     activeSearchButton={activeSearchButton}
                     getValues={getValues}
                     setValue={setValue}
+                    clearErrors={clearErrors}
+                    errors={errors}
                   ></RecurrenceFields>
                 </Grid>
               )}

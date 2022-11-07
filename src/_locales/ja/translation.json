@@ -82,6 +82,7 @@
 	"visitdialog.form.error.available-time":"会議室が空いていません",
 	"visitdialog.form.error.room-not-covered":"会議室を選択しなおしてください",
 	"visitdialog.form.error.number-of-tea-supply":"呈茶総数が正しくありません",
+	"visitdialog.form.error.recurrence.has-no-occurrence":"繰り返しに指定された範囲に発生日がありません",
 	"auto-complete.no-options-text":"メールアドレスまたは名前を入力してください",
 	"recurrence-dialog.title":"定期的な予定の設定",
 	"recurrence-dialog.button.release-recurrence":"定期的な設定を解除",

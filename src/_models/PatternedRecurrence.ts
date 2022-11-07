@@ -6,6 +6,7 @@ export type PatternedRecurrence = {
 export type PatternedRecurrenceInput = {
   pattern: RecurrencePattern;
   range: RecurrenceRange;
+  message?: string; // server側で返されるRecurrenceに関連するgraphAPIエラー
 };
 
 export const nameOfRecurrencePatternType = ['daily', 'weekly', 'absoluteMonthly', 'relativeMonthly', 'absoluteYearly', 'relativeYearly'] as const;
