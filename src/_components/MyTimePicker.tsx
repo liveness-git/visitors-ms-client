@@ -55,7 +55,7 @@ function MyTimePicker(props: MyTimePickerProps) {
         >
           {hoursList.map((option, index) => (
             <MenuItem key={`hour-${index}`} value={option.value}>
-              {option.label}
+              {('00' + Number(option.label)).slice(-2)}
             </MenuItem>
           ))}
         </TextField>
