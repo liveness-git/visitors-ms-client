@@ -55,6 +55,8 @@ import { MyConfirmDialog } from '_components/MyConfirmDialog';
 import { Inputs } from './RowDataInputDialog';
 import { DateTimePickerFields } from './DateTimePickerFields';
 import { RecurrenceInfo } from './RecurrenceInfo';
+import Alert from '@material-ui/lab/Alert';
+import AlertTitle from '@material-ui/lab/AlertTitle';
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -763,11 +765,12 @@ export function RecurrenceFields(props: RecurrenceFieldsProps) {
         open={confOpen}
         onClose={handleConfClose}
         message={
-          <>
+          <Alert severity="warning" variant="outlined">
+            <AlertTitle>Warning</AlertTitle>
             {t('recurrence-dialog.confirm-message-1')}
             <br />
             {t('recurrence-dialog.confirm-message-2')}
-          </>
+          </Alert>
         }
       ></MyConfirmDialog>
     </>
