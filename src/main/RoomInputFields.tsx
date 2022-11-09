@@ -41,14 +41,14 @@ export function RoomInputFields(props: RoomInputFieldsProps) {
   // 給茶選択のエフェクト
   useEffect(() => {
     if (!!roomWatch && !!rooms) {
-      const result = rooms.some((room) => room.id === roomWatch && room.teaSupply);
+      const result = rooms.some((room) => room.id === roomWatch && room.teaSupply[getValues('usageRange')]);
       if (!result) setValue(`resourcies.${roomId}.teaSupply`, false, { shouldDirty: true });
       setDisabledTeaSupply(!result);
     } else {
       setValue(`resourcies.${roomId}.teaSupply`, false, { shouldDirty: true });
       setDisabledTeaSupply(true);
     }
-  }, [roomId, roomWatch, rooms, setValue]);
+  }, [getValues, roomId, roomWatch, rooms, setValue]);
 
   // 給茶人数の入力制御
   const [disabledTeaMember, setDisabledTeaMember] = useState(false);

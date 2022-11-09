@@ -13,7 +13,7 @@ export type Room = {
   sort: string;
   usageRange: UsageRange;
   type: RoomType;
-  teaSupply: boolean;
+  teaSupply: { outside: boolean; inside: boolean };
   comment: string;
   location: string;
   category: string;
