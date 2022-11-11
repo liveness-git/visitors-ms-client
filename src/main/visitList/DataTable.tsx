@@ -60,7 +60,11 @@ export function DataTable(props: DataTableProps) {
     },
     { title: t('visittable.header.room-name'), field: 'roomName' },
     { title: t('visittable.header.event-subject'), field: 'subject' },
-    { title: t('visittable.header.visit-company'), field: 'visitCompany' },
+    {
+      title: t('visittable.header.visit-company-name'),
+      field: 'visitCompany',
+      render: (rowData) => rowData.visitCompany.name,
+    },
     { title: t('visittable.header.reservation-name'), field: 'reservationName' },
   ];
 

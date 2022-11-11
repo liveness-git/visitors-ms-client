@@ -8,8 +8,7 @@ export type VisitorInfo = {
   subject: string;
   visitorId: string;
   usageRange: UsageRangeForVisitor;
-  visitCompany: string;
-  visitorName: string;
+  visitCompany: { name: string; rep: string };
   numberOfVisitor: number;
   numberOfEmployee: number;
   mailto: { authors: EmailAddress[]; required: EmailAddress[]; optional: EmailAddress[] };

@@ -100,15 +100,9 @@ export function DataTable(props: DataTableProps) {
       width: '70px',
     },
     {
-      title: `${t('visittable.header.visit-company')} / ${t('visittable.header.visitor-name')}`,
+      title: `${t('visittable.header.visit-company-name')} / ${t('visittable.header.visit-company-rep')}`,
       field: 'visitCompany',
-      render: (rowData) => (
-        <>
-          {rowData.visitCompany}
-          <br />
-          {rowData.visitorName}
-        </>
-      ),
+      render: (rowData) => `${rowData.visitCompany.name} / ${rowData.visitCompany.rep}`,
     },
     {
       title: t('visittable.header.check-in'),

@@ -111,8 +111,7 @@ const getDefaultValues = (start?: Date, roomId?: string, usage?: UsageRangeForVi
     iCalUId: '',
     subject: '',
     visitorId: '',
-    visitCompany: '',
-    visitorName: '',
+    visitCompany: { name: '', rep: '' },
     numberOfVisitor: 0,
     numberOfEmployee: 0,
     mailto: { authors: [], required: [], optional: [] },
@@ -177,7 +176,6 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
         subject: data.subject,
         visitorId: data.visitorId,
         visitCompany: data.visitCompany,
-        visitorName: data.visitorName,
         numberOfVisitor: data.numberOfVisitor,
         numberOfEmployee: data.numberOfEmployee,
         mailto: data.mailto,
@@ -265,8 +263,7 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
   useEffect(() => {
     // 社内会議
     if (usageRangeWatch === 'inside') {
-      setValue('visitCompany', '', { shouldDirty: true });
-      setValue('visitorName', '', { shouldDirty: true });
+      setValue('visitCompany', { name: '', rep: '' }, { shouldDirty: true });
       setValue(`numberOfVisitor`, 0, { shouldDirty: true });
       setDisabledVisitor(true);
     } else {
@@ -584,9 +581,9 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
               <Grid container spacing={1}>
                 <Grid item xs={6}>
                   <ControllerTextField
-                    name="visitCompany"
+                    name="visitCompany.name"
                     control={control}
-                    label={t('visittable.header.visit-company')}
+                    label={t('visittable.header.visit-company-name')}
                     required={!disabledVisitor}
                     disabled={disabledVisitor}
                     errors={errors}
@@ -594,9 +591,9 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
                 </Grid>
                 <Grid item xs={6}>
                   <ControllerTextField
-                    name="visitorName"
+                    name="visitCompany.rep"
                     control={control}
-                    label={t('visittable.header.visitor-name')}
+                    label={t('visittable.header.visit-company-rep')}
                     disabled={disabledVisitor}
                     errors={errors}
                   />

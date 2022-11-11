@@ -28,9 +28,6 @@ export const makeVisitorTableStyles = (isFront: boolean) => {
     cellVisitCompany: {
       padding: cellPadding,
     },
-    cellVisitorName: {
-      padding: cellPadding,
-    },
     cellSubject: {
       padding: cellPadding,
     },

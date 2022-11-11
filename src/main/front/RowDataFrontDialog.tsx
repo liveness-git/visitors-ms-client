@@ -163,11 +163,11 @@ export function RowDataFrontDialog(props: RowDataReadDialogProps) {
             </li> */}
             <li key="visit-company" className={classes.list}>
               <div className={classes.title}>
-                {t('visittable.header.visit-company')} /<br />
-                {t('visittable.header.visitor-name')}
+                {t('visittable.header.visit-company-name')} /<br />
+                {t('visittable.header.visit-company-rep')}
               </div>
               <div className={classes.field}>
-                {data.visitCompany} / {data.visitorName}
+                {data.visitCompany.name} / {data.visitCompany.rep}
               </div>
             </li>
             <li key="number-of-visitor" className={classes.list}>
