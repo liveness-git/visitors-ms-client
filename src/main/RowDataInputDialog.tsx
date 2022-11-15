@@ -1,7 +1,7 @@
 import { useCallback, useContext, useEffect, useState } from 'react';
 import { useRouteMatch } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Controller, SubmitHandler, useForm, useWatch } from 'react-hook-form';
+import { Controller, SubmitHandler, useFieldArray, useForm, useWatch } from 'react-hook-form';
 
 import { Box, Grid, Button, List, Typography, TextField } from '@material-ui/core';
 import { makeStyles, createStyles, createTheme, ThemeProvider } from '@material-ui/core/styles';
@@ -42,6 +42,7 @@ import ReservationNameField from './ReservationNameField';
 import { LastUpdatedField } from './LastUpdatedField';
 import { RecurrenceFields } from './RecurrenceFields';
 import { DateTimePickerFields } from './DateTimePickerFields';
+import { VisitCompanyInputFields } from './VisitCompanyInputFields';
 
 const useRowDataDialogStyles = makeTableDialogStyle();
 
@@ -111,7 +112,7 @@ const getDefaultValues = (start?: Date, roomId?: string, usage?: UsageRangeForVi
     iCalUId: '',
     subject: '',
     visitorId: '',
-    visitCompany: { name: '', rep: '' },
+    visitCompany: [{ name: '', rep: '' }],
     numberOfVisitor: 0,
     numberOfEmployee: 0,
     mailto: { authors: [], required: [], optional: [] },
@@ -263,7 +264,7 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
   useEffect(() => {
     // 社内会議
     if (usageRangeWatch === 'inside') {
-      setValue('visitCompany', { name: '', rep: '' }, { shouldDirty: true });
+      setValue('visitCompany', [{ name: '', rep: '' }], { shouldDirty: true });
       setValue(`numberOfVisitor`, 0, { shouldDirty: true });
       setDisabledVisitor(true);
     } else {
@@ -275,6 +276,10 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
   // 予約日時を監視
   const startTimeWatch = useWatch({ control, name: 'startTime' });
   const endTimeWatch = useWatch({ control, name: 'endTime' });
+
+  // 来訪社/代表者フィールドの配列管理
+  const { fields: visitCompanyFields, append: visitCompanyAppend, remove: visitCompanyRemove } = useFieldArray({ control, name: 'visitCompany' });
+  const visitCompanyWatch = useWatch({ control, name: 'visitCompany' });
 
   // ::アクション処理 start-->
 
@@ -382,6 +387,15 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
     if (getValues('mode') === 'upd') return; // 更新時、会議室変更は出来ないため非対応
     setHiddenRooms(false);
     setUrl(defaultRoomsUrl + `&usagerange=${getValues('usageRange')}`);
+  };
+
+  // 来訪社追加アクション
+  const appendVisitorCompany = () => {
+    visitCompanyAppend({ name: '', rep: '' });
+  };
+  // 来訪社削除アクション
+  const removeVisitorCompany = (index: number) => {
+    visitCompanyRemove(index);
   };
 
   // 削除確認アクション
@@ -578,38 +592,28 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
             )}
 
             <Box px={2} pt={1} style={disabledVisitor ? { display: 'none' } : undefined}>
-              <Grid container spacing={1}>
-                <Grid item xs={6}>
-                  <ControllerTextField
-                    name="visitCompany.name"
-                    control={control}
-                    label={t('visittable.header.visit-company-name')}
-                    required={!disabledVisitor}
-                    disabled={disabledVisitor}
-                    errors={errors}
-                  />
-                </Grid>
-                <Grid item xs={6}>
-                  <ControllerTextField
-                    name="visitCompany.rep"
-                    control={control}
-                    label={t('visittable.header.visit-company-rep')}
-                    disabled={disabledVisitor}
-                    errors={errors}
-                  />
-                </Grid>
-              </Grid>
+              {visitCompanyFields.map((field, index) => (
+                <VisitCompanyInputFields
+                  key={field.id}
+                  control={control}
+                  index={index}
+                  remove={removeVisitorCompany}
+                  disabledVisitor={disabledVisitor}
+                  errors={errors}
+                />
+              ))}
             </Box>
 
             <Box px={2}>
               <Grid container spacing={1}>
                 <Grid item xs={12} sm={4} style={disabledVisitor ? { opacity: 0 } : { margin: 'auto' }}>
                   <Button
-                    // onClick={}
+                    onClick={appendVisitorCompany}
                     startIcon={<AddCircleOutlineIcon />}
                     variant="contained"
                     color="primary"
                     fullWidth
+                    disabled={visitCompanyWatch.length > 2} // 最大３社まで
                   >
                     {t('visitdialog.button.add-visitor')}
                   </Button>

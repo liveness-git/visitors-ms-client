@@ -102,7 +102,13 @@ export function DataTable(props: DataTableProps) {
     {
       title: `${t('visittable.header.visit-company-name')} / ${t('visittable.header.visit-company-rep')}`,
       field: 'visitCompany',
-      render: (rowData) => `${rowData.visitCompany.name} / ${rowData.visitCompany.rep}`,
+      render: (rowData) =>
+        rowData.visitCompany.map((co, index) => (
+          <>
+            {!!index && <br />}
+            <span>{`${co.name} / ${co.rep}`}</span>
+          </>
+        )),
     },
     {
       title: t('visittable.header.check-in'),

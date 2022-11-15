@@ -167,7 +167,12 @@ export function RowDataFrontDialog(props: RowDataReadDialogProps) {
                 {t('visittable.header.visit-company-rep')}
               </div>
               <div className={classes.field}>
-                {data.visitCompany.name} / {data.visitCompany.rep}
+                {data.visitCompany.map((co, index) => (
+                  <>
+                    {!!index && <br />}
+                    <span>{`${co.name} / ${co.rep}`}</span>
+                  </>
+                ))}
               </div>
             </li>
             <li key="number-of-visitor" className={classes.list}>

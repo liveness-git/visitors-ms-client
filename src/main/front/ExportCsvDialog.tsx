@@ -133,7 +133,7 @@ export function ExportCsvDialog(props: ExportCsvDialogProps) {
               teaDetails: item.resourcies[roomId].teaDetails,
               numberOfVisitor: item.numberOfVisitor.toString(),
               numberOfEmployee: item.numberOfEmployee.toString(),
-              visitCompany: `${item.visitCompany.name} / ${item.visitCompany.rep}`,
+              visitCompany: item.visitCompany.map((co) => `${co.name} / ${co.rep}`).join(', '),
               checkIn: item.checkIn,
               visitorCardNumber: item.visitorCardNumber,
               checkOut: item.checkOut,

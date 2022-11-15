@@ -13,6 +13,7 @@ import { UserStatusIconNote } from '_components/UserStatusIconNote';
 import ReservationNameField from './ReservationNameField';
 import { LastUpdatedField } from './LastUpdatedField';
 import { RecurrenceInfo } from './RecurrenceInfo';
+import { compact } from 'lodash';
 
 const useRowDataDialogStyles = makeTableDialogStyle();
 
@@ -105,7 +106,12 @@ export function RowDataReadDialog(props: RowDataReadDialogProps) {
               {t('visittable.header.visit-company-rep')}
             </div>
             <div className={classes.field}>
-              {data.visitCompany.name} / {data.visitCompany.rep}
+              {data.visitCompany.map((co, index) => (
+                <>
+                  {!!index && <br />}
+                  <span>{`${co.name} / ${co.rep}`}</span>
+                </>
+              ))}
             </div>
           </li>
 

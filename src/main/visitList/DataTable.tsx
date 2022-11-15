@@ -63,7 +63,7 @@ export function DataTable(props: DataTableProps) {
     {
       title: t('visittable.header.visit-company-name'),
       field: 'visitCompany',
-      render: (rowData) => rowData.visitCompany.name,
+      render: (rowData) => rowData.visitCompany.map((co) => `${co.name}`).join(', '),
     },
     { title: t('visittable.header.reservation-name'), field: 'reservationName' },
   ];
