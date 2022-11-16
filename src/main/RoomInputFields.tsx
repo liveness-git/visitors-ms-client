@@ -1,6 +1,16 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Control, Controller, DeepMap, DeepPartial, FieldError, UseFormGetValues, UseFormSetValue, useWatch } from 'react-hook-form';
+import {
+  Control,
+  Controller,
+  DeepMap,
+  DeepPartial,
+  FieldError,
+  UseFormClearErrors,
+  UseFormGetValues,
+  UseFormSetValue,
+  useWatch,
+} from 'react-hook-form';
 import { Box, FormControlLabel, Grid, makeStyles, MenuItem, Switch, TextField, Typography } from '@material-ui/core';
 import { Room } from '_models/Room';
 import { Inputs } from './RowDataInputDialog';
@@ -19,6 +29,7 @@ type RoomInputFieldsProps = {
   control: Control<Inputs, object>;
   setValue: UseFormSetValue<Inputs>;
   getValues: UseFormGetValues<Inputs>;
+  clearErrors: UseFormClearErrors<Inputs>;
   rooms: Room[] | undefined;
   roomId: string;
   disabledVisitor: boolean;
@@ -27,7 +38,7 @@ type RoomInputFieldsProps = {
 };
 
 export function RoomInputFields(props: RoomInputFieldsProps) {
-  const { control, setValue, getValues, rooms, roomId, disabledVisitor, disabledRoom, errors } = props;
+  const { control, setValue, getValues, clearErrors, rooms, roomId, disabledVisitor, disabledRoom, errors } = props;
 
   const { t } = useTranslation();
   const classes = useStyles();
@@ -59,11 +70,12 @@ export function RoomInputFields(props: RoomInputFieldsProps) {
   // 給茶人数のエフェクト
   useEffect(() => {
     if (!teaWatch) {
+      clearErrors([`resourcies.${roomId}.numberOfTeaSupply`, `resourcies.${roomId}.teaDetails`]);
       setValue(`resourcies.${roomId}.numberOfTeaSupply`, 0, { shouldDirty: true });
       setValue(`resourcies.${roomId}.teaDetails`, '', { shouldDirty: true });
     }
     setDisabledTeaMember(!teaWatch);
-  }, [teaWatch, setValue, roomId]);
+  }, [teaWatch, setValue, roomId, clearErrors]);
 
   //会議室の説明文
   const [roomComment, setRoomComment] = useState('');

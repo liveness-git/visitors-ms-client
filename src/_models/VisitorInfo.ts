@@ -8,7 +8,7 @@ export type VisitorInfo = {
   subject: string;
   visitorId: string;
   usageRange: UsageRangeForVisitor;
-  visitCompany: { name: string; rep: string }[];
+  visitCompany: VisitCompany[];
   numberOfVisitor: number;
   numberOfEmployee: number;
   mailto: { authors: EmailAddress[]; required: EmailAddress[]; optional: EmailAddress[] };
@@ -20,6 +20,7 @@ export type VisitorInfo = {
   seriesMasterId: string | undefined;
 };
 
+export type VisitCompany = { name: string; rep: string };
 export type VisitorInfoResourcies = {
   teaSupply: boolean;
   numberOfTeaSupply: number;

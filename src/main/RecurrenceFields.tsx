@@ -133,7 +133,7 @@ const initCheckBoxWeek = nameOfDayOfWeek.reduce((newObj, week) => {
   return newObj;
 }, {} as CheckBoxWeek);
 
-const endDateAddAmount = 3;
+const endDateAddAmount = 1;
 const maxRepeatYear = 5;
 
 const getDefaultValues = (startTime: Date, endTime: Date) => {
@@ -357,7 +357,7 @@ export function RecurrenceFields(props: RecurrenceFieldsProps) {
       default:
         break;
     }
-    clearErrors('recurrence');
+    clearErrors(['recurrence', 'startTime', 'endTime']);
     setValue('recurrence', { pattern: pattern, range: range } as PatternedRecurrenceInput, { shouldDirty: true });
     setValue('startTime', inputValues.startTime, { shouldDirty: true });
     setValue('endTime', inputValues.endTime, { shouldDirty: true });

@@ -14,11 +14,12 @@ import { DataDialogAction, DataDialogState, DataTableBase, RowDataType } from '.
 import { RowDataFrontDialog } from './RowDataFrontDialog';
 
 import { LocationParams } from '_models/Location';
-import { VisitorInfoFront } from '_models/VisitorInfo';
+import { VisitCompany, VisitorInfoFront } from '_models/VisitorInfo';
 import { cellStyle, makeVisitorTableStyles, frontCellPadding } from '_styles/VisitorTableStyle';
 import { tableTheme } from '_styles/TableTheme';
 
 const useStyles = makeVisitorTableStyles(true);
+const visitCompanies = (rowData: FrontRowData) => rowData.visitCompany.map((co: VisitCompany) => `${co.name} / ${co.rep}`).join(', ');
 
 export type Columns = {
   title: string;
@@ -26,6 +27,7 @@ export type Columns = {
   width?: string;
   cellStyle?: object | void;
   render?: (rowData: FrontRowData) => any;
+  customSort?: (a: FrontRowData, b: FrontRowData) => number;
 };
 
 export type FrontRowData = RowDataType & VisitorInfoFront;
@@ -97,6 +99,11 @@ export function DataTable(props: DataTableProps) {
           </>
         );
       },
+      customSort: (a, b) => {
+        const aRoomId = Object.keys(a.resourcies)[0]; // TODO:複数会議室未対応
+        const bRoomId = Object.keys(b.resourcies)[0]; // TODO:複数会議室未対応
+        return a.resourcies[aRoomId].numberOfTeaSupply - b.resourcies[bRoomId].numberOfTeaSupply;
+      },
       width: '70px',
     },
     {
@@ -109,6 +116,7 @@ export function DataTable(props: DataTableProps) {
             <span>{`${co.name} / ${co.rep}`}</span>
           </>
         )),
+      customSort: (a, b) => (visitCompanies(a) < visitCompanies(b) ? -1 : 1),
     },
     {
       title: t('visittable.header.check-in'),

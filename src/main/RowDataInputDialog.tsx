@@ -112,7 +112,7 @@ const getDefaultValues = (start?: Date, roomId?: string, usage?: UsageRangeForVi
     iCalUId: '',
     subject: '',
     visitorId: '',
-    visitCompany: [{ name: '', rep: '' }],
+    visitCompany: usageRange === 'outside' ? [{ name: '', rep: '' }] : [],
     numberOfVisitor: 0,
     numberOfEmployee: 0,
     mailto: { authors: [], required: [], optional: [] },
@@ -234,6 +234,8 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
     if (getValues('mode') === 'upd') {
       // 更新時、会議室変更は出来ないためデフォルト値
       setUrl(defaultRoomsUrl);
+    } else if (!!getValues('recurrence')) {
+      setUrl(defaultRoomsUrl + `&usagerange=${getValues('usageRange')}`);
     } else {
       setUrl(
         defaultRoomsUrl +
@@ -264,14 +266,17 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
   useEffect(() => {
     // 社内会議
     if (usageRangeWatch === 'inside') {
-      setValue('visitCompany', [{ name: '', rep: '' }], { shouldDirty: true });
-      setValue(`numberOfVisitor`, 0, { shouldDirty: true });
+      clearErrors(['visitCompany', 'numberOfVisitor']);
+      setValue('visitCompany', [], { shouldDirty: true });
+      setValue('numberOfVisitor', 0, { shouldDirty: true });
       setDisabledVisitor(true);
     } else {
       // 社外会議
+      clearErrors('visitCompany');
+      setValue('visitCompany', [{ name: '', rep: '' }], { shouldDirty: true });
       setDisabledVisitor(false);
     }
-  }, [setValue, usageRangeWatch]);
+  }, [clearErrors, setValue, usageRangeWatch]);
 
   // 予約日時を監視
   const startTimeWatch = useWatch({ control, name: 'startTime' });
@@ -386,7 +391,7 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
   const activeRoomSelect = () => {
     if (getValues('mode') === 'upd') return; // 更新時、会議室変更は出来ないため非対応
     setHiddenRooms(false);
-    setUrl(defaultRoomsUrl + `&usagerange=${getValues('usageRange')}`);
+    buildRoomsUrl();
   };
 
   // 来訪社追加アクション
@@ -558,6 +563,7 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
                   control={control}
                   setValue={setValue}
                   getValues={getValues}
+                  clearErrors={clearErrors}
                   rooms={rooms}
                   roomId={ADD_ROOM_KEY}
                   disabledVisitor={disabledVisitor}
@@ -573,6 +579,7 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
                       control={control}
                       setValue={setValue}
                       getValues={getValues}
+                      clearErrors={clearErrors}
                       rooms={rooms}
                       roomId={Object.keys(data.resourcies)[0]}
                       disabledRoom={true}

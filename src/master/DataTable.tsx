@@ -15,6 +15,7 @@ export type Columns<RowData> = {
   title: string;
   field: string;
   type?: string;
+  sorting?: boolean;
   cellStyle?: object | void;
   render?: (rowData: RowData) => any;
 };

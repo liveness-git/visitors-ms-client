@@ -9,6 +9,8 @@ import { useLoadData } from '_utils/useLoadData';
 import { UseDataTable } from '_utils/UseDataTable';
 
 import { LocationParams } from '_models/Location';
+import { VisitCompany } from '_models/VisitorInfo';
+
 import { cellStyle, makeVisitorTableStyles } from '_styles/VisitorTableStyle';
 import { tableTheme } from '_styles/TableTheme';
 
@@ -17,10 +19,13 @@ import { EventTypeIcon } from '../EventTypeIcon';
 
 const useStyles = makeVisitorTableStyles(false);
 
+const visitCompanies = (rowData: RowDataType) => rowData.visitCompany.map((co: VisitCompany) => `${co.name}`).join(', ');
+
 export type Columns = {
   title: string;
   field: string;
   render?: (rowData: RowDataType) => any;
+  customSort?: (a: RowDataType, b: RowDataType) => number;
 };
 
 type DataTableProps = {
@@ -63,7 +68,8 @@ export function DataTable(props: DataTableProps) {
     {
       title: t('visittable.header.visit-company-name'),
       field: 'visitCompany',
-      render: (rowData) => rowData.visitCompany.map((co) => `${co.name}`).join(', '),
+      render: (rowData) => visitCompanies(rowData),
+      customSort: (a, b) => (visitCompanies(a) < visitCompanies(b) ? -1 : 1),
     },
     { title: t('visittable.header.reservation-name'), field: 'reservationName' },
   ];

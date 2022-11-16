@@ -49,6 +49,7 @@ export function RoomSettings() {
       title: t('settings.header.room.tea-supply'),
       field: 'teaSupply',
       type: 'boolean',
+      sorting: false,
       render: (rowData) => {
         if (rowData.usageRange === 'none') {
           return (

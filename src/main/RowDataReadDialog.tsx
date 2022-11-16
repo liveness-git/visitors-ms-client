@@ -13,7 +13,6 @@ import { UserStatusIconNote } from '_components/UserStatusIconNote';
 import ReservationNameField from './ReservationNameField';
 import { LastUpdatedField } from './LastUpdatedField';
 import { RecurrenceInfo } from './RecurrenceInfo';
-import { compact } from 'lodash';
 
 const useRowDataDialogStyles = makeTableDialogStyle();
 
@@ -82,13 +81,13 @@ export function RowDataReadDialog(props: RowDataReadDialogProps) {
           <li key="mailto-required" className={classes.list}>
             <div className={classes.title}>{t('visittable.header.event-mailto-required')}</div>
             <div className={classes.fieldSlim}>
-              <AddrBookUserDisplay key="mailto-required" data={data.mailto.required} />
+              <AddrBookUserDisplay propsKey="mailto-required" data={data.mailto.required} />
             </div>
           </li>
           <li key="mailto-optional" className={classes.list}>
             <div className={classes.title}>{t('visittable.header.event-mailto-optional')}</div>
             <div className={classes.fieldSlim}>
-              <AddrBookUserDisplay key="mailto-optional" data={data.mailto.optional} />
+              <AddrBookUserDisplay propsKey="mailto-optional" data={data.mailto.optional} />
             </div>
           </li>
         </List>
