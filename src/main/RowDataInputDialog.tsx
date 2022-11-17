@@ -1,7 +1,7 @@
 import { useCallback, useContext, useEffect, useState } from 'react';
 import { useRouteMatch } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Controller, SubmitHandler, useFieldArray, useForm, useWatch } from 'react-hook-form';
+import { Controller, DeepMap, DeepPartial, SubmitHandler, useFieldArray, useForm, useWatch } from 'react-hook-form';
 
 import { Box, Grid, Button, List, Typography, TextField } from '@material-ui/core';
 import { makeStyles, createStyles, createTheme, ThemeProvider } from '@material-ui/core/styles';
@@ -132,6 +132,20 @@ const getDefaultValues = (start?: Date, roomId?: string, usage?: UsageRangeForVi
     seriesMasterId: undefined,
     recurrence: undefined,
   } as Inputs;
+};
+
+// useFieldArray使用により、dirtyFields内にfalseの場合もマークアップされるようになった為trueのみに絞り込む
+const cloneDeepWithoutFalse = (obj: any) => {
+  // falseを排除したdirtyFieldsを作成
+  const withoutFalse = _.transform(obj, (result: any, value, key) => {
+    if (value === false) return;
+    result[key] = _.isObject(value) ? cloneDeepWithoutFalse(value) : value;
+  });
+  // ↑から空の配列やオブジェクトを排除
+  return _.transform(withoutFalse, (result: any, value, key) => {
+    if (value !== true && _.isEmpty(value)) return; // isEmptyにtrueが含まれるらしいので別途条件に追加
+    result[key] = _.isObject(value) ? cloneDeepWithoutFalse(value) : value;
+  });
 };
 
 type RowDataInputDialogProps = {
@@ -319,7 +333,7 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
           // url = '/visitor/delete';
           break;
       }
-      const result = await fetchPostData(url, { inputs: formData, dirtyFields: dirtyFields });
+      const result = await fetchPostData(url, { inputs: formData, dirtyFields: cloneDeepWithoutFalse(dirtyFields) });
       if (result!.success) {
         if (formData.mode === 'del') await new Promise((r) => setTimeout(r, 1000)); // MSGraphのイベント削除が反映されるまでのタイムラグを考慮
         await reload();
