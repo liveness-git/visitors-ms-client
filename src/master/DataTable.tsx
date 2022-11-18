@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import MaterialTable, { Column } from '@material-table/core';
@@ -15,6 +15,7 @@ export type Columns<RowData> = {
   title: string;
   field: string;
   type?: string;
+  sorting?: boolean;
   cellStyle?: object | void;
   render?: (rowData: RowData) => any;
 };
@@ -34,7 +35,10 @@ export function DataTable<RowData extends object>(props: DataTableProps<RowData>
   const { t } = useTranslation();
 
   // データ取得
-  const [{ data, isLoading, isError }, reload] = useLoadData<RowData[]>(`/${inputFields.type}/list`, []);
+  const [{ data, isLoading, isError }, reload, setUrl] = useLoadData<RowData[]>('', []);
+  useEffect(() => {
+    setUrl(`/${inputFields.type}/list`);
+  }, [inputFields.type, setUrl]);
 
   // 選択行の状態
   const [currentRow, setCurrentRow] = useState<RowData | null>(null);

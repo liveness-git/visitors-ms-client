@@ -1,3 +1,4 @@
+import { PatternedRecurrence, PatternedRecurrenceInput } from './PatternedRecurrence';
 import { UsageRangeForVisitor } from './Room';
 import { EmailAddress, UserStatus } from './User';
 
@@ -7,20 +8,23 @@ export type VisitorInfo = {
   subject: string;
   visitorId: string;
   usageRange: UsageRangeForVisitor;
-  visitCompany: string;
-  visitorName: string;
+  visitCompany: VisitCompany[];
+  numberOfVisitor: number;
+  numberOfEmployee: number;
   mailto: { authors: EmailAddress[]; required: EmailAddress[]; optional: EmailAddress[] };
   resourcies: {
     [room: string]: VisitorInfoResourcies;
   };
   comment: string;
   contactAddr: string;
+  seriesMasterId: string | undefined;
 };
 
+export type VisitCompany = { name: string; rep: string };
 export type VisitorInfoResourcies = {
   teaSupply: boolean;
-  numberOfVisitor: number;
-  numberOfEmployee: number;
+  numberOfTeaSupply: number;
+  teaDetails: string;
 };
 
 // 読み取り専用項目
@@ -39,7 +43,11 @@ export type VisitorInfoReadOnly = {
     [room: string]: ResourciesReadOnly;
   };
   lastUpdated: number;
+  recurrence: PatternedRecurrence | undefined;
+  eventType: GraphApiEventType;
 };
+export type GraphApiEventType = 'singleInstance' | 'occurrence' | 'exception' | 'seriesMaster';
+
 export type ResourciesReadOnly = {
   roomName: string; // outlook情報
   roomEmail: string; // outlook情報
@@ -53,6 +61,7 @@ export type EventInputType = {
   resourcies: {
     [room: string]: ResourciesInputType;
   };
+  recurrence: PatternedRecurrenceInput | undefined;
 };
 export type ResourciesInputType = {
   roomForEdit: string;
@@ -71,4 +80,6 @@ export type VisitorInfoFront = {
 // フロントの編集画面用
 export type FrontInputType = {
   id: string;
+  iCalUId: string;
+  seriesMasterId: string | undefined;
 };

@@ -1,3 +1,4 @@
+import { addDays } from 'date-fns';
 import { useEffect, useState } from 'react';
 import { getReloadStateFlg, saveReloadState } from './SessionStrage';
 
@@ -7,6 +8,9 @@ import { getReloadStateFlg, saveReloadState } from './SessionStrage';
 export function useSelectedDate() {
   // カレンダー選択日の状態
   const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
+  // 矢印カウンターの状態
+  const [weekly, setWeekly] = useState(false);
+  const [count, setCount] = useState(0);
 
   // ================================
   // ReloadStateStrageの設定
@@ -17,5 +21,23 @@ export function useSelectedDate() {
   }, [selectedDate]);
   // ================================
 
-  return [selectedDate, setSelectedDate] as const;
+  useEffect(() => {
+    if (weekly) {
+      setCount(7);
+    } else {
+      setCount(1);
+    }
+  }, [weekly]);
+
+  const handleDateChange = (date: Date | null) => {
+    setSelectedDate(date);
+  };
+  const handleDatePrev = () => {
+    setSelectedDate((date) => (!!date ? addDays(date!, count * -1) : date));
+  };
+  const handleDateNext = () => {
+    setSelectedDate((date) => (!!date ? addDays(date!, count) : date));
+  };
+
+  return [selectedDate, setSelectedDate, handleDateChange, handleDatePrev, handleDateNext, setWeekly] as const;
 }

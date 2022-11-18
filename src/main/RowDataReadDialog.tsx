@@ -12,6 +12,7 @@ import { AddrBookUserDisplay } from '_components/AddrBookUserDisplay';
 import { UserStatusIconNote } from '_components/UserStatusIconNote';
 import ReservationNameField from './ReservationNameField';
 import { LastUpdatedField } from './LastUpdatedField';
+import { RecurrenceInfo } from './RecurrenceInfo';
 
 const useRowDataDialogStyles = makeTableDialogStyle();
 
@@ -44,10 +45,24 @@ export function RowDataReadDialog(props: RowDataReadDialogProps) {
             <div className={classes.title}>{t('visittable.header.event-subject')}</div>
             <div className={classes.field}>{data.subject}</div>
           </li>
-          <li key="app-time" className={classes.list}>
-            <div className={classes.title}>{t('visittable.header.appt-time')}</div>
-            <div className={classes.field}>{data.apptTime}</div>
-          </li>
+          {!data?.recurrence && (
+            <li key="app-time" className={classes.list}>
+              <div className={classes.title}>{t('visittable.header.appt-time')}</div>
+              <div className={classes.field}>{data.apptTime}</div>
+            </li>
+          )}
+          {!!data?.recurrence && (
+            <li key="app-time" className={classes.list}>
+              <div className={classes.title}>{t('visitdialog.notes.recurrence-info')}</div>
+              <div className={classes.field}>
+                <RecurrenceInfo
+                  recurrence={data?.recurrence}
+                  start={new Date(data?.startDateTime)}
+                  end={new Date(data?.endDateTime)}
+                ></RecurrenceInfo>
+              </div>
+            </li>
+          )}
           <li key="reservation-name" className={classes.list}>
             <div className={classes.title}>{t('visittable.header.reservation-name')}</div>
             <div className={classes.field}>
@@ -66,13 +81,13 @@ export function RowDataReadDialog(props: RowDataReadDialogProps) {
           <li key="mailto-required" className={classes.list}>
             <div className={classes.title}>{t('visittable.header.event-mailto-required')}</div>
             <div className={classes.fieldSlim}>
-              <AddrBookUserDisplay key="mailto-required" data={data.mailto.required} />
+              <AddrBookUserDisplay propsKey="mailto-required" data={data.mailto.required} />
             </div>
           </li>
           <li key="mailto-optional" className={classes.list}>
             <div className={classes.title}>{t('visittable.header.event-mailto-optional')}</div>
             <div className={classes.fieldSlim}>
-              <AddrBookUserDisplay key="mailto-optional" data={data.mailto.optional} />
+              <AddrBookUserDisplay propsKey="mailto-optional" data={data.mailto.optional} />
             </div>
           </li>
         </List>
@@ -85,12 +100,31 @@ export function RowDataReadDialog(props: RowDataReadDialogProps) {
       <Box px={2} pt={2} style={data.usageRange === 'inside' ? { display: 'none' } : undefined}>
         <List disablePadding={true}>
           <li key="visit-company" className={classes.list}>
-            <div className={classes.title}>{t('visittable.header.visit-company')}</div>
-            <div className={classes.field}>{data.visitCompany}</div>
+            <div className={classes.title}>
+              {t('visittable.header.visit-company-name')} /<br />
+              {t('visittable.header.visit-company-rep')}
+            </div>
+            <div className={classes.field}>
+              {data.visitCompany.map((co, index) => (
+                <>
+                  {!!index && <br />}
+                  <span>{`${co.name} / ${co.rep}`}</span>
+                </>
+              ))}
+            </div>
           </li>
-          <li key="visitor-name" className={classes.list}>
-            <div className={classes.title}>{t('visittable.header.visitor-name')}</div>
-            <div className={classes.field}>{data.visitorName}</div>
+
+          <li key="number-of-visitor" className={classes.list}>
+            <div className={classes.title}>{t('visittable.header.number-of-visitor')}</div>
+            <div className={classes.field} style={{ flexBasis: '25%', borderRight: 'none' }}>
+              {data.numberOfVisitor}
+            </div>
+            <div className={classes.title} style={{ flexBasis: '25%', borderLeft: 'none' }}>
+              {t('visittable.header.number-of-employee')}
+            </div>
+            <div className={classes.field} style={{ flexBasis: '25%' }}>
+              {data.numberOfEmployee}
+            </div>
           </li>
         </List>
       </Box>

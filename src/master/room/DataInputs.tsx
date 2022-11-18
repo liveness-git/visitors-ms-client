@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { FormControlLabel, Switch } from '@material-ui/core';
 import { Controller, useFormContext, useWatch } from 'react-hook-form';
+import { FormControlLabel, Grid, Switch } from '@material-ui/core';
 
 import { ControllerTextField } from '_components/ControllerTextField';
 
@@ -34,12 +34,28 @@ export function DataInputs({ locations, categories }: DataInputsProps) {
   // 給茶選択のエフェクト
   useEffect(() => {
     if (typeWatch === 'free') {
-      setValue('teaSupply', false, { shouldDirty: true });
+      setValue('teaSupply', { outside: false, inside: false }, { shouldDirty: true });
       setDisabledTeaSupply(true);
     } else {
       setDisabledTeaSupply(false);
     }
   }, [setValue, typeWatch]);
+
+  // 給茶選択の制御用に利用範囲を監視
+  const usageRangeWatch = useWatch({ control, name: 'usageRange' });
+  // 利用範囲のエフェクト
+  useEffect(() => {
+    switch (usageRangeWatch) {
+      case 'outside':
+        setValue('teaSupply.inside', false, { shouldDirty: true });
+        break;
+      case 'inside':
+        setValue('teaSupply.outside', false, { shouldDirty: true });
+        break;
+      default:
+        break;
+    }
+  }, [setValue, usageRangeWatch]);
 
   return (
     <>
@@ -79,19 +95,40 @@ export function DataInputs({ locations, categories }: DataInputsProps) {
         })}
         errors={errors}
       />
-      <FormControlLabel
-        control={
-          <Controller
-            name={'teaSupply'}
-            control={control}
-            render={({ field }) => (
-              <Switch onChange={(e) => field.onChange(e.target.checked)} checked={field.value} color="primary" disabled={disabledTeaSupply} />
-            )}
+      <Grid container style={disabledTeaSupply ? { display: 'none' } : undefined}>
+        <Grid item>
+          <FormControlLabel
+            control={
+              <Controller
+                name={'teaSupply.outside'}
+                control={control}
+                defaultValue={false} /* TODO:ver1.0.2呈茶選択ﾌｨｰﾙﾄﾞの型が途中で変わった為、旧データ改修用に必要。ver1.0.3で削除予定 */
+                render={({ field }) => (
+                  <Switch onChange={(e) => field.onChange(e.target.checked)} checked={field.value} color="primary" disabled={disabledTeaSupply} />
+                )}
+              />
+            }
+            label={t('settings.header.room.tea-supply.outside')}
+            style={usageRangeWatch === 'inside' ? { display: 'none' } : undefined}
           />
-        }
-        label={t('settings.header.room.tea-supply')}
-        style={disabledTeaSupply ? { display: 'none' } : undefined}
-      />
+        </Grid>
+        <Grid item>
+          <FormControlLabel
+            control={
+              <Controller
+                name={'teaSupply.inside'}
+                control={control}
+                defaultValue={false} /* TODO:ver1.0.2呈茶選択ﾌｨｰﾙﾄﾞの型が途中で変わった為、旧データ改修用に必要。ver1.0.3で削除予定 */
+                render={({ field }) => (
+                  <Switch onChange={(e) => field.onChange(e.target.checked)} checked={field.value} color="primary" disabled={disabledTeaSupply} />
+                )}
+              />
+            }
+            label={t('settings.header.room.tea-supply.inside')}
+            style={usageRangeWatch === 'outside' ? { display: 'none' } : undefined}
+          />
+        </Grid>
+      </Grid>
       <ControllerTextField
         name={'location'}
         control={control}
@@ -112,6 +149,7 @@ export function DataInputs({ locations, categories }: DataInputsProps) {
         })}
         errors={errors}
       />
+      <ControllerTextField name="comment" control={control} label={t('settings.header.room.comment')} multiline errors={errors} />
     </>
   );
 }

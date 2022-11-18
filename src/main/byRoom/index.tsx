@@ -46,10 +46,7 @@ export function ByRoom() {
   const { t } = useTranslation();
 
   // カレンダー選択日の状態
-  const [selectedDate, setSelectedDate] = useSelectedDate();
-  const handleDateChange = (date: Date | null) => {
-    setSelectedDate(date);
-  };
+  const [selectedDate, setSelectedDate, handleDateChange, handleDatePrev, handleDateNext, setWeekly] = useSelectedDate();
 
   // ダイアログの初期値
   const initialState: DataDialogState = {
@@ -89,12 +86,14 @@ export function ByRoom() {
   // デフォルト → １週間表示へ切替えアクション
   const handleDefaultClick = (timestamp: number, _categoryId: string, roomId: string) => {
     setSelectedDate(new Date(timestamp));
+    setWeekly(true);
     byRoomDispatch({ type: 'weekly', changeTab: roomId });
   };
 
   // １週間 → デフォルト表示へ切替えアクション
   const handleWeeklyClick = (timestamp: number, categoryId: string, _roomId: string) => {
     setSelectedDate(new Date(timestamp));
+    setWeekly(false);
     byRoomDispatch({ type: 'default', changeTab: categoryId });
   };
 
@@ -107,6 +106,8 @@ export function ByRoom() {
             subtitle={t(byRoomState.subtitleLabel)}
             date={selectedDate}
             onDateChange={handleDateChange}
+            onDatePrev={handleDatePrev}
+            onDateNext={handleDateNext}
             dispatch={dataDialogDispatch}
           />
         </Box>
@@ -139,7 +140,6 @@ export function ByRoom() {
                 />
               }
               selected={byRoomState.changeTab}
-              // type="rooms"
             />
           )
         }

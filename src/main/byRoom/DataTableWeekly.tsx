@@ -1,6 +1,6 @@
 import { MuiPickersContext } from '@material-ui/pickers';
 import { format } from 'date-fns';
-import { useCallback, useContext, useMemo, useState } from 'react';
+import { useContext, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRouteMatch } from 'react-router-dom';
 
@@ -8,6 +8,7 @@ import { LocationParams } from '_models/Location';
 import { Schedule } from '_models/Schedule';
 
 import { useLoadData } from '_utils/useLoadData';
+import { UseDataTable } from '_utils/UseDataTable';
 
 import { DataDialogAction, DataDialogState, DataTableBase, RowDataType } from '../DataTableBase';
 import { TimeBar } from '../TimeBar';
@@ -35,26 +36,13 @@ export function DataTableWeekly(props: DataTableProps) {
   const muiPickContext = useContext(MuiPickersContext); // locale取得用
 
   // データ取得
-  const [{ data, isLoading, isError }, reload] = useLoadData<TimeBarDataType>(
-    `/event/byroom/weekly?timestamp=${currentDate!.getTime()}&location=${match.params.location}&room=${tabKey}`,
-    undefined
-  );
+  const [{ data, isLoading, isError }, reload, setUrl] = useLoadData<TimeBarDataType>('', undefined);
+  useEffect(() => {
+    setUrl(`/event/byroom/weekly?timestamp=${currentDate!.getTime()}&location=${match.params.location}&room=${tabKey}`);
+  }, [currentDate, match.params.location, setUrl, tabKey]);
 
   // 選択行の状態
-  const [currentRow, setCurrentRow] = useState<RowDataType | null>(null);
-
-  // ダイアログを開く
-  const handleDialogOpen = useCallback(
-    (selectedRow: RowDataType) => {
-      if (selectedRow.isAuthor) {
-        dataDialogHook.dispatch({ type: 'inputOpen' });
-      } else {
-        dataDialogHook.dispatch({ type: 'readOpen' });
-      }
-      setCurrentRow(selectedRow);
-    },
-    [dataDialogHook]
-  );
+  const [{ currentRow }, , handleDialogOpen, handleRecConfClose] = UseDataTable({ dataDialogHook: dataDialogHook });
 
   // タイムバーの表示（不要レンダリングが起きるためメモ化）
   const timeBars = useMemo(() => {
@@ -83,7 +71,7 @@ export function DataTableWeekly(props: DataTableProps) {
   }
 
   return (
-    <DataTableBase currentRow={currentRow} dataDialogHook={dataDialogHook} isLoading={isLoading} reload={reload}>
+    <DataTableBase currentRow={currentRow} dataDialogHook={dataDialogHook} isLoading={isLoading} reload={reload} onRecConfClose={handleRecConfClose}>
       {timeBars}
     </DataTableBase>
   );

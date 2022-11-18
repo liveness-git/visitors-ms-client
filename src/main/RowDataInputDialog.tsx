@@ -1,21 +1,22 @@
 import { useCallback, useContext, useEffect, useState } from 'react';
 import { useRouteMatch } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { SubmitHandler, useForm, useWatch } from 'react-hook-form';
+import { Controller, DeepMap, DeepPartial, SubmitHandler, useFieldArray, useForm, useWatch } from 'react-hook-form';
 
-import { Box, Grid, Button, List, Typography } from '@material-ui/core';
+import { Box, Grid, Button, List, Typography, TextField } from '@material-ui/core';
 import { makeStyles, createStyles, createTheme, ThemeProvider } from '@material-ui/core/styles';
 import { grey } from '@material-ui/core/colors';
 
 import DeleteIcon from '@material-ui/icons/Delete';
 import SaveIcon from '@material-ui/icons/Save';
+import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 
-import { addMinutes } from 'date-fns';
 import _ from 'lodash';
 
 import { VisitorInfo, EventInputType, RoomInputType } from '_models/VisitorInfo';
 import { nameOfUsageRangeForVisitor, Room, UsageRangeForVisitor } from '_models/Room';
 import { LocationParams } from '_models/Location';
+import { PatternedRecurrenceInput } from '_models/PatternedRecurrence';
 
 import { defaultPrimary } from '_styles/Theme';
 import { tableTheme, makeTableDialogStyle } from '_styles/TableTheme';
@@ -29,14 +30,19 @@ import { ControllerTextField } from '_components/ControllerTextField';
 import { AddrBookAutoComplete } from '_components/AddrBookAutoComplete';
 import { MyDialog } from '_components/MyDialog';
 import { UserStatusIconNote } from '_components/UserStatusIconNote';
+import { calcEndTimeFromStartTime, calcStartTime } from '_components/MyTimePicker';
+import { SessionStrageContext } from '_components/BaseTemplate';
+import { MyConfirmDialog } from '_components/MyConfirmDialog';
 
 import { RowDataType } from './DataTableBase';
-import { DeleteConfirmDialog } from './DeleteConfirmDialog';
 import { RoomInputFields } from './RoomInputFields';
 import { RoomReadFields, strRoomStatus } from './RoomReadFields';
 import { ControllerDateTimePicker } from './ControllerDateTimePicker';
 import ReservationNameField from './ReservationNameField';
 import { LastUpdatedField } from './LastUpdatedField';
+import { RecurrenceFields } from './RecurrenceFields';
+import { DateTimePickerFields } from './DateTimePickerFields';
+import { VisitCompanyInputFields } from './VisitCompanyInputFields';
 
 const useRowDataDialogStyles = makeTableDialogStyle();
 
@@ -71,14 +77,17 @@ const inputformTheme = createTheme({
       variant: 'outlined',
       margin: 'dense',
       fullWidth: true,
-      minRows: 4,
+      minRows: 2,
+    },
+  },
+  overrides: {
+    MuiOutlinedInput: {
+      adornedEnd: {
+        paddingRight: 0,
+      },
     },
   },
 });
-
-const startTimeBufferMinute = 0;
-const endTimeBufferMinute = 30; //TODO: Interval config化？
-const change5MinuteIntervals = (date: Date) => Math.ceil(date.getTime() / 1000 / 60 / 5) * 1000 * 60 * 5; //TODO: Interval config化？
 
 export type Inputs = {
   mode: 'ins' | 'upd' | 'del';
@@ -103,23 +112,40 @@ const getDefaultValues = (start?: Date, roomId?: string, usage?: UsageRangeForVi
     iCalUId: '',
     subject: '',
     visitorId: '',
-    visitCompany: '',
-    visitorName: '',
+    visitCompany: usageRange === 'outside' ? [{ name: '', rep: '' }] : [],
+    numberOfVisitor: 0,
+    numberOfEmployee: 0,
     mailto: { authors: [], required: [], optional: [] },
     usageRange: usageRange,
     resourcies: {
       [ADD_ROOM_KEY]: {
         roomForEdit: room,
         teaSupply: false,
-        numberOfVisitor: 0,
-        numberOfEmployee: 0,
+        numberOfTeaSupply: 0,
+        teaDetails: '',
       },
     },
     comment: '',
     contactAddr: '',
-    startTime: addMinutes(change5MinuteIntervals(startDate), startTimeBufferMinute),
-    endTime: addMinutes(change5MinuteIntervals(startDate), startTimeBufferMinute + endTimeBufferMinute),
+    startTime: calcStartTime(startDate),
+    endTime: calcEndTimeFromStartTime(startDate),
+    seriesMasterId: undefined,
+    recurrence: undefined,
   } as Inputs;
+};
+
+// useFieldArray使用により、dirtyFields内にfalseの場合もマークアップされるようになった為trueのみに絞り込む
+const cloneDeepWithoutFalse = (obj: any) => {
+  // falseを排除したdirtyFieldsを作成
+  const withoutFalse = _.transform(obj, (result: any, value, key) => {
+    if (value === false) return;
+    result[key] = _.isObject(value) ? cloneDeepWithoutFalse(value) : value;
+  });
+  // ↑から空の配列やオブジェクトを排除
+  return _.transform(withoutFalse, (result: any, value, key) => {
+    if (value !== true && _.isEmpty(value)) return; // isEmptyにtrueが含まれるらしいので別途条件に追加
+    result[key] = _.isObject(value) ? cloneDeepWithoutFalse(value) : value;
+  });
 };
 
 type RowDataInputDialogProps = {
@@ -136,6 +162,7 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
   const { t } = useTranslation();
   const classes = { ...useRowDataDialogStyles(), ...useStyles() };
   const snackberContext = useContext(MySnackberContext); // スナックバー取得用
+  const sessionStrageContext = useContext(SessionStrageContext); // sessionStrage取得用
   const match = useRouteMatch<LocationParams>();
 
   // 削除確認メッセージの状態
@@ -151,6 +178,7 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
     setValue,
     trigger,
     setError,
+    clearErrors,
     formState: { errors, isDirty, isSubmitting, dirtyFields },
   } = useForm<Inputs>({ defaultValues, reValidateMode: 'onSubmit' });
 
@@ -163,15 +191,16 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
         subject: data.subject,
         visitorId: data.visitorId,
         visitCompany: data.visitCompany,
-        visitorName: data.visitorName,
+        numberOfVisitor: data.numberOfVisitor,
+        numberOfEmployee: data.numberOfEmployee,
         mailto: data.mailto,
         usageRange: data.usageRange,
         resourcies: Object.keys(data.resourcies).reduce((newObj, room) => {
           newObj[room] = {
             roomForEdit: room,
             teaSupply: data.resourcies[room].teaSupply,
-            numberOfVisitor: data.resourcies[room].numberOfVisitor,
-            numberOfEmployee: data.resourcies[room].numberOfEmployee,
+            numberOfTeaSupply: data.resourcies[room].numberOfTeaSupply,
+            teaDetails: data.resourcies[room].teaDetails,
           };
           return newObj;
         }, {} as RoomInputType),
@@ -179,6 +208,24 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
         contactAddr: data.contactAddr,
         startTime: new Date(data.startDateTime),
         endTime: new Date(data.endDateTime),
+        seriesMasterId: data.seriesMasterId,
+        recurrence: !!data.recurrence
+          ? ({
+              pattern: {
+                type: data.recurrence.pattern.type,
+                interval: data.recurrence.pattern.interval,
+                daysOfWeek: data.recurrence.pattern.daysOfWeek,
+                dayOfMonth: data.recurrence.pattern.dayOfMonth,
+                index: data.recurrence.pattern.index,
+                month: data.recurrence.pattern.month,
+              },
+              range: {
+                type: data.recurrence.range.type,
+                startDate: data.recurrence.range.startDate,
+                endDate: data.recurrence.range.endDate,
+              },
+            } as PatternedRecurrenceInput)
+          : undefined,
       });
     } else {
       reset(_.cloneDeep(getDefaultValues(addDefault?.start, addDefault?.roomId, addDefault?.usageRange)));
@@ -194,22 +241,23 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
 
   // 空き会議室一覧の取得
   const defaultRoomsUrl = `/room/choices?location=${match.params.location}`;
-  const [roomsUrl, setRoomsUrl] = useState(defaultRoomsUrl);
-  const [{ data: rooms }] = useLoadData<Room[]>(roomsUrl, []);
+  const [{ data: rooms }, , setUrl] = useLoadData<Room[]>(defaultRoomsUrl, []); //更新時の呈茶switchに影響があるので初回からload
 
   // 空き会議室一覧のURL更新
   const buildRoomsUrl = useCallback(() => {
     if (getValues('mode') === 'upd') {
       // 更新時、会議室変更は出来ないためデフォルト値
-      setRoomsUrl(defaultRoomsUrl);
+      setUrl(defaultRoomsUrl);
+    } else if (!!getValues('recurrence')) {
+      setUrl(defaultRoomsUrl + `&usagerange=${getValues('usageRange')}`);
     } else {
-      setRoomsUrl(
+      setUrl(
         defaultRoomsUrl +
           `&start=${getValues('startTime').getTime()}&end=${getValues('endTime').getTime()}` +
           `&usagerange=${getValues('usageRange')}`
       );
     }
-  }, [defaultRoomsUrl, getValues]);
+  }, [defaultRoomsUrl, getValues, setUrl]);
 
   // 空き会議室一覧のURLリセット
   useEffect(() => {
@@ -232,14 +280,27 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
   useEffect(() => {
     // 社内会議
     if (usageRangeWatch === 'inside') {
-      setValue('visitCompany', '', { shouldDirty: true });
-      setValue('visitorName', '', { shouldDirty: true });
+      clearErrors(['visitCompany', 'numberOfVisitor']);
+      setValue('visitCompany', [], { shouldDirty: true });
+      setValue('numberOfVisitor', 0, { shouldDirty: true });
       setDisabledVisitor(true);
     } else {
       // 社外会議
+      clearErrors('visitCompany');
+      setValue('visitCompany', [{ name: '', rep: '' }], { shouldDirty: true });
       setDisabledVisitor(false);
     }
-  }, [setValue, usageRangeWatch]);
+  }, [clearErrors, setValue, usageRangeWatch]);
+
+  // 予約日時を監視
+  const startTimeWatch = useWatch({ control, name: 'startTime' });
+  const endTimeWatch = useWatch({ control, name: 'endTime' });
+
+  // 来訪社/代表者フィールドの配列管理
+  const { fields: visitCompanyFields, append: visitCompanyAppend, remove: visitCompanyRemove } = useFieldArray({ control, name: 'visitCompany' });
+  const visitCompanyWatch = useWatch({ control, name: 'visitCompany' });
+
+  // ::アクション処理 start-->
 
   // 保存アクション
   const handleSave = () => {
@@ -272,7 +333,7 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
           // url = '/visitor/delete';
           break;
       }
-      const result = await fetchPostData(url, { inputs: formData, dirtyFields: dirtyFields });
+      const result = await fetchPostData(url, { inputs: formData, dirtyFields: cloneDeepWithoutFalse(dirtyFields) });
       if (result!.success) {
         if (formData.mode === 'del') await new Promise((r) => setTimeout(r, 1000)); // MSGraphのイベント削除が反映されるまでのタイムラグを考慮
         await reload();
@@ -311,13 +372,49 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
   };
   // 開始日時の変更アクション
   const handleStartTimeChange = () => {
-    const endTime = addMinutes(change5MinuteIntervals(getValues('startTime')), startTimeBufferMinute + endTimeBufferMinute);
+    const endTime = calcEndTimeFromStartTime(getValues('startTime'));
     setValue('endTime', endTime, { shouldDirty: true });
     activeSearchButton();
   };
   // 終了日時の変更アクション
   const handleEndTimeChange = () => {
     activeSearchButton();
+  };
+
+  // 予約日の変更アクション(DateTimePicker用)
+  const handleDateChange = (date: Date) => {
+    setValue(
+      'startTime',
+      new Date(date.getFullYear(), date.getMonth(), date.getDate(), getValues('startTime').getHours(), getValues('startTime').getMinutes()),
+      { shouldDirty: true }
+    );
+    handleStartTimeChange();
+  };
+  //  開始時間の変更アクション(DateTimePicker用)
+  const handleStartChange = (date: Date) => {
+    setValue('startTime', date, { shouldDirty: true });
+    handleStartTimeChange();
+  };
+  //  終了時間の変更アクション(DateTimePicker用)
+  const handleEndChange = (date: Date) => {
+    setValue('endTime', date, { shouldDirty: true });
+    handleEndTimeChange();
+  };
+
+  // 会議室選択活性化 (定期イベント用)
+  const activeRoomSelect = () => {
+    if (getValues('mode') === 'upd') return; // 更新時、会議室変更は出来ないため非対応
+    setHiddenRooms(false);
+    buildRoomsUrl();
+  };
+
+  // 来訪社追加アクション
+  const appendVisitorCompany = () => {
+    visitCompanyAppend({ name: '', rep: '' });
+  };
+  // 来訪社削除アクション
+  const removeVisitorCompany = (index: number) => {
+    visitCompanyRemove(index);
   };
 
   // 削除確認アクション
@@ -365,7 +462,7 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
           )}
 
           <form>
-            <Box p={2}>
+            <Box p={2} pb={0}>
               <ControllerTextField name="subject" control={control} label={t('visittable.header.event-subject')} required errors={errors} />
 
               {!!data && (
@@ -412,8 +509,8 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
                 />
               </Box>
 
-              <Grid container spacing={1}>
-                <Grid item xs={5}>
+              <Grid container spacing={1} style={!!getValues('recurrence') ? { display: 'none' } : undefined}>
+                <Grid item xs={5} style={{ display: 'none' }}>
                   <ControllerDateTimePicker
                     name="startTime"
                     control={control}
@@ -423,7 +520,7 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
                     errors={errors}
                   />
                 </Grid>
-                <Grid item xs={5}>
+                <Grid item xs={5} style={{ display: 'none' }}>
                   <ControllerDateTimePicker
                     name="endTime"
                     control={control}
@@ -433,7 +530,19 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
                     errors={errors}
                   />
                 </Grid>
-                <Grid item xs={2} style={{ margin: 'auto' }}>
+                <Grid item xs={12} sm={10}>
+                  <DateTimePickerFields
+                    label={t('visittable.header.appt-date-time')}
+                    start={startTimeWatch}
+                    end={endTimeWatch}
+                    onDateChange={handleDateChange}
+                    onStartChange={handleStartChange}
+                    onEndChange={handleEndChange}
+                    disablePast={!data}
+                    errMsg={errors['startTime']?.message ? [errors['startTime']?.message] : undefined}
+                  ></DateTimePickerFields>
+                </Grid>
+                <Grid item xs={12} sm={2} style={{ margin: 'auto' }}>
                   <Button
                     onClick={handleSearch}
                     variant="contained"
@@ -446,6 +555,19 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
                   </Button>
                 </Grid>
               </Grid>
+
+              {!data?.seriesMasterId && sessionStrageContext.userStorage.isFront && (
+                <Grid>
+                  <RecurrenceFields
+                    activeRoomSelect={activeRoomSelect}
+                    activeSearchButton={activeSearchButton}
+                    getValues={getValues}
+                    setValue={setValue}
+                    clearErrors={clearErrors}
+                    errors={errors}
+                  ></RecurrenceFields>
+                </Grid>
+              )}
             </Box>
 
             {!data ? (
@@ -454,6 +576,8 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
                 <RoomInputFields
                   control={control}
                   setValue={setValue}
+                  getValues={getValues}
+                  clearErrors={clearErrors}
                   rooms={rooms}
                   roomId={ADD_ROOM_KEY}
                   disabledVisitor={disabledVisitor}
@@ -468,6 +592,8 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
                     <RoomInputFields
                       control={control}
                       setValue={setValue}
+                      getValues={getValues}
+                      clearErrors={clearErrors}
                       rooms={rooms}
                       roomId={Object.keys(data.resourcies)[0]}
                       disabledRoom={true}
@@ -486,22 +612,71 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
               </>
             )}
 
-            <Box p={2} style={disabledVisitor ? { display: 'none' } : undefined}>
-              <ControllerTextField
-                name="visitCompany"
-                control={control}
-                label={t('visittable.header.visit-company')}
-                required={!disabledVisitor}
-                disabled={disabledVisitor}
-                errors={errors}
-              />
-              <ControllerTextField
-                name="visitorName"
-                control={control}
-                label={t('visittable.header.visitor-name')}
-                disabled={disabledVisitor}
-                errors={errors}
-              />
+            <Box px={2} pt={1} style={disabledVisitor ? { display: 'none' } : undefined}>
+              {visitCompanyFields.map((field, index) => (
+                <VisitCompanyInputFields
+                  key={field.id}
+                  control={control}
+                  index={index}
+                  remove={removeVisitorCompany}
+                  disabledVisitor={disabledVisitor}
+                  errors={errors}
+                />
+              ))}
+            </Box>
+
+            <Box px={2}>
+              <Grid container spacing={1}>
+                <Grid item xs={12} sm={4} style={disabledVisitor ? { opacity: 0 } : { margin: 'auto' }}>
+                  <Button
+                    onClick={appendVisitorCompany}
+                    startIcon={<AddCircleOutlineIcon />}
+                    variant="contained"
+                    color="primary"
+                    fullWidth
+                    disabled={visitCompanyWatch.length > 2} // 最大３社まで
+                  >
+                    {t('visitdialog.button.add-visitor')}
+                  </Button>
+                </Grid>
+
+                <Grid item xs={6} sm={4} style={disabledVisitor ? { opacity: 0 } : undefined}>
+                  <Controller
+                    name={`numberOfVisitor`}
+                    control={control}
+                    rules={{ required: t('common.form.required') as string }}
+                    render={({ field }) => (
+                      <TextField
+                        type="number"
+                        inputProps={{ min: 0, style: { textAlign: 'right' } }}
+                        {...field}
+                        disabled={disabledVisitor}
+                        label={t('visittable.header.number-of-visitor')}
+                        error={!!errors.numberOfVisitor}
+                        helperText={!!errors.numberOfVisitor && errors.numberOfVisitor.message}
+                      />
+                    )}
+                  />
+                </Grid>
+
+                <Grid item xs={6} sm={4}>
+                  <Controller
+                    name={`numberOfEmployee`}
+                    control={control}
+                    rules={{ required: t('common.form.required') as string }}
+                    render={({ field }) => (
+                      <TextField
+                        type="number"
+                        inputProps={{ min: 0, style: { textAlign: 'right' } }}
+                        {...field}
+                        label={t('visittable.header.number-of-employee')}
+                        error={!!errors.numberOfEmployee}
+                        helperText={!!errors.numberOfEmployee && errors.numberOfEmployee.message}
+                      />
+                    )}
+                  />
+                </Grid>
+              </Grid>
             </Box>
 
             <Box p={2}>
@@ -546,7 +721,15 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
           </form>
         </ThemeProvider>
       </MyDialog>
-      <DeleteConfirmDialog open={delConfOpen} onClose={handleDelConfClose}></DeleteConfirmDialog>
+      <MyConfirmDialog
+        open={delConfOpen}
+        onClose={handleDelConfClose}
+        // title={t('visitorinfoform.delete-confirm-title')}
+        message={
+          data?.eventType === 'seriesMaster' ? t('visitorinfoform.delete-confirm-message.series-master') : t('visitorinfoform.delete-confirm-message')
+        }
+        color="secondary"
+      ></MyConfirmDialog>
     </>
   );
 }

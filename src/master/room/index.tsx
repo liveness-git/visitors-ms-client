@@ -32,6 +32,9 @@ export function RoomSettings() {
   // カテゴリデータ取得
   const [{ data: categories }] = useLoadData<Category[]>(`/category/choices`, []);
 
+  const fieldTeaSupply = (result: boolean) => {
+    return result ? t('settings.view.room.tea-supply-true') : t('settings.view.room.tea-supply-false');
+  };
   const columns: Columns<Room>[] = [
     { title: t('settings.header.room.name'), field: 'name' },
     // { title: t('settings.header.room.email'), field: 'email' },
@@ -42,7 +45,31 @@ export function RoomSettings() {
       render: (rowData) => t(`settings.view.room.usage-range.${rowData.usageRange}`),
     },
     { title: t('settings.header.room.type'), field: 'type', render: (rowData) => t(`settings.view.room.type.${rowData.type}`) },
-    { title: t('settings.header.room.tea-supply'), field: 'teaSupply', type: 'boolean' },
+    {
+      title: t('settings.header.room.tea-supply'),
+      field: 'teaSupply',
+      type: 'boolean',
+      sorting: false,
+      render: (rowData) => {
+        if (rowData.usageRange === 'none') {
+          return (
+            <>
+              <span>
+                {t('settings.view.room.tea-supply.outside')}
+                {fieldTeaSupply(rowData.teaSupply.outside)}
+              </span>
+              <br />
+              <span>
+                {t('settings.view.room.tea-supply.inside')}
+                {fieldTeaSupply(rowData.teaSupply.inside)}
+              </span>
+            </>
+          );
+        } else {
+          return <span>{fieldTeaSupply(rowData.teaSupply[rowData.usageRange])}</span>;
+        }
+      },
+    },
     {
       title: t('settings.header.room.location'),
       field: 'location',
@@ -69,7 +96,8 @@ export function RoomSettings() {
     usageRange: 'none',
     type: 'rooms',
     sort: '',
-    teaSupply: false,
+    teaSupply: { outside: false, inside: false },
+    comment: '',
     location: '',
     category: '',
   };

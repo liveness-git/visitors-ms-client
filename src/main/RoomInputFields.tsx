@@ -1,14 +1,35 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Control, Controller, DeepMap, DeepPartial, FieldError, UseFormSetValue, useWatch } from 'react-hook-form';
-import { Box, FormControlLabel, Grid, MenuItem, Switch, TextField } from '@material-ui/core';
+import {
+  Control,
+  Controller,
+  DeepMap,
+  DeepPartial,
+  FieldError,
+  UseFormClearErrors,
+  UseFormGetValues,
+  UseFormSetValue,
+  useWatch,
+} from 'react-hook-form';
+import { Box, FormControlLabel, Grid, makeStyles, MenuItem, Switch, TextField, Typography } from '@material-ui/core';
 import { Room } from '_models/Room';
 import { Inputs } from './RowDataInputDialog';
 import { get } from 'lodash';
 
+const useStyles = makeStyles({
+  roomComment: {
+    whiteSpace: 'pre-line',
+    fontSize: '0.75rem',
+    lineHeight: '1rem',
+    padding: '0 5px 5px 5px',
+  },
+});
+
 type RoomInputFieldsProps = {
   control: Control<Inputs, object>;
   setValue: UseFormSetValue<Inputs>;
+  getValues: UseFormGetValues<Inputs>;
+  clearErrors: UseFormClearErrors<Inputs>;
   rooms: Room[] | undefined;
   roomId: string;
   disabledVisitor: boolean;
@@ -17,9 +38,10 @@ type RoomInputFieldsProps = {
 };
 
 export function RoomInputFields(props: RoomInputFieldsProps) {
-  const { control, setValue, rooms, roomId, disabledVisitor, disabledRoom, errors } = props;
+  const { control, setValue, getValues, clearErrors, rooms, roomId, disabledVisitor, disabledRoom, errors } = props;
 
   const { t } = useTranslation();
+  const classes = useStyles();
 
   // 給茶選択の制御
   const [disabledTeaSupply, setDisabledTeaSupply] = useState(false);
@@ -30,14 +52,14 @@ export function RoomInputFields(props: RoomInputFieldsProps) {
   // 給茶選択のエフェクト
   useEffect(() => {
     if (!!roomWatch && !!rooms) {
-      const result = rooms.some((room) => room.id === roomWatch && room.teaSupply);
+      const result = rooms.some((room) => room.id === roomWatch && room.teaSupply[getValues('usageRange')]);
       if (!result) setValue(`resourcies.${roomId}.teaSupply`, false, { shouldDirty: true });
       setDisabledTeaSupply(!result);
     } else {
       setValue(`resourcies.${roomId}.teaSupply`, false, { shouldDirty: true });
       setDisabledTeaSupply(true);
     }
-  }, [roomId, roomWatch, rooms, setValue]);
+  }, [getValues, roomId, roomWatch, rooms, setValue]);
 
   // 給茶人数の入力制御
   const [disabledTeaMember, setDisabledTeaMember] = useState(false);
@@ -48,18 +70,24 @@ export function RoomInputFields(props: RoomInputFieldsProps) {
   // 給茶人数のエフェクト
   useEffect(() => {
     if (!teaWatch) {
-      setValue(`resourcies.${roomId}.numberOfVisitor`, 0, { shouldDirty: true });
-      setValue(`resourcies.${roomId}.numberOfEmployee`, 0, { shouldDirty: true });
+      clearErrors([`resourcies.${roomId}.numberOfTeaSupply`, `resourcies.${roomId}.teaDetails`]);
+      setValue(`resourcies.${roomId}.numberOfTeaSupply`, 0, { shouldDirty: true });
+      setValue(`resourcies.${roomId}.teaDetails`, '', { shouldDirty: true });
     }
     setDisabledTeaMember(!teaWatch);
-  }, [teaWatch, setValue, roomId]);
+  }, [teaWatch, setValue, roomId, clearErrors]);
 
-  // 利用範囲のエフェクト（来訪者数のリセット）
+  //会議室の説明文
+  const [roomComment, setRoomComment] = useState('');
   useEffect(() => {
-    if (disabledVisitor) {
-      setValue(`resourcies.${roomId}.numberOfVisitor`, 0, { shouldDirty: true });
+    if (!!roomWatch && !!rooms) {
+      const room = rooms.filter((room) => room.id === roomWatch && !!room.comment)[0];
+      const comment = !!room ? room.comment : '';
+      setRoomComment(comment);
+    } else {
+      setRoomComment('');
     }
-  }, [setValue, disabledVisitor, roomId]);
+  }, [roomWatch, rooms]);
 
   // 多階層になっている場合の取得回避策
   const getNestedError = (name: string): FieldError => {
@@ -103,9 +131,12 @@ export function RoomInputFields(props: RoomInputFieldsProps) {
           </TextField>
         )}
       />
+      <Typography component="div" className={classes.roomComment}>
+        {roomComment}
+      </Typography>
 
       <Grid container spacing={1} style={disabledTeaSupply ? { display: 'none' } : undefined}>
-        <Grid item xs={4}>
+        <Grid item xs={5} sm={4}>
           <FormControlLabel
             control={
               <Controller
@@ -120,43 +151,48 @@ export function RoomInputFields(props: RoomInputFieldsProps) {
           />
         </Grid>
 
-        <Grid item xs={4} style={disabledVisitor ? { opacity: 0 } : undefined}>
-          <Controller
-            name={`resourcies.${roomId}.numberOfVisitor`}
-            control={control}
-            rules={{ required: t('common.form.required') as string }}
-            render={({ field }) => (
-              <TextField
-                type="number"
-                inputProps={{ min: 0, style: { textAlign: 'right' } }}
-                {...field}
-                disabled={disabledTeaMember || disabledVisitor}
-                label={t('visittable.header.number-of-visitor')}
-                error={!!getNestedError('numberOfVisitor')}
-                helperText={!!getNestedError('numberOfVisitor') && getNestedError('numberOfVisitor').message}
-              />
-            )}
-          />
-        </Grid>
+        <Grid item xs={2} sm={4} style={disabledVisitor ? { opacity: 0 } : undefined}></Grid>
 
-        <Grid item xs={4}>
+        <Grid item xs={5} sm={4}>
           <Controller
-            name={`resourcies.${roomId}.numberOfEmployee`}
+            name={`resourcies.${roomId}.numberOfTeaSupply`}
             control={control}
-            rules={{ required: t('common.form.required') as string }}
+            rules={{
+              required: t('common.form.required') as string,
+              validate: () =>
+                (getValues(`resourcies.${roomId}.teaSupply`) && getValues(`resourcies.${roomId}.numberOfTeaSupply`) > 0) ||
+                (!getValues(`resourcies.${roomId}.teaSupply`) && getValues(`resourcies.${roomId}.numberOfTeaSupply`) === 0) ||
+                (t('visitdialog.form.error.number-of-tea-supply') as string),
+            }}
             render={({ field }) => (
               <TextField
                 type="number"
                 inputProps={{ min: 0, style: { textAlign: 'right' } }}
                 {...field}
                 disabled={disabledTeaMember}
-                label={t('visittable.header.number-of-employee')}
-                error={!!getNestedError('numberOfEmployee')}
-                helperText={!!getNestedError('numberOfEmployee') && getNestedError('numberOfEmployee').message}
+                label={t('visittable.header.number-of-tea-supply')}
+                error={!!getNestedError('numberOfTeaSupply')}
+                helperText={!!getNestedError('numberOfTeaSupply') && getNestedError('numberOfTeaSupply').message}
               />
             )}
           />
         </Grid>
+
+        <Controller
+          name={`resourcies.${roomId}.teaDetails`}
+          control={control}
+          render={({ field }) => (
+            <TextField
+              style={disabledTeaMember ? { display: 'none' } : undefined}
+              multiline
+              {...field}
+              disabled={disabledTeaMember}
+              label={t('visittable.header.tea-details')}
+              error={!!getNestedError('teaDetails')}
+              helperText={!!getNestedError('teaDetails') && getNestedError('teaDetails').message}
+            />
+          )}
+        />
       </Grid>
     </Box>
   );

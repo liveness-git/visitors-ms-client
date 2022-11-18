@@ -16,16 +16,16 @@ const useStyles = makeStyles((theme) =>
 );
 
 type AddrBookUserDisplayProps = {
-  key: string;
+  propsKey: string;
   data: EmailAddress[];
 };
 
-export function AddrBookUserDisplay({ key, data }: AddrBookUserDisplayProps) {
+export function AddrBookUserDisplay({ propsKey, data }: AddrBookUserDisplayProps) {
   const classes = useStyles();
   return (
     <div className={classes.root}>
       {data.map((user, i) => (
-        <MyChip key={`${key}-${i}`} option={user} />
+        <MyChip key={`${propsKey}-${i}`} option={user} />
       ))}
     </div>
   );

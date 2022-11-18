@@ -3,17 +3,18 @@ import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
-import { useTranslation } from 'react-i18next';
+import DialogTitle from '@material-ui/core/DialogTitle';
 
-type DeleteConfirmDialogPorps = {
+type MyConfirmDialogPorps = {
   open: boolean;
-  onClose: (deleteOk: boolean) => void;
+  onClose: (ok: boolean) => void;
+  title?: string;
+  message: string | React.ReactNode;
+  color?: 'inherit' | 'default' | 'primary' | 'secondary';
 };
 
-export function DeleteConfirmDialog(props: DeleteConfirmDialogPorps) {
-  const { open, onClose } = props;
-
-  const { t } = useTranslation();
+export function MyConfirmDialog(props: MyConfirmDialogPorps) {
+  const { open, onClose, title, message, color } = props;
 
   const handleClose = () => {
     onClose(false);
@@ -28,15 +29,15 @@ export function DeleteConfirmDialog(props: DeleteConfirmDialogPorps) {
   return (
     <div>
       <Dialog open={open} onClose={handleClose} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
-        {/* <DialogTitle id="alert-dialog-title">{t('visitorinfoform.delete-confirm-title')}</DialogTitle> */}
+        {!!title && <DialogTitle id="alert-dialog-title">{title}</DialogTitle>}
         <DialogContent>
-          <DialogContentText id="alert-dialog-description">{t('common.msg.delete-confirm')}</DialogContentText>
+          <DialogContentText id="alert-dialog-description">{message}</DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleOkClose} color="secondary">
+          <Button onClick={handleOkClose} color={color}>
             OK
           </Button>
-          <Button onClick={handleCancelClose} color="secondary" autoFocus>
+          <Button onClick={handleCancelClose} color={color} autoFocus>
             CANCEL
           </Button>
         </DialogActions>

@@ -21,10 +21,7 @@ export function VisitList() {
   }, []);
 
   // カレンダー選択日の状態
-  const [selectedDate, setSelectedDate] = useSelectedDate();
-  const handleDateChange = (date: Date | null) => {
-    setSelectedDate(date);
-  };
+  const [selectedDate, setSelectedDate, handleDateChange, handleDatePrev, handleDateNext] = useSelectedDate();
 
   // ダイアログの初期値
   const initialState: DataDialogState = {
@@ -55,6 +52,8 @@ export function VisitList() {
             subtitle={t(`main.visitlist.subtitle${createdOnly ? '.created-only' : ''}`)}
             date={selectedDate}
             onDateChange={handleDateChange}
+            onDatePrev={handleDatePrev}
+            onDateNext={handleDateNext}
             dispatch={dataDialogDispatch}
           />
         </Box>
