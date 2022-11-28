@@ -70,6 +70,8 @@
 	"visitdialog.notes.recurrence-info":"パターン",
 	"visitdialog.button.add-visitor":"来訪社追加",
 	"visitdialog.button.remove-visitor":"単一来訪社",
+	"visitdialog.button.save":"予約の保存",
+	"visitdialog.button.delete":"予約の削除",
 	"visitdialog.button.check-in":"チェックイン",
 	"visitdialog.button.check-out":"チェックアウト",
 	"visitdialog.button.set-recurrence":"定期的な予定にする",
