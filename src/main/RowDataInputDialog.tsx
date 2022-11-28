@@ -708,12 +708,12 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
                     startIcon={<SaveIcon />}
                     fullWidth
                   >
-                    {t('common.button.save')}
+                    {t('visitdialog.button.save')}
                   </Button>
                 </Grid>
                 <Grid item xs={6} style={!data ? { display: 'none' } : undefined}>
                   <Button onClick={handleDelete} variant="contained" color="primary" /*disabled={!data}*/ startIcon={<DeleteIcon />} fullWidth>
-                    {t('common.button.delete')}
+                    {t('visitdialog.button.delete')}
                   </Button>
                 </Grid>
               </Grid>
