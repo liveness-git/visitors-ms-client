@@ -57,6 +57,16 @@ export function DataInputs() {
         errors={errors}
         style={!showMembers ? { display: 'none' } : undefined}
       />
+      <FormControlLabel
+        control={
+          <Controller
+            name={'disabledByRoom'}
+            control={control}
+            render={({ field }) => <Switch onChange={(e) => field.onChange(e.target.checked)} checked={field.value} color="primary" />}
+          />
+        }
+        label={t('settings.header.category.disabled-by-room')}
+      />
     </>
   );
 }

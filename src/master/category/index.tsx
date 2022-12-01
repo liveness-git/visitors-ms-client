@@ -28,6 +28,7 @@ export function CategorySettings() {
     { title: t('settings.header.category.sort'), field: 'sort' },
     { title: t('settings.header.category.limited-public'), field: 'limitedPublic', type: 'boolean' },
     // { title: t('settings.header.category.members'), field: 'members' },
+    { title: t('settings.header.category.disabled-by-room'), field: 'disabledByRoom', type: 'boolean' },
   ];
 
   const defaultValues: Inputs<Category> = {
@@ -37,6 +38,7 @@ export function CategorySettings() {
     sort: '',
     limitedPublic: false,
     members: [],
+    disabledByRoom: false,
   };
 
   return (
