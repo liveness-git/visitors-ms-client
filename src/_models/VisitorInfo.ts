@@ -31,7 +31,8 @@ export type VisitorInfoResourcies = {
 export type VisitorInfoReadOnly = {
   apptTime: string;
   startDateTime: number;
-  endDateTime: number;
+  endDateTime: number; // 清掃時間を除いた終了日時
+  cleaningTime: number; // 清掃時間
   roomName: string; //表での表示用
   roomStatus: string; // TODO:複数会議室未対応 //表での表示用
   reservationName: string;

@@ -221,7 +221,7 @@ export function TimeBar(props: TimeBarProps) {
   // イベント枠の作成 (textのoverflow:hiddenっぽくするためにsvgの入れ子で作成)
   const createEventBox = useCallback(
     (event: RowDataType, index: number, timestamp: number, rowIndex: number) => {
-      const item: ScheduleItem = { status: 'event', start: event.startDateTime, end: event.endDateTime };
+      const item: ScheduleItem = { status: 'event', start: event.startDateTime, end: event.endDateTime + event.cleaningTime };
       const boxData = getBoxData(item, boxStyle, new Date(timestamp));
       const x = boxData.x;
       const y = rectY + rectHeight * rowIndex;
