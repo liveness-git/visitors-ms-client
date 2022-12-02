@@ -236,6 +236,7 @@
 	"settings.header.room.location":"ロケーション",
 	"settings.header.room.category":"カテゴリ",
 	"settings.header.room.comment":"コメント",
+	"settings.header.room.cleaning-option":"清掃オプション",
 	"settings.view.role.name.admin":"管理者",
 	"settings.view.role.name.front":"フロント",
 	"settings.view.room.type.rooms":"会議室",

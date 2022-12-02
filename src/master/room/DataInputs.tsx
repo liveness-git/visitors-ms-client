@@ -102,7 +102,6 @@ export function DataInputs({ locations, categories }: DataInputsProps) {
               <Controller
                 name={'teaSupply.outside'}
                 control={control}
-                defaultValue={false} /* TODO:ver1.0.2呈茶選択ﾌｨｰﾙﾄﾞの型が途中で変わった為、旧データ改修用に必要。ver1.0.3で削除予定 */
                 render={({ field }) => (
                   <Switch onChange={(e) => field.onChange(e.target.checked)} checked={field.value} color="primary" disabled={disabledTeaSupply} />
                 )}
@@ -118,7 +117,6 @@ export function DataInputs({ locations, categories }: DataInputsProps) {
               <Controller
                 name={'teaSupply.inside'}
                 control={control}
-                defaultValue={false} /* TODO:ver1.0.2呈茶選択ﾌｨｰﾙﾄﾞの型が途中で変わった為、旧データ改修用に必要。ver1.0.3で削除予定 */
                 render={({ field }) => (
                   <Switch onChange={(e) => field.onChange(e.target.checked)} checked={field.value} color="primary" disabled={disabledTeaSupply} />
                 )}
@@ -150,6 +148,16 @@ export function DataInputs({ locations, categories }: DataInputsProps) {
         errors={errors}
       />
       <ControllerTextField name="comment" control={control} label={t('settings.header.room.comment')} multiline errors={errors} />
+      <FormControlLabel
+        control={
+          <Controller
+            name={'cleaningOption'}
+            control={control}
+            render={({ field }) => <Switch onChange={(e) => field.onChange(e.target.checked)} checked={field.value} color="primary" />}
+          />
+        }
+        label={t('settings.header.room.cleaning-option')}
+      />
     </>
   );
 }
