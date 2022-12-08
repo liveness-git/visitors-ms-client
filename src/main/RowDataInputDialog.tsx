@@ -1,7 +1,7 @@
 import { useCallback, useContext, useEffect, useState } from 'react';
 import { useRouteMatch } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Controller, DeepMap, DeepPartial, SubmitHandler, useFieldArray, useForm, useWatch } from 'react-hook-form';
+import { Controller, SubmitHandler, useFieldArray, useForm, useWatch } from 'react-hook-form';
 
 import { Box, Grid, Button, List, Typography, TextField } from '@material-ui/core';
 import { makeStyles, createStyles, createTheme, ThemeProvider } from '@material-ui/core/styles';
