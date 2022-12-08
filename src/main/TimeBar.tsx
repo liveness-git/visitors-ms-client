@@ -16,6 +16,8 @@ type Point = {
   y: number;
 };
 
+export type BoxStyleType = 'short' | 'long';
+
 type BoxStyle = {
   width: number;
   halfWidth: number;
@@ -165,7 +167,7 @@ const useStyles = makeStyles((theme) =>
 );
 
 type TimeBarProps = {
-  // rangesw: BoxStyle;
+  rangeToggle: BoxStyleType;
   dataDialogHook: {
     state: DataDialogState;
     dispatch: React.Dispatch<DataDialogAction>;
@@ -179,15 +181,15 @@ type TimeBarProps = {
 };
 
 export function TimeBar(props: TimeBarProps) {
-  const { dataDialogHook, schedule, events, onClickCallback, keyLabel, keyValue, onTitleClick } = props;
+  const { rangeToggle, dataDialogHook, schedule, events, onClickCallback, keyLabel, keyValue, onTitleClick } = props;
   const classes = useStyles();
 
   const [boxStyle, setBoxStyle] = useState(shortStyle);
   const [transform, setTransform] = useState(createTransform(boxStyle));
 
-  // useEffect(() => {
-  //   setBoxStyle(rangesw ? longStyle : shortStyle);
-  // }, [rangesw]);
+  useEffect(() => {
+    setBoxStyle(rangeToggle === 'short' ? shortStyle : longStyle);
+  }, [rangeToggle]);
 
   useEffect(() => {
     setTransform(createTransform(boxStyle));
