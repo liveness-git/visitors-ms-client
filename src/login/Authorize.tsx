@@ -82,7 +82,7 @@ export function Authorize() {
           <LockOutlinedIcon />
         </Avatar>
         <Typography component="h1" variant="h5">
-          LIVENESS Visitors for Microsoft
+          {process.env.REACT_APP_SYSTEM_NAME}
         </Typography>
       </div>
       <Box mt={8}>
