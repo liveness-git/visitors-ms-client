@@ -1,7 +1,7 @@
-import { useCallback, useContext, useEffect, useState } from 'react';
+import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useRouteMatch } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Controller, DeepMap, DeepPartial, SubmitHandler, useFieldArray, useForm, useWatch } from 'react-hook-form';
+import { Controller, SubmitHandler, useFieldArray, useForm, useWatch } from 'react-hook-form';
 
 import { Box, Grid, Button, List, Typography, TextField } from '@material-ui/core';
 import { makeStyles, createStyles, createTheme, ThemeProvider } from '@material-ui/core/styles';
@@ -17,6 +17,7 @@ import { VisitorInfo, EventInputType, RoomInputType } from '_models/VisitorInfo'
 import { nameOfUsageRangeForVisitor, Room, UsageRangeForVisitor } from '_models/Room';
 import { LocationParams } from '_models/Location';
 import { PatternedRecurrenceInput } from '_models/PatternedRecurrence';
+import { User } from '_models/User';
 
 import { defaultPrimary } from '_styles/Theme';
 import { tableTheme, makeTableDialogStyle } from '_styles/TableTheme';
@@ -103,10 +104,11 @@ export type AddDefaultType = {
 };
 
 // 入力フォームの初期値
-const getDefaultValues = (start?: Date, roomId?: string, usage?: UsageRangeForVisitor) => {
+const getDefaultValues = (user: User, start?: Date, roomId?: string, usage?: UsageRangeForVisitor) => {
   const startDate = start ? start : new Date();
   const room = roomId ? roomId : '';
   const usageRange = usage ? usage : 'outside';
+  const contactAddr = !!user.contactAddr ? user.contactAddr : '';
   return {
     mode: 'ins',
     iCalUId: '',
@@ -126,7 +128,7 @@ const getDefaultValues = (start?: Date, roomId?: string, usage?: UsageRangeForVi
       },
     },
     comment: '',
-    contactAddr: '',
+    contactAddr: contactAddr,
     startTime: calcStartTime(startDate),
     endTime: calcEndTimeFromStartTime(startDate),
     seriesMasterId: undefined,
@@ -169,7 +171,7 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
   const [delConfOpen, setDelConfOpen] = useState(false);
 
   // 入力フォームの登録
-  const defaultValues = getDefaultValues();
+  const defaultValues = useMemo(() => getDefaultValues(sessionStrageContext.userStorage), [sessionStrageContext.userStorage]);
   const {
     control,
     getValues,
@@ -228,9 +230,9 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
           : undefined,
       });
     } else {
-      reset(_.cloneDeep(getDefaultValues(addDefault?.start, addDefault?.roomId, addDefault?.usageRange)));
+      reset(_.cloneDeep(getDefaultValues(sessionStrageContext.userStorage, addDefault?.start, addDefault?.roomId, addDefault?.usageRange)));
     }
-  }, [data, open, reset, addDefault]);
+  }, [data, open, reset, addDefault, sessionStrageContext.userStorage]);
 
   // ::空き会議室の制御関連 start -------------------------->
   // 会議室コンポーネントの表示状態

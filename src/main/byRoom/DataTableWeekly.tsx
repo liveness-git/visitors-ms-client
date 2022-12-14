@@ -11,7 +11,8 @@ import { useLoadData } from '_utils/useLoadData';
 import { UseDataTable } from '_utils/UseDataTable';
 
 import { DataDialogAction, DataDialogState, DataTableBase, RowDataType } from '../DataTableBase';
-import { TimeBar } from '../TimeBar';
+import { BoxStyleType, TimeBar } from '../TimeBar';
+import { TimeBarRangeToggle } from 'main/TimeBarRangeToggle';
 
 type TimeBarDataType = {
   events: RowDataType[];
@@ -25,11 +26,13 @@ type DataTableProps = {
     dispatch: React.Dispatch<DataDialogAction>;
   };
   tabKey: string;
+  rangeToggle: BoxStyleType;
+  onChangeRangeToggle: (value: BoxStyleType) => void;
   onTitleClick: (timestamp: number, categoryId: string, roomId: string) => void;
 };
 
 export function DataTableWeekly(props: DataTableProps) {
-  const { currentDate, dataDialogHook, tabKey, onTitleClick } = props;
+  const { currentDate, dataDialogHook, tabKey, rangeToggle, onChangeRangeToggle, onTitleClick } = props;
 
   const { t } = useTranslation();
   const match = useRouteMatch<LocationParams>();
@@ -52,6 +55,7 @@ export function DataTableWeekly(props: DataTableProps) {
         {data.schedules.map((schedule, sIdx) => (
           <TimeBar
             key={sIdx}
+            rangeToggle={rangeToggle}
             dataDialogHook={dataDialogHook}
             schedule={schedule}
             events={schedule.eventsIndex.map((row) => row.map((eventIndex) => data!.events[eventIndex]))}
@@ -63,7 +67,7 @@ export function DataTableWeekly(props: DataTableProps) {
         ))}
       </>
     );
-  }, [data, dataDialogHook, handleDialogOpen, muiPickContext?.locale, onTitleClick]);
+  }, [data, dataDialogHook, handleDialogOpen, muiPickContext?.locale, onTitleClick, rangeToggle]);
 
   // データ取得失敗した場合
   if (isError) {
@@ -72,6 +76,7 @@ export function DataTableWeekly(props: DataTableProps) {
 
   return (
     <DataTableBase currentRow={currentRow} dataDialogHook={dataDialogHook} isLoading={isLoading} reload={reload} onRecConfClose={handleRecConfClose}>
+      <TimeBarRangeToggle rangeToggle={rangeToggle} onChangeRangeToggle={onChangeRangeToggle} />
       {timeBars}
     </DataTableBase>
   );

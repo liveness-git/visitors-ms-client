@@ -86,6 +86,7 @@ export function RoomSettings() {
         return target?.name;
       },
     },
+    { title: t('settings.header.room.cleaning-option'), field: 'cleaningOption', type: 'boolean' },
   ];
 
   const defaultValues: Inputs<Room> = {
@@ -98,6 +99,7 @@ export function RoomSettings() {
     sort: '',
     teaSupply: { outside: false, inside: false },
     comment: '',
+    cleaningOption: false,
     location: '',
     category: '',
   };

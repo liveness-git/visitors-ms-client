@@ -6,4 +6,5 @@ export type Category = {
   sort: string;
   limitedPublic: boolean;
   members: EmailAddress[];
+  disabledByRoom: boolean;
 };

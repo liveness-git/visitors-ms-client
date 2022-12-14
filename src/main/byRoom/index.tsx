@@ -1,4 +1,4 @@
-import { useEffect, useReducer } from 'react';
+import { useEffect, useReducer, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { Box, Paper } from '@material-ui/core';
@@ -13,6 +13,7 @@ import { dataDialogReducer, DataDialogState } from '../DataTableBase';
 import { HeaderActions } from '../HeaderActions';
 import { CategoryTabContext } from '../CategoryTabContext';
 import { RoomTabContext } from 'main/RoomTabContext';
+import { BoxStyleType } from 'main/TimeBar';
 
 export type ByRoomState = {
   weekly: boolean;
@@ -65,6 +66,9 @@ export function ByRoom() {
     subtitleLabel: 'main.byroom.subtitle',
   });
 
+  // タイムバー表示範囲の状態
+  const [rangeToggle, setRangeToggle] = useState<BoxStyleType>('short');
+
   // ================================
   // refreshボタンによるreload
   useEffect(() => {
@@ -82,6 +86,11 @@ export function ByRoom() {
     }
   }, [byRoomState.weekly]);
   // ================================
+
+  // タイムバー表示範囲の切替えアクション
+  const handleRangeToggleChange = (value: BoxStyleType) => {
+    setRangeToggle(value);
+  };
 
   // デフォルト → １週間表示へ切替えアクション
   const handleDefaultClick = (timestamp: number, _categoryId: string, roomId: string) => {
@@ -120,6 +129,8 @@ export function ByRoom() {
                   currentDate={selectedDate!}
                   dataDialogHook={{ state: dataDialogState, dispatch: dataDialogDispatch }}
                   tabKey="dummyId"
+                  rangeToggle={rangeToggle}
+                  onChangeRangeToggle={handleRangeToggleChange}
                   onTitleClick={handleDefaultClick}
                 />
               }
@@ -136,6 +147,8 @@ export function ByRoom() {
                   currentDate={selectedDate!}
                   dataDialogHook={{ state: dataDialogState, dispatch: dataDialogDispatch }}
                   tabKey="dummyId"
+                  rangeToggle={rangeToggle}
+                  onChangeRangeToggle={handleRangeToggleChange}
                   onTitleClick={handleWeeklyClick}
                 />
               }

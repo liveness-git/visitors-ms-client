@@ -213,12 +213,20 @@ const BaseTemplate = ({ children, adminMode, frontMode, menuOpen }: BaseTemplate
     name: '',
     isAdmin: false,
     isFront: false,
+    contactAddr: undefined,
   };
   // ストレージの状態設定
   const userStorageReducer = (state: UserStorageState, action: UserStorageAction) => {
     switch (action.type) {
       case 'signedIn':
-        return { signedIn: true, email: action.user.email, name: action.user.name, isAdmin: action.user.isAdmin, isFront: action.user.isFront };
+        return {
+          signedIn: true,
+          email: action.user.email,
+          name: action.user.name,
+          isAdmin: action.user.isAdmin,
+          isFront: action.user.isFront,
+          contactAddr: action.user.contactAddr,
+        };
       case 'signedOut':
         return initialState;
       default:
