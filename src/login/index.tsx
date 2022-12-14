@@ -47,7 +47,7 @@ export function SignIn() {
           <LockOutlinedIcon />
         </Avatar>
         <Typography component="h1" variant="h5">
-          LIVENESS Visitors for Microsoft
+          {process.env.REACT_APP_SYSTEM_NAME}
         </Typography>
         <Button onClick={handleClick} fullWidth variant="contained" color="primary" className={classes.submit}>
           {t('login.msal.login')}

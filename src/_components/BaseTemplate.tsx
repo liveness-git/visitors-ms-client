@@ -311,7 +311,7 @@ const BaseTemplate = ({ children, adminMode, frontMode, menuOpen }: BaseTemplate
                 <MenuIcon />
               </IconButton>
               <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
-                LIVENESS Visitors for Microsoft
+                {process.env.REACT_APP_SYSTEM_NAME}
               </Typography>
               <div>
                 <MyLocation></MyLocation>
