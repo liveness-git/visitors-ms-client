@@ -11,7 +11,18 @@ import {
   UseFormSetValue,
   useWatch,
 } from 'react-hook-form';
-import { Box, FormControlLabel, Grid, makeStyles, MenuItem, Switch, TextField, Typography } from '@material-ui/core';
+import {
+  Box,
+  CircularProgress,
+  FormControlLabel,
+  Grid,
+  InputAdornment,
+  makeStyles,
+  MenuItem,
+  Switch,
+  TextField,
+  Typography,
+} from '@material-ui/core';
 import { Room } from '_models/Room';
 import { Inputs } from './RowDataInputDialog';
 import { get } from 'lodash';
@@ -31,6 +42,7 @@ type RoomInputFieldsProps = {
   getValues: UseFormGetValues<Inputs>;
   clearErrors: UseFormClearErrors<Inputs>;
   rooms: Room[] | undefined;
+  roomsLoading: boolean;
   roomId: string;
   disabledVisitor: boolean;
   disabledRoom?: boolean;
@@ -38,7 +50,7 @@ type RoomInputFieldsProps = {
 };
 
 export function RoomInputFields(props: RoomInputFieldsProps) {
-  const { control, setValue, getValues, clearErrors, rooms, roomId, disabledVisitor, disabledRoom, errors } = props;
+  const { control, setValue, getValues, clearErrors, rooms, roomsLoading, roomId, disabledVisitor, disabledRoom, errors } = props;
 
   const { t } = useTranslation();
   const classes = useStyles();
@@ -51,6 +63,7 @@ export function RoomInputFields(props: RoomInputFieldsProps) {
 
   // 給茶選択のエフェクト
   useEffect(() => {
+    if (getValues('mode') === 'upd') return; // 更新時、会議室変更は出来ないため非対応
     if (!!roomWatch && !!rooms) {
       const result = rooms.some((room) => room.id === roomWatch && room.teaSupply[getValues('usageRange')]);
       if (!result) setValue(`resourcies.${roomId}.teaSupply`, false, { shouldDirty: true });
@@ -94,7 +107,26 @@ export function RoomInputFields(props: RoomInputFieldsProps) {
     return get(errors, `resourcies.${roomId}.${name}`) as FieldError;
   };
 
-  if (rooms?.length === 0) {
+  if (roomsLoading) {
+    return (
+      <Box px={2}>
+        <TextField
+          label={t(`visittable.header.room-name`)}
+          value={t('visitdialog.notes.loading-rooms')}
+          disabled
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                <CircularProgress color="inherit" style={{ padding: 10 }} />
+              </InputAdornment>
+            ),
+          }}
+        />
+      </Box>
+    );
+  }
+
+  if (!roomsLoading && rooms?.length === 0) {
     return (
       <Box px={2} style={{ textAlign: 'center', color: 'red' }}>
         {t('visitdialog.notes.no-relevant-rooms')}
@@ -123,9 +155,7 @@ export function RoomInputFields(props: RoomInputFieldsProps) {
           >
             {rooms!.map((option) => (
               <MenuItem key={option.id} value={option.id}>
-                {option.name} {'<'}
-                {option.email}
-                {'>'}
+                {option.name}
               </MenuItem>
             ))}
           </TextField>

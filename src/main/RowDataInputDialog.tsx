@@ -44,6 +44,7 @@ import { LastUpdatedField } from './LastUpdatedField';
 import { RecurrenceFields } from './RecurrenceFields';
 import { DateTimePickerFields } from './DateTimePickerFields';
 import { VisitCompanyInputFields } from './VisitCompanyInputFields';
+import { abortRequestSafe } from '_utils/Http';
 
 const useRowDataDialogStyles = makeTableDialogStyle();
 
@@ -96,6 +97,8 @@ export type Inputs = {
   EventInputType;
 
 export const ADD_ROOM_KEY = 'add-room-01';
+
+const FETCH_ROOMS_SELECT = 'FETCH_INPUT_DIALOG_ROOMS_SELECT';
 
 export type AddDefaultType = {
   start: Date;
@@ -243,7 +246,7 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
 
   // 空き会議室一覧の取得
   const defaultRoomsUrl = `/room/choices?location=${match.params.location}`;
-  const [{ data: rooms }, , setUrl] = useLoadData<Room[]>(defaultRoomsUrl, []); //更新時の呈茶switchに影響があるので初回からload
+  const [{ data: rooms, isLoading: roomsLoading }, , setUrl] = useLoadData<Room[]>('', [], FETCH_ROOMS_SELECT);
 
   // 空き会議室一覧のURL更新
   const buildRoomsUrl = useCallback(() => {
@@ -266,6 +269,9 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
     if (open) {
       buildRoomsUrl();
     }
+    return () => {
+      abortRequestSafe(FETCH_ROOMS_SELECT, 'OPTIONAL_REASON'); // manual abort
+    };
   }, [buildRoomsUrl, open, usageRangeWatch]); // 利用範囲変更時もリセット対象
 
   // 会議室コンポーネントの表示リセット
@@ -581,6 +587,7 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
                   getValues={getValues}
                   clearErrors={clearErrors}
                   rooms={rooms}
+                  roomsLoading={roomsLoading}
                   roomId={ADD_ROOM_KEY}
                   disabledVisitor={disabledVisitor}
                   errors={errors}
@@ -597,6 +604,7 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
                       getValues={getValues}
                       clearErrors={clearErrors}
                       rooms={rooms}
+                      roomsLoading={roomsLoading}
                       roomId={Object.keys(data.resourcies)[0]}
                       disabledRoom={true}
                       disabledVisitor={data.usageRange === 'inside'}
@@ -706,7 +714,7 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
                     onClick={handleSave}
                     variant="contained"
                     color="primary"
-                    disabled={!isDirty || hiddenRooms}
+                    disabled={!isDirty || hiddenRooms || roomsLoading}
                     startIcon={<SaveIcon />}
                     fullWidth
                   >

@@ -6,6 +6,7 @@ import { Room } from '_models/Room';
 
 import { useLoadData } from '_utils/useLoadData';
 import { MyTabContext } from '_components/MyTabContext';
+import { Spinner } from '_components/Spinner';
 
 type RoomTabContextProps = {
   tabPanelContent: React.ReactElement;
@@ -18,10 +19,15 @@ export function RoomTabContext(props: RoomTabContextProps) {
   const match = useRouteMatch<LocationParams>();
 
   // カテゴリ取得
-  const [{ data }, , setUrl] = useLoadData<Room[]>('', []);
+  const [{ data, isLoading }, , setUrl] = useLoadData<Room[]>('', []);
   useEffect(() => {
     setUrl(`/room/choices?location=${match.params.location}&samecategory=${selected}`);
   }, [match.params.location, selected, setUrl]);
 
-  return <>{!!data?.length && <MyTabContext data={data} tabPanelContent={tabPanelContent} selected={selected} />}</>;
+  return (
+    <>
+      <Spinner open={isLoading} />
+      {!!data?.length && <MyTabContext data={data} tabPanelContent={tabPanelContent} selected={selected} />}
+    </>
+  );
 }

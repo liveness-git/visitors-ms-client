@@ -32,11 +32,7 @@ export function RoomReadFields(props: RoomReadFieldsProps) {
       <List disablePadding={true}>
         <li key="room-name" className={classes.list}>
           <div className={classes.title}>{t('visittable.header.room-name')}</div>
-          <div className={classes.field}>
-            {data.roomName} {'<'}
-            {data.roomEmail}
-            {'>'}
-          </div>
+          <div className={classes.field}>{data.roomName}</div>
         </li>
         <li key="resource-status" className={classes.list}>
           <div className={classes.title}>{t('visittable.header.resource-status')}</div>
