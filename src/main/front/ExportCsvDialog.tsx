@@ -73,6 +73,8 @@ export function ExportCsvDialog(props: ExportCsvDialogProps) {
 
   // CSVデータの状態
   const [csvData, setCsvData] = useState<CsvDataType[]>([]);
+  // CSVファイル名の状態
+  const [filename, setFilename] = useState('');
 
   // 入力フォームの登録
   const defaultValues = useMemo(() => {
@@ -111,9 +113,6 @@ export function ExportCsvDialog(props: ExportCsvDialogProps) {
     return { label: t(`export-csv.file.header.${_.kebabCase(value)}`), key: value };
   });
 
-  // CSVファイル名
-  const filename = `visitor-${format(getValues('startDate'), 'yyyyMMdd')}-${format(getValues('endDate'), 'yyyyMMdd')}.csv`;
-
   // データ送信submit
   const onSubmit: SubmitHandler<ExportCsvParams> = async (formData) => {
     try {
@@ -123,6 +122,9 @@ export function ExportCsvDialog(props: ExportCsvDialogProps) {
       });
       if (result!.success) {
         if (!!result.value) {
+          // CSVファイル名の設定
+          setFilename(`visitor-${format(formData.startDate, 'yyyyMMdd')}-${format(formData.endDate, 'yyyyMMdd')}.csv`);
+
           const data = result.value.map((item) => {
             const roomId = Object.keys(item.resourcies)[0]; // TODO:複数会議室未対応
             return {
@@ -182,6 +184,9 @@ export function ExportCsvDialog(props: ExportCsvDialogProps) {
           }}
           size="small"
           className={classes.keyboardDatePicker}
+          inputProps={{
+            autoComplete: 'off',
+          }}
           error={!!errors[`${type}Date`]}
           helperText={errors[`${type}Date`] && errors[`${type}Date`]!.message}
         />

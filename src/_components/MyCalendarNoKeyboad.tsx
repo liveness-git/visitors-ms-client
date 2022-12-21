@@ -1,16 +1,16 @@
 import { FormHelperText, makeStyles } from '@material-ui/core';
-import { KeyboardDatePicker } from '@material-ui/pickers';
+import { DatePicker } from '@material-ui/pickers';
 import { useTranslation } from 'react-i18next';
 
 const useStyles = makeStyles({
-  keyboardDatePicker: {
-    '& .MuiOutlinedInput-adornedEnd': { paddingRight: 0 },
+  datePicker: {
     width: 'fit-content',
+    marginRight: 20,
   },
   helperText: { marginLeft: 0, marginRight: 0, textAlign: 'center' },
 });
 
-type MyCalendarProps = {
+type MyCalendarNoKeyboadProps = {
   label: string;
   date: Date | null;
   onChange: (date: Date | null) => void;
@@ -18,12 +18,12 @@ type MyCalendarProps = {
   error?: boolean;
 };
 
-function MyCalendar({ label, date, onChange, disablePast, error }: MyCalendarProps) {
+function MyCalendarNoKeyboad({ label, date, onChange, disablePast, error }: MyCalendarNoKeyboadProps) {
   const { t } = useTranslation();
   const classes = useStyles();
 
   return (
-    <KeyboardDatePicker
+    <DatePicker
       margin="normal"
       id="date-picker-dialog"
       label={label}
@@ -32,17 +32,8 @@ function MyCalendar({ label, date, onChange, disablePast, error }: MyCalendarPro
       disablePast={disablePast}
       value={date}
       onChange={onChange}
-      KeyboardButtonProps={{
-        'aria-label': 'change date',
-      }}
       size="small"
-      className={classes.keyboardDatePicker}
-      inputProps={{
-        style: {
-          width: 90,
-        },
-        autoComplete: 'off',
-      }}
+      className={classes.datePicker}
       error={error}
       invalidDateMessage={
         <FormHelperText className={classes.helperText} error>
@@ -63,4 +54,4 @@ function MyCalendar({ label, date, onChange, disablePast, error }: MyCalendarPro
   );
 }
 
-export default MyCalendar;
+export default MyCalendarNoKeyboad;

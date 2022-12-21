@@ -1,6 +1,6 @@
 import { FormHelperText, Grid, makeStyles } from '@material-ui/core';
 import MyTimePicker from '_components/MyTimePicker';
-import MyCalendar from '_components/MyCalendar';
+import MyCalendarNoKeyboad from '_components/MyCalendarNoKeyboad';
 
 const useStyles = makeStyles({
   time: {
@@ -40,7 +40,7 @@ export function DateTimePickerFields(props: DateTimePickerFieldsProps) {
     <Grid container>
       <Grid item container>
         <Grid item xs={12} sm={5}>
-          <MyCalendar label={label} date={start} disablePast={disablePast} onChange={handleDateChange} error={!!errMsg} />
+          <MyCalendarNoKeyboad label={label} date={start} disablePast={disablePast} onChange={handleDateChange} error={!!errMsg} />
         </Grid>
         <Grid container item xs={12} sm={7}>
           <Grid item className={classes.time}>
