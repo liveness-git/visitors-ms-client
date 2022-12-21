@@ -30,6 +30,7 @@ export function useSelectedDate() {
   }, [weekly]);
 
   const handleDateChange = (date: Date | null) => {
+    if (!date) return;
     setSelectedDate(date);
   };
   const handleDatePrev = () => {
