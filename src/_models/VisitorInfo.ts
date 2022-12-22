@@ -18,7 +18,6 @@ export type VisitorInfo = {
   comment: string;
   contactAddr: string;
   seriesMasterId: string | undefined;
-  reservationInfo: { officeLocation: string; department: string } | undefined; // 作成時にmongo側に保存した作成者情報(読取専用だが更新時にpostする必要がある)
 };
 
 export type VisitCompany = { name: string; rep: string };
@@ -37,6 +36,7 @@ export type VisitorInfoReadOnly = {
   roomName: string; //表での表示用
   roomStatus: string; // TODO:複数会議室未対応 //表での表示用
   reservationName: string;
+  reservationInfo: { officeLocation: string; department: string }; // 作成時にmongo側に保存した作成者情報
   reservationStatus: UserStatus;
   isAuthor: boolean;
   isAttendees: boolean;
