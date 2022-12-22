@@ -136,6 +136,7 @@ const getDefaultValues = (user: User, start?: Date, roomId?: string, usage?: Usa
     endTime: calcEndTimeFromStartTime(startDate),
     seriesMasterId: undefined,
     recurrence: undefined,
+    reservationInfo: undefined,
   } as Inputs;
 };
 
@@ -231,6 +232,7 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
               },
             } as PatternedRecurrenceInput)
           : undefined,
+        reservationInfo: data.reservationInfo,
       });
     } else {
       reset(_.cloneDeep(getDefaultValues(sessionStrageContext.userStorage, addDefault?.start, addDefault?.roomId, addDefault?.usageRange)));
@@ -702,6 +704,10 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
                     <div className={classes.field}>
                       <LastUpdatedField datetime={data.lastUpdated} />
                     </div>
+                  </li>
+                  <li key="info" className={classes.list}>
+                    <div className={classes.title}>reservationInfo</div>
+                    <div className={classes.field}>{JSON.stringify(data.reservationInfo)}</div>
                   </li>
                 </List>
               </Box>
