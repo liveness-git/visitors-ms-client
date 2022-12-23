@@ -705,7 +705,7 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
                       <LastUpdatedField datetime={data.lastUpdated} />
                     </div>
                   </li>
-                  <li key="info" className={classes.list}>
+                  <li key="info" className={classes.list} style={{ display: 'none' }}>
                     <div className={classes.title}>reservationInfo</div>
                     <div className={classes.field}>{JSON.stringify(data.reservationInfo)}</div>
                   </li>
