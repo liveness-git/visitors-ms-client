@@ -656,7 +656,12 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
                   <Controller
                     name={`numberOfVisitor`}
                     control={control}
-                    rules={{ required: t('common.form.required') as string }}
+                    rules={{
+                      required: t('common.form.required') as string,
+                      validate: () =>
+                        (getValues(`usageRange`) === 'outside' && getValues(`numberOfVisitor`) > 0) ||
+                        (t('visitdialog.form.error.number-of-visitor') as string),
+                    }}
                     render={({ field }) => (
                       <TextField
                         type="number"
@@ -675,7 +680,10 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
                   <Controller
                     name={`numberOfEmployee`}
                     control={control}
-                    rules={{ required: t('common.form.required') as string }}
+                    rules={{
+                      required: t('common.form.required') as string,
+                      validate: () => getValues(`numberOfEmployee`) > 0 || (t('visitdialog.form.error.number-of-employee') as string),
+                    }}
                     render={({ field }) => (
                       <TextField
                         type="number"
