@@ -136,6 +136,7 @@ const getDefaultValues = (user: User, start?: Date, roomId?: string, usage?: Usa
     endTime: calcEndTimeFromStartTime(startDate),
     seriesMasterId: undefined,
     recurrence: undefined,
+    reservationInfo: undefined,
   } as Inputs;
 };
 
@@ -231,6 +232,7 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
               },
             } as PatternedRecurrenceInput)
           : undefined,
+        reservationInfo: data.reservationInfo,
       });
     } else {
       reset(_.cloneDeep(getDefaultValues(sessionStrageContext.userStorage, addDefault?.start, addDefault?.roomId, addDefault?.usageRange)));
@@ -654,7 +656,13 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
                   <Controller
                     name={`numberOfVisitor`}
                     control={control}
-                    rules={{ required: t('common.form.required') as string }}
+                    rules={{
+                      required: t('common.form.required') as string,
+                      validate: () =>
+                        (getValues(`usageRange`) === 'outside' && getValues(`numberOfVisitor`) > 0) ||
+                        (getValues(`usageRange`) === 'inside' && getValues(`numberOfVisitor`) === 0) ||
+                        (t('visitdialog.form.error.number-of-visitor') as string),
+                    }}
                     render={({ field }) => (
                       <TextField
                         type="number"
@@ -673,7 +681,10 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
                   <Controller
                     name={`numberOfEmployee`}
                     control={control}
-                    rules={{ required: t('common.form.required') as string }}
+                    rules={{
+                      required: t('common.form.required') as string,
+                      validate: () => getValues(`numberOfEmployee`) > 0 || (t('visitdialog.form.error.number-of-employee') as string),
+                    }}
                     render={({ field }) => (
                       <TextField
                         type="number"
@@ -702,6 +713,10 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
                     <div className={classes.field}>
                       <LastUpdatedField datetime={data.lastUpdated} />
                     </div>
+                  </li>
+                  <li key="info" className={classes.list} style={{ display: 'none' }}>
+                    <div className={classes.title}>reservationInfo</div>
+                    <div className={classes.field}>{JSON.stringify(data.reservationInfo)}</div>
                   </li>
                 </List>
               </Box>

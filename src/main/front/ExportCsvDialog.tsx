@@ -7,7 +7,7 @@ import { CSVLink } from 'react-csv';
 import _ from 'lodash';
 
 import { Box, Button, Grid, makeStyles } from '@material-ui/core';
-import { KeyboardDatePicker } from '@material-ui/pickers';
+import { KeyboardDatePicker, MuiPickersContext } from '@material-ui/pickers';
 import ArrowRightAltIcon from '@material-ui/icons/ArrowRightAlt';
 
 import { MyDialog } from '_components/MyDialog';
@@ -34,7 +34,10 @@ type ExportCsvParams = {
 type DataType = VisitorInfo & VisitorInfoReadOnly & VisitorInfoFront;
 
 const nameOfCsvHeaders = [
-  'apptTime',
+  // 'apptTime',
+  'apptDate',
+  'apptStartTime',
+  'apptEndTime',
   'roomName',
   'teaSupply',
   'numberOfTeaSupply',
@@ -42,10 +45,12 @@ const nameOfCsvHeaders = [
   'numberOfVisitor',
   'numberOfEmployee',
   'visitCompany',
-  'checkIn',
-  'visitorCardNumber',
-  'checkOut',
+  // 'checkIn',
+  // 'visitorCardNumber',
+  // 'checkOut',
   'reservationName',
+  'reservationDepEn',
+  'reservationDepJa',
   'contactAddr',
   'subject',
   'comment',
@@ -68,6 +73,7 @@ export function ExportCsvDialog(props: ExportCsvDialogProps) {
   const classes = useStyles();
   const match = useRouteMatch<LocationParams>();
   const snackberContext = useContext(MySnackberContext); // スナックバー取得用
+  const muiPickContext = useContext(MuiPickersContext); // locale取得用
 
   const csvLinkRef = useRef<CSVLink & HTMLAnchorElement & { link: HTMLAnchorElement }>(null);
 
@@ -128,7 +134,9 @@ export function ExportCsvDialog(props: ExportCsvDialogProps) {
           const data = result.value.map((item) => {
             const roomId = Object.keys(item.resourcies)[0]; // TODO:複数会議室未対応
             return {
-              apptTime: item.apptTime,
+              apptDate: format(item.startDateTime, 'yyyy/MM/dd', { locale: muiPickContext?.locale }),
+              apptStartTime: format(item.startDateTime, 'HH:mm', { locale: muiPickContext?.locale }),
+              apptEndTime: format(item.endDateTime, 'HH:mm', { locale: muiPickContext?.locale }),
               roomName: item.roomName,
               teaSupply: item.resourcies[roomId].teaSupply ? t('export-csv.file.tea-supply-yes') : t('export-csv.file.tea-supply-no'),
               numberOfTeaSupply: item.resourcies[roomId].numberOfTeaSupply.toString(),
@@ -136,10 +144,12 @@ export function ExportCsvDialog(props: ExportCsvDialogProps) {
               numberOfVisitor: item.numberOfVisitor.toString(),
               numberOfEmployee: item.numberOfEmployee.toString(),
               visitCompany: item.visitCompany.map((co) => `${co.name} / ${co.rep}`).join(', '),
-              checkIn: item.checkIn,
-              visitorCardNumber: item.visitorCardNumber,
-              checkOut: item.checkOut,
+              // checkIn: item.checkIn,
+              // visitorCardNumber: item.visitorCardNumber,
+              // checkOut: item.checkOut,
               reservationName: item.reservationName,
+              reservationDepEn: !!item.reservationInfo ? item.reservationInfo.department : '',
+              reservationDepJa: !!item.reservationInfo ? item.reservationInfo.officeLocation : '',
               contactAddr: item.contactAddr,
               subject: item.subject,
               comment: item.comment,
