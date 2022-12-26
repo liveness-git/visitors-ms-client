@@ -660,6 +660,7 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
                       required: t('common.form.required') as string,
                       validate: () =>
                         (getValues(`usageRange`) === 'outside' && getValues(`numberOfVisitor`) > 0) ||
+                        (getValues(`usageRange`) === 'inside' && getValues(`numberOfVisitor`) === 0) ||
                         (t('visitdialog.form.error.number-of-visitor') as string),
                     }}
                     render={({ field }) => (
