@@ -87,6 +87,13 @@ export function RoomSettings() {
       },
     },
     { title: t('settings.header.room.cleaning-option'), field: 'cleaningOption', type: 'boolean' },
+    {
+      title: t('settings.header.room.reservation-periode'),
+      field: 'reservationPeriod',
+      render: (rowData) => {
+        return !!rowData.reservationPeriod ? rowData.reservationPeriod : '';
+      },
+    },
   ];
 
   const defaultValues: Inputs<Room> = {
@@ -100,6 +107,7 @@ export function RoomSettings() {
     teaSupply: { outside: false, inside: false },
     comment: '',
     cleaningOption: false,
+    reservationPeriod: 0,
     location: '',
     category: '',
   };
