@@ -83,6 +83,7 @@
 	"visitdialog.form.visitor-card-number-placeholder":"カード番号を入力してください",
 	"visitdialog.form.error.event-time":"日時の関係性に誤りがあります",
 	"visitdialog.form.error.available-time":"会議室が空いていません",
+	"visitdialog.form.error.reservation-period":"予約可能日数を超えています",
 	"visitdialog.form.error.room-not-covered":"会議室を選択しなおしてください",
 	"visitdialog.form.error.number-of-tea-supply":"呈茶総数が正しくありません",
 	"visitdialog.form.error.number-of-visitor":"来訪者数が正しくありません",
