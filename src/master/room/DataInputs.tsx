@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Controller, useFormContext, useWatch } from 'react-hook-form';
-import { FormControlLabel, Grid, Switch } from '@material-ui/core';
+import { FormControlLabel, Grid, Switch, TextField } from '@material-ui/core';
 
 import { ControllerTextField } from '_components/ControllerTextField';
 
@@ -158,6 +158,25 @@ export function DataInputs({ locations, categories }: DataInputsProps) {
         }
         label={t('settings.header.room.cleaning-option')}
       />
+      <Grid container>
+        <Grid item sm={4}>
+          <Controller
+            name={`reservationPeriod`}
+            control={control}
+            rules={{ required: t('common.form.required') as string }}
+            render={({ field }) => (
+              <TextField
+                type="number"
+                inputProps={{ min: 0, style: { textAlign: 'right' } }}
+                {...field}
+                label={t('settings.header.room.reservation-periode')}
+                error={!!errors.reservationPeriod}
+                helperText={!!errors.reservationPeriod && errors.reservationPeriod.message}
+              />
+            )}
+          />
+        </Grid>
+      </Grid>
     </>
   );
 }
