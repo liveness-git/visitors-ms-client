@@ -19,6 +19,7 @@ export type VisitorInfo = {
   contactAddr: string;
   seriesMasterId: string | undefined;
   reservationInfo: { officeLocation: string; department: string } | undefined; // 作成者のuser情報(読取専用だがmongoに保存するため更新時にもpostする必要がある)
+  withTeams: boolean;
 };
 
 export type VisitCompany = { name: string; rep: string };

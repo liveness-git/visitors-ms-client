@@ -3,7 +3,7 @@ import { useRouteMatch } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Controller, SubmitHandler, useFieldArray, useForm, useWatch } from 'react-hook-form';
 
-import { Box, Grid, Button, List, Typography, TextField } from '@material-ui/core';
+import { Box, Grid, Button, List, Typography, TextField, FormControlLabel, Switch } from '@material-ui/core';
 import { makeStyles, createStyles, createTheme, ThemeProvider } from '@material-ui/core/styles';
 import { grey } from '@material-ui/core/colors';
 
@@ -137,6 +137,7 @@ const getDefaultValues = (user: User, start?: Date, roomId?: string, usage?: Usa
     seriesMasterId: undefined,
     recurrence: undefined,
     reservationInfo: undefined,
+    withTeams: false,
   } as Inputs;
 };
 
@@ -233,6 +234,7 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
             } as PatternedRecurrenceInput)
           : undefined,
         reservationInfo: data.reservationInfo,
+        withTeams: data.withTeams,
       });
     } else {
       reset(_.cloneDeep(getDefaultValues(sessionStrageContext.userStorage, addDefault?.start, addDefault?.roomId, addDefault?.usageRange)));
@@ -517,6 +519,22 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
                   disabled={!!data}
                   errors={errors}
                 />
+              </Box>
+
+              <Box>
+                {!data?.withTeams && (
+                  <FormControlLabel
+                    control={
+                      <Controller
+                        name={`withTeams`}
+                        control={control}
+                        render={({ field }) => <Switch onChange={(e) => field.onChange(e.target.checked)} checked={field.value} color="primary" />}
+                      />
+                    }
+                    label={t('visittable.header.with-teams')}
+                  />
+                )}
+                {data?.withTeams && <>{t('visittable.header.with-teams')}</>}
               </Box>
 
               <Grid container spacing={1} style={!!getValues('recurrence') ? { display: 'none' } : undefined}>

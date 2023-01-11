@@ -50,6 +50,7 @@
 	"visittable.header.visitor-card-number":"カード番号",
 	"visittable.header.edit-action":"編集",
 	"visittable.header.number-of-people":"人数",
+	"visittable.header.with-teams":"Teams会議",
 	"visitdialog.view.resource-status-accepted":"承諾",
 	"visitdialog.view.resource-status-declined":"辞退",
 	"visitdialog.view.usage-range.outside":"社外会議",
