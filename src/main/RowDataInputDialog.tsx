@@ -45,6 +45,7 @@ import { RecurrenceFields } from './RecurrenceFields';
 import { DateTimePickerFields } from './DateTimePickerFields';
 import { VisitCompanyInputFields } from './VisitCompanyInputFields';
 import { abortRequestSafe } from '_utils/Http';
+import { TeamsOnlineChip } from './TeamsOnlineChip';
 
 const useRowDataDialogStyles = makeTableDialogStyle();
 
@@ -521,22 +522,6 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
                 />
               </Box>
 
-              <Box>
-                {!data?.withTeams && (
-                  <FormControlLabel
-                    control={
-                      <Controller
-                        name={`withTeams`}
-                        control={control}
-                        render={({ field }) => <Switch onChange={(e) => field.onChange(e.target.checked)} checked={field.value} color="primary" />}
-                      />
-                    }
-                    label={t('visittable.header.with-teams')}
-                  />
-                )}
-                {data?.withTeams && <>{t('visittable.header.with-teams')}</>}
-              </Box>
-
               <Grid container spacing={1} style={!!getValues('recurrence') ? { display: 'none' } : undefined}>
                 <Grid item xs={5} style={{ display: 'none' }}>
                   <ControllerDateTimePicker
@@ -718,7 +703,27 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
               </Grid>
             </Box>
 
-            <Box p={2}>
+            <Box px={2}>
+              {!data?.withTeams && (
+                <FormControlLabel
+                  control={
+                    <Controller
+                      name={`withTeams`}
+                      control={control}
+                      render={({ field }) => <Switch onChange={(e) => field.onChange(e.target.checked)} checked={field.value} color="primary" />}
+                    />
+                  }
+                  label={t('visittable.header.with-teams')}
+                />
+              )}
+              {data?.withTeams && (
+                <div style={{ padding: '10px 5px' }}>
+                  <TeamsOnlineChip />
+                </div>
+              )}
+            </Box>
+
+            <Box p={2} paddingTop={0}>
               <ControllerTextField name="comment" control={control} label={t('visittable.header.comment')} multiline errors={errors} />
               <ControllerTextField name="contactAddr" control={control} label={t('visittable.header.contact-addr')} required errors={errors} />
             </Box>

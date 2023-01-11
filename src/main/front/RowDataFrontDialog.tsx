@@ -10,6 +10,7 @@ import { FrontRowData } from './DataTable';
 
 import { RoomReadFields } from 'main/RoomReadFields';
 import { LastUpdatedField } from 'main/LastUpdatedField';
+import { TeamsOnlineChip } from 'main/TeamsOnlineChip';
 
 import { fetchPostData } from '_utils/FetchPostData';
 import { MySnackberContext } from '_components/MySnackbarContext';
@@ -147,7 +148,14 @@ export function RowDataFrontDialog(props: RowDataReadDialogProps) {
           <List disablePadding={true}>
             <li key="app-time" className={classes.list}>
               <div className={classes.title}>{t('visittable.header.appt-time')}</div>
-              <div className={classes.field}>{data.apptTime}</div>
+              <div className={classes.field}>
+                {data.apptTime}
+                {data?.withTeams && (
+                  <span style={{ paddingLeft: 10 }}>
+                    <TeamsOnlineChip />
+                  </span>
+                )}
+              </div>
             </li>
             <li key="check-in" className={classes.list}>
               <div className={classes.title}>{t('visittable.header.check-in')}</div>
