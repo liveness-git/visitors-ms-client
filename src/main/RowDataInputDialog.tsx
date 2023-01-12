@@ -3,7 +3,7 @@ import { useRouteMatch } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Controller, SubmitHandler, useFieldArray, useForm, useWatch } from 'react-hook-form';
 
-import { Box, Grid, Button, List, Typography, TextField } from '@material-ui/core';
+import { Box, Grid, Button, List, Typography, TextField, FormControlLabel, Switch } from '@material-ui/core';
 import { makeStyles, createStyles, createTheme, ThemeProvider } from '@material-ui/core/styles';
 import { grey } from '@material-ui/core/colors';
 
@@ -45,6 +45,7 @@ import { RecurrenceFields } from './RecurrenceFields';
 import { DateTimePickerFields } from './DateTimePickerFields';
 import { VisitCompanyInputFields } from './VisitCompanyInputFields';
 import { abortRequestSafe } from '_utils/Http';
+import { TeamsOnlineChip } from './TeamsOnlineChip';
 
 const useRowDataDialogStyles = makeTableDialogStyle();
 
@@ -137,6 +138,7 @@ const getDefaultValues = (user: User, start?: Date, roomId?: string, usage?: Usa
     seriesMasterId: undefined,
     recurrence: undefined,
     reservationInfo: undefined,
+    withTeams: false,
   } as Inputs;
 };
 
@@ -233,6 +235,7 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
             } as PatternedRecurrenceInput)
           : undefined,
         reservationInfo: data.reservationInfo,
+        withTeams: data.withTeams,
       });
     } else {
       reset(_.cloneDeep(getDefaultValues(sessionStrageContext.userStorage, addDefault?.start, addDefault?.roomId, addDefault?.usageRange)));
@@ -700,7 +703,27 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
               </Grid>
             </Box>
 
-            <Box p={2}>
+            <Box px={2}>
+              {!data?.withTeams && (
+                <FormControlLabel
+                  control={
+                    <Controller
+                      name={`withTeams`}
+                      control={control}
+                      render={({ field }) => <Switch onChange={(e) => field.onChange(e.target.checked)} checked={field.value} color="primary" />}
+                    />
+                  }
+                  label={t('visittable.header.with-teams')}
+                />
+              )}
+              {data?.withTeams && (
+                <div style={{ padding: '10px 5px' }}>
+                  <TeamsOnlineChip />
+                </div>
+              )}
+            </Box>
+
+            <Box p={2} paddingTop={0}>
               <ControllerTextField name="comment" control={control} label={t('visittable.header.comment')} multiline errors={errors} />
               <ControllerTextField name="contactAddr" control={control} label={t('visittable.header.contact-addr')} required errors={errors} />
             </Box>

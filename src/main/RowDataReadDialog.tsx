@@ -13,6 +13,7 @@ import { UserStatusIconNote } from '_components/UserStatusIconNote';
 import ReservationNameField from './ReservationNameField';
 import { LastUpdatedField } from './LastUpdatedField';
 import { RecurrenceInfo } from './RecurrenceInfo';
+import { TeamsOnlineChip } from './TeamsOnlineChip';
 
 const useRowDataDialogStyles = makeTableDialogStyle();
 
@@ -48,7 +49,14 @@ export function RowDataReadDialog(props: RowDataReadDialogProps) {
           {!data?.recurrence && (
             <li key="app-time" className={classes.list}>
               <div className={classes.title}>{t('visittable.header.appt-time')}</div>
-              <div className={classes.field}>{data.apptTime}</div>
+              <div className={classes.field}>
+                {data.apptTime}
+                {data?.withTeams && (
+                  <span style={{ paddingLeft: 10 }}>
+                    <TeamsOnlineChip />
+                  </span>
+                )}
+              </div>
             </li>
           )}
           {!!data?.recurrence && (
