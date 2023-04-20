@@ -57,7 +57,7 @@ export function Authorize() {
             }
           }
           // urlを設定
-          let url = `/${location}/main`;
+          let url = `/${location}/main/byroom`; // let url = `/${location}/main`;
           // ロケーション設定が未だの場合
           if (location === 'undefined') {
             url = '/settings/location';
