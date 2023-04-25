@@ -110,6 +110,7 @@ export function RoomSettings() {
     reservationPeriod: 0,
     location: '',
     category: '',
+    onlyDuringWorkHours: false,
   };
 
   return (

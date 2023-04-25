@@ -148,22 +148,37 @@ export function DataInputs({ locations, categories }: DataInputsProps) {
         errors={errors}
       />
       <ControllerTextField name="comment" control={control} label={t('settings.header.room.comment')} multiline errors={errors} />
-      <FormControlLabel
-        control={
-          <Controller
-            name={'cleaningOption'}
-            control={control}
-            render={({ field }) => <Switch onChange={(e) => field.onChange(e.target.checked)} checked={field.value} color="primary" />}
+      <Grid container>
+        <Grid item>
+          <FormControlLabel
+            control={
+              <Controller
+                name={'cleaningOption'}
+                control={control}
+                render={({ field }) => <Switch onChange={(e) => field.onChange(e.target.checked)} checked={field.value} color="primary" />}
+              />
+            }
+            label={t('settings.header.room.cleaning-option')}
           />
-        }
-        label={t('settings.header.room.cleaning-option')}
-      />
+        </Grid>
+        <Grid item>
+          <FormControlLabel
+            control={
+              <Controller
+                name={'onlyDuringWorkHours'}
+                control={control}
+                render={({ field }) => <Switch onChange={(e) => field.onChange(e.target.checked)} checked={field.value} color="primary" />}
+              />
+            }
+            label={t('settings.header.room.only-during-work-hours')}
+          />
+        </Grid>
+      </Grid>
       <Grid container>
         <Grid item sm={4}>
           <Controller
             name={`reservationPeriod`}
             control={control}
-            rules={{ required: t('common.form.required') as string }}
             render={({ field }) => (
               <TextField
                 type="number"
