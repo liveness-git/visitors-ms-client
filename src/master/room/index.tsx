@@ -111,6 +111,7 @@ export function RoomSettings() {
     location: '',
     category: '',
     onlyDuringWorkHours: false,
+    displayLivenessRooms: false,
   };
 
   return (

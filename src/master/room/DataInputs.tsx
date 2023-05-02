@@ -149,7 +149,7 @@ export function DataInputs({ locations, categories }: DataInputsProps) {
       />
       <ControllerTextField name="comment" control={control} label={t('settings.header.room.comment')} multiline errors={errors} />
       <Grid container>
-        <Grid item>
+        <Grid item xs={12} sm={6}>
           <FormControlLabel
             control={
               <Controller
@@ -161,7 +161,7 @@ export function DataInputs({ locations, categories }: DataInputsProps) {
             label={t('settings.header.room.cleaning-option')}
           />
         </Grid>
-        <Grid item>
+        <Grid item xs={12} sm={6}>
           <FormControlLabel
             control={
               <Controller
@@ -171,6 +171,20 @@ export function DataInputs({ locations, categories }: DataInputsProps) {
               />
             }
             label={t('settings.header.room.only-during-work-hours')}
+          />
+        </Grid>
+      </Grid>
+      <Grid container>
+        <Grid item xs={12}>
+          <FormControlLabel
+            control={
+              <Controller
+                name={'displayLivenessRooms'}
+                control={control}
+                render={({ field }) => <Switch onChange={(e) => field.onChange(e.target.checked)} checked={field.value} color="primary" />}
+              />
+            }
+            label={t('settings.header.room.display-liveness-rooms')}
           />
         </Grid>
       </Grid>
