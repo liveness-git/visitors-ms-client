@@ -248,6 +248,8 @@
 	"settings.header.room.category":"カテゴリ",
 	"settings.header.room.comment":"コメント",
 	"settings.header.room.cleaning-option":"清掃オプション",
+	"settings.header.room.only-during-work-hours":"稼働時間中のみ予約可",
+	"settings.header.room.display-liveness-rooms":"会議室別にRooms情報を表示",
 	"settings.header.room.reservation-periode":"予約可能日数",
 	"settings.view.role.name.admin":"管理者",
 	"settings.view.role.name.front":"フロント",

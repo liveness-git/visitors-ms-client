@@ -6,6 +6,7 @@ import { useRouteMatch } from 'react-router-dom';
 
 import { LocationParams } from '_models/Location';
 import { Schedule } from '_models/Schedule';
+import { LroomsType } from '_models/Lrooms';
 
 import { useLoadData } from '_utils/useLoadData';
 import { UseDataTable } from '_utils/UseDataTable';
@@ -17,6 +18,7 @@ import { TimeBarRangeToggle } from 'main/TimeBarRangeToggle';
 type TimeBarDataType = {
   events: RowDataType[];
   schedules: Schedule[];
+  lrooms: LroomsType[];
 };
 
 type DataTableProps = {
@@ -59,6 +61,7 @@ export function DataTableWeekly(props: DataTableProps) {
             dataDialogHook={dataDialogHook}
             schedule={schedule}
             events={schedule.eventsIndex.map((row) => row.map((eventIndex) => data!.events[eventIndex]))}
+            lrooms={schedule.lroomsIndex.map((row) => row.map((lroomsIndex) => data!.lrooms[lroomsIndex]))}
             onClickCallback={handleDialogOpen}
             keyLabel={format(schedule.date, 'yyyy/MM/dd (E)', { locale: muiPickContext?.locale })}
             keyValue={schedule.date.toString()}

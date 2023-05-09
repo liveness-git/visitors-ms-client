@@ -11,6 +11,7 @@ export type Schedule = {
   usageRange: UsageRangeForVisitor;
   scheduleItems: ScheduleItem[][];
   eventsIndex: number[][];
+  lroomsIndex: number[][];
 };
 export type ScheduleItem = {
   status: string;

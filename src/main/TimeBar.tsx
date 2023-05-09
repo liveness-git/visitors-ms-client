@@ -8,6 +8,7 @@ import clsx from 'clsx';
 
 import { Schedule, ScheduleItem } from '_models/Schedule';
 import { UsageRangeForVisitor } from '_models/Room';
+import { LroomsType } from '_models/Lrooms';
 
 import { DataDialogAction, DataDialogState, RowDataType } from 'main/DataTableBase';
 
@@ -156,6 +157,10 @@ const useStyles = makeStyles((theme) =>
           stroke: theme.palette.error.light,
           fill: theme.palette.error.main,
         },
+        '& rect.lrooms': {
+          cursor: 'pointer',
+          fillOpacity: 0.1,
+        },
       },
     },
     title: {
@@ -174,6 +179,7 @@ type TimeBarProps = {
   };
   schedule: Schedule;
   events: RowDataType[][];
+  lrooms: LroomsType[][];
   onClickCallback: (rowData: RowDataType) => void;
   keyLabel: string; //schedule.roomName
   keyValue: string; //schedule.roomEmail
@@ -181,7 +187,7 @@ type TimeBarProps = {
 };
 
 export function TimeBar(props: TimeBarProps) {
-  const { rangeToggle, dataDialogHook, schedule, events, onClickCallback, keyLabel, keyValue, onTitleClick } = props;
+  const { rangeToggle, dataDialogHook, schedule, events, lrooms, onClickCallback, keyLabel, keyValue, onTitleClick } = props;
   const classes = useStyles();
 
   const [boxStyle, setBoxStyle] = useState(shortStyle);
@@ -257,6 +263,39 @@ export function TimeBar(props: TimeBarProps) {
     [boxStyle, rectY, rectHeight, keyValue, onClickCallback]
   );
 
+  // LivnessRooms枠の作成 (textのoverflow:hiddenっぽくするためにsvgの入れ子で作成)
+  const createLroomsBox = useCallback(
+    (event: LroomsType, index: number, timestamp: number, rowIndex: number) => {
+      const item: ScheduleItem = { status: 'busy', start: event.startDateTime, end: event.endDateTime };
+      const boxData = getBoxData(item, boxStyle, new Date(timestamp));
+      const x = boxData.x;
+      const y = rectY + rectHeight * rowIndex;
+      const width = boxData.width;
+      const height = rectHeight;
+      return (
+        <HtmlTooltip
+          key={`${keyValue}-ev-${index}`}
+          title={
+            <>
+              <Typography variant="body2">{event.subject}</Typography>
+              <em>{event.apptTime}</em> <b>{event.reservationName}</b>
+            </>
+          }
+        >
+          <svg x={x} y={y} width={width} height={height} viewBox={`0 0 ${width} ${height}`}>
+            <g>
+              <rect className={clsx(boxData.className, 'lrooms')} x={0} y={0} width={width} height={height} rx={3} ry={5}></rect>
+              <text className="subject" x={3} y={'50%'}>
+                {event.subject}
+              </text>
+            </g>
+          </svg>
+        </HtmlTooltip>
+      );
+    },
+    [boxStyle, rectY, rectHeight, keyValue]
+  );
+
   // 新規作成ボタン(開始時間の指定あり)
   const handleCreateClick = (
     event: React.MouseEvent<SVGRectElement, MouseEvent>,
@@ -291,6 +330,11 @@ export function TimeBar(props: TimeBarProps) {
   const rectEvents = useMemo(() => {
     return <>{events.map((row, rowIndex) => row.map((event, index) => createEventBox(event, index, schedule.date, rowIndex)))}</>;
   }, [createEventBox, events, schedule]);
+
+  // LivnessRooms枠の表示（不要レンダリングが起きるためメモ化）
+  const rectLrooms = useMemo(() => {
+    return <>{lrooms.map((row, rowIndex) => row.map((event, index) => createLroomsBox(event, index, schedule.date, rowIndex)))}</>;
+  }, [createLroomsBox, lrooms, schedule]);
 
   return (
     <>
@@ -332,6 +376,7 @@ export function TimeBar(props: TimeBarProps) {
             ></rect>
             {rectSchedules}
             {rectEvents}
+            {rectLrooms}
           </g>
         </svg>
       </div>

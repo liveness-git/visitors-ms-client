@@ -4,6 +4,7 @@ import { useRouteMatch } from 'react-router-dom';
 
 import { LocationParams } from '_models/Location';
 import { Schedule } from '_models/Schedule';
+import { LroomsType } from '_models/Lrooms';
 
 import { useLoadData } from '_utils/useLoadData';
 import { UseDataTable } from '_utils/UseDataTable';
@@ -14,6 +15,7 @@ import { TimeBarRangeToggle } from 'main/TimeBarRangeToggle';
 
 type TimeBarDataType = {
   events: RowDataType[];
+  lrooms: LroomsType[];
   schedules: Schedule[];
 };
 
@@ -56,6 +58,7 @@ export function DataTable(props: DataTableProps) {
             dataDialogHook={dataDialogHook}
             schedule={schedule}
             events={schedule.eventsIndex.map((row) => row.map((eventIndex) => data!.events[eventIndex]))}
+            lrooms={schedule.lroomsIndex.map((row) => row.map((lroomsIndex) => data!.lrooms[lroomsIndex]))}
             onClickCallback={handleDialogOpen}
             keyLabel={schedule.roomName}
             keyValue={schedule.roomEmail}
