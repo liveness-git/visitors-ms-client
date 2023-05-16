@@ -16,6 +16,7 @@ export type Room = {
   teaSupply: { outside: boolean; inside: boolean };
   comment: string;
   cleaningOption: boolean;
+  noReservations?: boolean; // add ver.1.4.0
   reservationPeriod?: number; // add ver.1.0.6
   onlyDuringWorkHours?: boolean; // add ver.1.3.0
   displayLivenessRooms?: boolean; // add ver.1.3.0
