@@ -1,7 +1,11 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Controller, useFormContext, useWatch } from 'react-hook-form';
-import { FormControlLabel, Grid, Switch, TextField } from '@material-ui/core';
+import { FormControlLabel, Typography, Grid, Switch, TextField, withStyles, FormHelperText } from '@material-ui/core';
+import MuiAccordion from '@material-ui/core/Accordion';
+import MuiAccordionSummary from '@material-ui/core/AccordionSummary';
+import MuiAccordionDetails from '@material-ui/core/AccordionDetails';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
 import { ControllerTextField } from '_components/ControllerTextField';
 
@@ -15,6 +19,47 @@ type DataInputsProps = {
   locations: Location[] | undefined;
   categories: Category[] | undefined;
 };
+
+const Accordion = withStyles({
+  root: {
+    border: '1px solid rgba(0, 0, 0, .125)',
+    boxShadow: 'none',
+    '&:not(:last-child)': {
+      borderBottom: 0,
+    },
+    '&:before': {
+      display: 'none',
+    },
+    '&$expanded': {
+      margin: 'auto',
+    },
+  },
+  expanded: {},
+})(MuiAccordion);
+
+const AccordionSummary = withStyles({
+  root: {
+    backgroundColor: 'rgba(0, 0, 0, .03)',
+    borderBottom: '1px solid rgba(0, 0, 0, .125)',
+    marginBottom: -1,
+    minHeight: 48,
+    '&$expanded': {
+      minHeight: 48,
+    },
+  },
+  content: {
+    '&$expanded': {
+      margin: '0',
+    },
+  },
+  expanded: {},
+})(MuiAccordionSummary);
+
+const AccordionDetails = withStyles((theme) => ({
+  root: {
+    padding: theme.spacing(2),
+  },
+}))(MuiAccordionDetails);
 
 export function DataInputs({ locations, categories }: DataInputsProps) {
   const {
@@ -56,6 +101,15 @@ export function DataInputs({ locations, categories }: DataInputsProps) {
         break;
     }
   }, [setValue, usageRangeWatch]);
+
+  // 予約可能日数の制御用に予約不可選択を監視
+  const noReservationsWatch = useWatch({ control, name: 'noReservations' });
+  // 予約不可のエフェクト
+  useEffect(() => {
+    if (noReservationsWatch) {
+      setValue('reservationPeriod', 0, { shouldDirty: true });
+    }
+  }, [noReservationsWatch, setValue]);
 
   return (
     <>
@@ -188,24 +242,45 @@ export function DataInputs({ locations, categories }: DataInputsProps) {
           />
         </Grid>
       </Grid>
-      <Grid container>
-        <Grid item sm={4}>
-          <Controller
-            name={`reservationPeriod`}
-            control={control}
-            render={({ field }) => (
-              <TextField
-                type="number"
-                inputProps={{ min: 0, style: { textAlign: 'right' } }}
-                {...field}
-                label={t('settings.header.room.reservation-periode')}
-                error={!!errors.reservationPeriod}
-                helperText={!!errors.reservationPeriod && errors.reservationPeriod.message}
+
+      <Accordion style={{ marginTop: 10 }}>
+        <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header">
+          <Typography>{t('settings.header.room.accordion.public-reservations')}</Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          <Grid container>
+            <Grid item xs={12} sm={6}>
+              <FormControlLabel
+                control={
+                  <Controller
+                    name={'noReservations'}
+                    control={control}
+                    render={({ field }) => <Switch onChange={(e) => field.onChange(e.target.checked)} checked={field.value} color="primary" />}
+                  />
+                }
+                label={t('settings.header.room.no-reservations')}
               />
-            )}
-          />
-        </Grid>
-      </Grid>
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <Controller
+                name={`reservationPeriod`}
+                control={control}
+                render={({ field }) => (
+                  <TextField
+                    type="number"
+                    disabled={noReservationsWatch}
+                    inputProps={{ min: 0, style: { textAlign: 'right' } }}
+                    {...field}
+                    label={t('settings.header.room.reservation-periode')}
+                    error={!!errors.reservationPeriod}
+                    helperText={!!errors.reservationPeriod && errors.reservationPeriod.message}
+                  />
+                )}
+              />
+            </Grid>
+          </Grid>
+        </AccordionDetails>
+      </Accordion>
     </>
   );
 }

@@ -91,7 +91,11 @@ export function RoomSettings() {
       title: t('settings.header.room.reservation-periode'),
       field: 'reservationPeriod',
       render: (rowData) => {
-        return !!rowData.reservationPeriod ? rowData.reservationPeriod : '';
+        return rowData.noReservations
+          ? `${t('settings.view.room.reservation-periode.disabled')}`
+          : !!rowData.reservationPeriod
+          ? rowData.reservationPeriod
+          : `${t('settings.view.room.reservation-periode.nolimit')}`;
       },
     },
   ];
@@ -107,6 +111,7 @@ export function RoomSettings() {
     teaSupply: { outside: false, inside: false },
     comment: '',
     cleaningOption: false,
+    noReservations: false,
     reservationPeriod: 0,
     location: '',
     category: '',
