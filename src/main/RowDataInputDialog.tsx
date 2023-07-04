@@ -348,7 +348,7 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
       }
       const result = await fetchPostData(url, { inputs: formData, dirtyFields: cloneDeepWithoutFalse(dirtyFields) });
       if (result!.success) {
-        if (formData.mode === 'del') await new Promise((r) => setTimeout(r, 1000)); // MSGraphのイベント削除が反映されるまでのタイムラグを考慮
+        await new Promise((r) => setTimeout(r, 1000)); // MSGraphのイベントが反映されるまでのタイムラグを考慮
         await reload();
         onClose();
         snackberContext.dispatch({ type: 'success', message: t('common.msg.update-success') });
