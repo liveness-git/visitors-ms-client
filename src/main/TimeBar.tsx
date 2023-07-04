@@ -149,6 +149,13 @@ const useStyles = makeStyles((theme) =>
           stroke: theme.palette.info.main,
           fill: theme.palette.info.light,
         },
+        '& rect.myOwnPending': {
+          stroke: theme.palette.info.main,
+          fill: theme.palette.info.light,
+          strokeWidth: 10,
+          strokeDasharray: 5,
+          strokeOpacity: 0.8,
+        },
         '& rect.wait': {
           stroke: theme.palette.warning.light,
           fill: theme.palette.warning.main,
@@ -235,7 +242,7 @@ export function TimeBar(props: TimeBarProps) {
       const y = rectY + rectHeight * rowIndex;
       const width = boxData.width;
       const height = rectHeight;
-      const myEvent = event.isAttendees ? 'myOwn' : '';
+      const myEvent = event.isAttendees ? `myOwn${event.roomStatus !== 'accepted' ? 'Pending' : ''}` : '';
       return (
         <HtmlTooltip
           key={`${keyValue}-ev-${index}`}
