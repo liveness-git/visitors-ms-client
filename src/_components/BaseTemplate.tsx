@@ -27,7 +27,6 @@ import SettingsIcon from '@material-ui/icons/Settings';
 import ExpandLess from '@material-ui/icons/ExpandLess';
 import ExpandMore from '@material-ui/icons/ExpandMore';
 import RefreshIcon from '@material-ui/icons/Refresh';
-import ImportContactsIcon from '@material-ui/icons/ImportContacts';
 
 import { get } from '_utils/Http';
 import { getReloadStateFlg, getUserInfo, initReloadState, removeSessionStrage, saveUserInfo, setReloadStateFlg } from '_utils/SessionStrage';
@@ -38,7 +37,6 @@ import { MyLocation } from '_components/MyLocation';
 
 import { User } from '_models/User';
 import { LocationParams } from '_models/Location';
-import { LocalAddrImport } from 'master/LocalAddrImport';
 
 const useStyles = makeStyles((theme) => {
   const drawerWidth = 230;
@@ -272,10 +270,6 @@ const BaseTemplate = ({ children, adminMode, frontMode, menuOpen }: BaseTemplate
     window.location.reload();
   };
 
-  // アドレス情報取込み
-  const [localAddrOpen, setLocalAddrOpen] = useState(false);
-  const localAddrImport = () => setLocalAddrOpen(true);
-
   useEffect(() => {
     checkAuth();
   }, [checkAuth]);
@@ -429,15 +423,6 @@ const BaseTemplate = ({ children, adminMode, frontMode, menuOpen }: BaseTemplate
                         <ListItemText primary={t('main.menu.settings.room')} />
                       </ListItem>
                     </Link>
-                    <ListItem button onClick={localAddrImport}>
-                      <Tooltip title={t('main.menu.local-addr-import') as string}>
-                        <ListItemIcon>
-                          <ImportContactsIcon />
-                        </ListItemIcon>
-                      </Tooltip>
-                      <ListItemText primary={t('main.menu.local-addr-import')} />
-                    </ListItem>
-                    <LocalAddrImport open={localAddrOpen} />
                   </Collapse>
                 </>
               )}
