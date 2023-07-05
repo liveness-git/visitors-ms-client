@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Controller, useFormContext, useWatch } from 'react-hook-form';
-import { FormControlLabel, Typography, Grid, Switch, TextField, withStyles, FormHelperText } from '@material-ui/core';
+import { FormControlLabel, Typography, Grid, Switch, TextField, withStyles } from '@material-ui/core';
 import MuiAccordion from '@material-ui/core/Accordion';
 import MuiAccordionSummary from '@material-ui/core/AccordionSummary';
 import MuiAccordionDetails from '@material-ui/core/AccordionDetails';

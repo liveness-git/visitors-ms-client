@@ -251,7 +251,7 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
 
   // 空き会議室一覧の取得
   const defaultRoomsUrl = `/room/choices?location=${match.params.location}`;
-  const [{ data: rooms, isLoading: roomsLoading }, , setUrl] = useLoadData<Room[]>('', [], FETCH_ROOMS_SELECT);
+  const [{ data: rooms, isLoading: roomsLoading, isError: roomsError }, roomsReload, setUrl] = useLoadData<Room[]>('', [], FETCH_ROOMS_SELECT);
 
   // 空き会議室一覧のURL更新
   const buildRoomsUrl = useCallback(() => {
@@ -348,7 +348,7 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
       }
       const result = await fetchPostData(url, { inputs: formData, dirtyFields: cloneDeepWithoutFalse(dirtyFields) });
       if (result!.success) {
-        if (formData.mode === 'del') await new Promise((r) => setTimeout(r, 1000)); // MSGraphのイベント削除が反映されるまでのタイムラグを考慮
+        await new Promise((r) => setTimeout(r, 1000)); // MSGraphのイベントが反映されるまでのタイムラグを考慮
         await reload();
         onClose();
         snackberContext.dispatch({ type: 'success', message: t('common.msg.update-success') });
@@ -593,6 +593,8 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
                   clearErrors={clearErrors}
                   rooms={rooms}
                   roomsLoading={roomsLoading}
+                  roomsError={roomsError}
+                  roomsReload={roomsReload}
                   roomId={ADD_ROOM_KEY}
                   disabledVisitor={disabledVisitor}
                   errors={errors}
@@ -610,6 +612,8 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
                       clearErrors={clearErrors}
                       rooms={rooms}
                       roomsLoading={roomsLoading}
+                      roomsError={roomsError}
+                      roomsReload={roomsReload}
                       roomId={Object.keys(data.resourcies)[0]}
                       disabledRoom={true}
                       disabledVisitor={data.usageRange === 'inside'}

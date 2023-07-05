@@ -13,6 +13,7 @@ import {
 } from 'react-hook-form';
 import {
   Box,
+  Button,
   CircularProgress,
   FormControlLabel,
   Grid,
@@ -43,6 +44,8 @@ type RoomInputFieldsProps = {
   clearErrors: UseFormClearErrors<Inputs>;
   rooms: Room[] | undefined;
   roomsLoading: boolean;
+  roomsError: boolean;
+  roomsReload: () => void;
   roomId: string;
   disabledVisitor: boolean;
   disabledRoom?: boolean;
@@ -50,7 +53,8 @@ type RoomInputFieldsProps = {
 };
 
 export function RoomInputFields(props: RoomInputFieldsProps) {
-  const { control, setValue, getValues, clearErrors, rooms, roomsLoading, roomId, disabledVisitor, disabledRoom, errors } = props;
+  const { control, setValue, getValues, clearErrors, rooms, roomsLoading, roomsError, roomsReload, roomId, disabledVisitor, disabledRoom, errors } =
+    props;
 
   const { t } = useTranslation();
   const classes = useStyles();
@@ -106,6 +110,27 @@ export function RoomInputFields(props: RoomInputFieldsProps) {
   const getNestedError = (name: string): FieldError => {
     return get(errors, `resourcies.${roomId}.${name}`) as FieldError;
   };
+
+  if (roomsLoading && roomsError) {
+    return (
+      <Box px={2}>
+        <TextField
+          label={t(`visittable.header.room-name`)}
+          value={t('common.msg.fetch-failed')}
+          disabled
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                <Button color="primary" onClick={roomsReload}>
+                  retry
+                </Button>
+              </InputAdornment>
+            ),
+          }}
+        />
+      </Box>
+    );
+  }
 
   if (roomsLoading) {
     return (
