@@ -116,7 +116,7 @@ export function RoomInputFields(props: RoomInputFieldsProps) {
       <Box px={2}>
         <TextField
           label={t(`visittable.header.room-name`)}
-          value={t('visitdialog.notes.loading-rooms')}
+          value={t('common.msg.fetch-failed')}
           disabled
           InputProps={{
             endAdornment: (
