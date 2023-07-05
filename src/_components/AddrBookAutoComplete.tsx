@@ -51,7 +51,7 @@ export function AddrBookAutoComplete<TFieldValues extends FieldValues, TName ext
 
   // アドレス帳検索値のリアルタイム取得
   const onChangeHandle = async (value: string) => {
-    setFilter(value);
+    if (value.length > 2) setFilter(value);
   };
 
   return (
