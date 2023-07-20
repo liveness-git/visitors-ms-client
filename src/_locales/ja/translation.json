@@ -91,7 +91,7 @@
 	"visitdialog.form.error.number-of-visitor":"来訪者数が正しくありません",
 	"visitdialog.form.error.number-of-employee":"従業員数が正しくありません",
 	"visitdialog.form.error.recurrence.has-no-occurrence":"繰り返しに指定された範囲に発生日がありません",
-	"auto-complete.no-options-text":"メールアドレスまたは名前を入力してください",
+	"auto-complete.no-options-text":"メールアドレスまたは名前を入力してください（３文字以上）",
 	"recurrence-dialog.title":"定期的な予定の設定",
 	"recurrence-dialog.button.release-recurrence":"定期的な設定を解除",
 	"recurrence-dialog.confirm-message-1":"定期的な予定の一部に、特定の変更もしくはチェックイン済みの予約が含まれています。",
