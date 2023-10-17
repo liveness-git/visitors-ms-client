@@ -15,10 +15,11 @@ type MyCalendarNoKeyboadProps = {
   date: Date | null;
   onChange: (date: Date | null) => void;
   disablePast?: boolean;
+  disabled?: boolean;
   error?: boolean;
 };
 
-function MyCalendarNoKeyboad({ label, date, onChange, disablePast, error }: MyCalendarNoKeyboadProps) {
+function MyCalendarNoKeyboad({ label, date, onChange, disablePast, disabled, error }: MyCalendarNoKeyboadProps) {
   const { t } = useTranslation();
   const classes = useStyles();
 
@@ -30,6 +31,7 @@ function MyCalendarNoKeyboad({ label, date, onChange, disablePast, error }: MyCa
       format="yyyy/MM/dd"
       showTodayButton
       disablePast={disablePast}
+      disabled={disabled}
       value={date}
       onChange={onChange}
       size="small"

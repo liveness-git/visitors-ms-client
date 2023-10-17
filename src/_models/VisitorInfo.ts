@@ -48,6 +48,7 @@ export type VisitorInfoReadOnly = {
   lastUpdated: number;
   recurrence: PatternedRecurrence | undefined;
   eventType: GraphApiEventType;
+  isChangedByRooms: boolean; // LIVENESSRoomsでイベント変更されていた場合True
 };
 export type GraphApiEventType = 'singleInstance' | 'occurrence' | 'exception' | 'seriesMaster';
 
