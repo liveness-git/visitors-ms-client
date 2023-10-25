@@ -23,11 +23,12 @@ type DateTimePickerFieldsProps = {
   onStartChange: (date: Date) => void;
   onEndChange: (date: Date) => void;
   disablePast?: boolean;
+  disabled?: boolean;
   errMsg?: string[];
 };
 
 export function DateTimePickerFields(props: DateTimePickerFieldsProps) {
-  const { label, start, end, onDateChange, onStartChange, onEndChange, disablePast, errMsg } = props;
+  const { label, start, end, onDateChange, onStartChange, onEndChange, disablePast, disabled, errMsg } = props;
 
   const classes = useStyles();
 
@@ -40,17 +41,24 @@ export function DateTimePickerFields(props: DateTimePickerFieldsProps) {
     <Grid container>
       <Grid item container>
         <Grid item xs={12} sm={5}>
-          <MyCalendarNoKeyboad label={label} date={start} disablePast={disablePast} onChange={handleDateChange} error={!!errMsg} />
+          <MyCalendarNoKeyboad
+            label={label}
+            date={start}
+            disablePast={disablePast}
+            disabled={disabled}
+            onChange={handleDateChange}
+            error={!!errMsg}
+          />
         </Grid>
         <Grid container item xs={12} sm={7}>
           <Grid item className={classes.time}>
-            <MyTimePicker selected={start} onChange={onStartChange} error={!!errMsg}></MyTimePicker>
+            <MyTimePicker selected={start} onChange={onStartChange} disabled={disabled} error={!!errMsg}></MyTimePicker>
           </Grid>
           <Grid item className={classes.timeBetween}>
             -
           </Grid>
           <Grid item className={classes.time}>
-            <MyTimePicker selected={end} onChange={onEndChange} error={!!errMsg}></MyTimePicker>
+            <MyTimePicker selected={end} onChange={onEndChange} disabled={disabled} error={!!errMsg}></MyTimePicker>
           </Grid>
         </Grid>
       </Grid>

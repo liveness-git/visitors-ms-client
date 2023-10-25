@@ -39,11 +39,12 @@ const minutesList = [...Array(12)]
 type MyTimePickerProps = {
   selected: Date;
   onChange: (date: Date) => void;
+  disabled: boolean | undefined;
   error: boolean;
 };
 
 function MyTimePicker(props: MyTimePickerProps) {
-  const { selected, onChange, error } = props;
+  const { selected, onChange, disabled, error } = props;
 
   const classes = useStyles();
 
@@ -53,6 +54,7 @@ function MyTimePicker(props: MyTimePickerProps) {
         <TextField
           className={classes.timerSelectRoot}
           select
+          disabled={disabled}
           value={selected.getHours()}
           onChange={(e) => {
             onChange(new Date(selected.getFullYear(), selected.getMonth(), selected.getDate(), Number(e.target.value), selected.getMinutes()));
@@ -74,6 +76,7 @@ function MyTimePicker(props: MyTimePickerProps) {
         <TextField
           className={classes.timerSelectRoot}
           select
+          disabled={disabled}
           value={selected.getMinutes()}
           onChange={(e) => {
             onChange(new Date(selected.getFullYear(), selected.getMonth(), selected.getDate(), selected.getHours(), Number(e.target.value)));
@@ -81,11 +84,17 @@ function MyTimePicker(props: MyTimePickerProps) {
           inputProps={{ className: classes.timerSelect }}
           error={error}
         >
-          {minutesList.map((option, index) => (
-            <MenuItem key={`minute-${index}`} value={option.value}>
-              {('00' + Number(option.label)).slice(-2)}
+          {!disabled &&
+            minutesList.map((option, index) => (
+              <MenuItem key={`minute-${index}`} value={option.value}>
+                {('00' + Number(option.label)).slice(-2)}
+              </MenuItem>
+            ))}
+          {!!disabled && (
+            <MenuItem key={`minute-disabled`} value={selected.getMinutes()}>
+              {('00' + Number(selected.getMinutes())).slice(-2)}
             </MenuItem>
-          ))}
+          )}
         </TextField>
       </Grid>
     </Grid>

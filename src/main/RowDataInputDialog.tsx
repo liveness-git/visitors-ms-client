@@ -552,6 +552,7 @@ export function RowDataInputDialog(props: RowDataInputDialogProps) {
                     onStartChange={handleStartChange}
                     onEndChange={handleEndChange}
                     disablePast={!data}
+                    disabled={data?.isChangedByRooms}
                     errMsg={errors['startTime']?.message ? [errors['startTime']?.message] : undefined}
                   ></DateTimePickerFields>
                 </Grid>
