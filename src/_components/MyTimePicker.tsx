@@ -84,11 +84,17 @@ function MyTimePicker(props: MyTimePickerProps) {
           inputProps={{ className: classes.timerSelect }}
           error={error}
         >
-          {minutesList.map((option, index) => (
-            <MenuItem key={`minute-${index}`} value={option.value}>
-              {('00' + Number(option.label)).slice(-2)}
+          {!disabled &&
+            minutesList.map((option, index) => (
+              <MenuItem key={`minute-${index}`} value={option.value}>
+                {('00' + Number(option.label)).slice(-2)}
+              </MenuItem>
+            ))}
+          {!!disabled && (
+            <MenuItem key={`minute-disabled`} value={selected.getMinutes()}>
+              {('00' + Number(selected.getMinutes())).slice(-2)}
             </MenuItem>
-          ))}
+          )}
         </TextField>
       </Grid>
     </Grid>
