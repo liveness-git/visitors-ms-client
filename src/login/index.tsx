@@ -36,6 +36,7 @@ export function SignIn() {
       }
     } catch (error) {
       console.log(error);
+      setLoding(false);
     }
   };
 
