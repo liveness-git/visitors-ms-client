@@ -9,6 +9,8 @@
 	"common.msg.login-failed":"ログインに失敗しました。",
 	"common.msg.no-data":"該当データがありません。",
 	"common.msg.fetch-failed":"データの取得に失敗しました。",
+	"common.msg.too_many_requests":"現在アクセスが集中しています。しばらく待ってから再度実行してください。",
+	"common.msg.back_login":"しばらくすると、ログイン画面に遷移します。",
 	"common.msg.update-success":"更新しました。",
 	"common.msg.update-failed":"更新に失敗しました。",
 	"common.msg.authority-error":"権限がありません。",

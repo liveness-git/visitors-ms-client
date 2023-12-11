@@ -76,7 +76,7 @@ export function Authorize() {
         setErrMsg(true);
         setTimeout(() => {
           window.history.back();
-        }, 1500);
+        }, 5000);
       }
     };
     sendAuthCode();
@@ -96,7 +96,13 @@ export function Authorize() {
       </div>
       {errMsg && (
         <Box mt={3}>
-          <Alert severity="error">{t('common.msg.login-failed')}</Alert>
+          <Alert severity="error">
+            {t('common.msg.login-failed')}
+            <br />
+            {t('common.msg.too_many_requests')}
+            <br />
+            {t('common.msg.back_login')}
+          </Alert>
         </Box>
       )}
       <Box mt={8}>
