@@ -9,6 +9,7 @@ import { RoleSettings } from 'master/role';
 import { LocationSettings } from 'master/location';
 import { CategorySettings } from 'master/category';
 import { RoomSettings } from 'master/room';
+import { ResetCache } from 'master/ResetCache';
 
 export function Routes() {
   return (
@@ -23,6 +24,7 @@ export function Routes() {
         <Route exact path="/:location?/settings/location" component={LocationSettings} />
         <Route exact path="/:location?/settings/category" component={CategorySettings} />
         <Route exact path="/:location?/settings/room" component={RoomSettings} />
+        <Route exact path="/:location?/settings/resetcache" component={ResetCache} />
         {/*** リダイレクト ***/}
         <Redirect from="/:location?/" to="/:location?/login" />
       </Switch>

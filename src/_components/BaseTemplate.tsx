@@ -423,6 +423,11 @@ const BaseTemplate = ({ children, adminMode, frontMode, menuOpen }: BaseTemplate
                         <ListItemText primary={t('main.menu.settings.room')} />
                       </ListItem>
                     </Link>
+                    <Link to={`/${match.params.location}/settings/resetcache`} className={classes.link}>
+                      <ListItem button className={classes.nested}>
+                        <ListItemText primary={t('main.menu.settings.reset-cache')} />
+                      </ListItem>
+                    </Link>
                   </Collapse>
                 </>
               )}

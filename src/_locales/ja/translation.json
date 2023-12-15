@@ -207,7 +207,8 @@
 	"main.menu.settings.role":"ロール",
 	"main.menu.settings.location":"ロケーション",
 	"main.menu.settings.category":"カテゴリ",
-	"main.menu.settings.room":"会議室",	
+	"main.menu.settings.room":"会議室",
+	"main.menu.settings.reset-cache":"最新ﾃﾞｰﾀ取得",
 	"main.menu.refresh":"更新",
 	"main.menu.logout":"ログアウト",
 	"main.header.picker-label":"選択日",
@@ -226,6 +227,7 @@
 	"settings.title.location":"ロケーション設定",
 	"settings.title.category":"カテゴリ設定",
 	"settings.title.room":"会議室設定",
+	"settings.title.reset-cache":"最新データ取得",
 	"settings.add-master":"新規作成",
 	"settings.header.role.name":"ロール名",
 	"settings.header.role.members":"メンバー",
@@ -273,5 +275,11 @@
 	"settings.form.location.error.url.unique":"このurlは既に登録されています。",
 	"settings.form.location.error.url.pattern":"半角の小文字英数字のみ入力できます。",
 	"settings.form.room.error.email.unique":"このメールアドレスは既に登録されています。",
-	"settings.form.room.error.email.pattern":"無効なメールアドレスです。"
+	"settings.form.room.error.email.pattern":"無効なメールアドレスです。",
+	"settings.reset-cache.execution":"実行する",
+	"settings.reset-cache.confirm":"実行します。宜しいですか？",
+	"settings.reset-cache.description1":"この処理はキャッシュデータを全て削除後、GraphAPIから最新の情報を再取得します。",
+	"settings.reset-cache.description2":"データの整合性を保つため、実行中のシステム利用はお控え頂くようアナウンスをお願いいたします。",
+	"settings.reset-cache.done":"完了しました",
+	"settings.reset-cache.error":"実行エラー！サーバーログをご確認ください"
 }
