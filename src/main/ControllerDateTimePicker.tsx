@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { DateTimePicker } from '@material-ui/pickers';
-import { Control, Controller, DeepMap, DeepPartial, FieldError, UseFormGetValues } from 'react-hook-form';
+import { Control, Controller, FieldError, FieldErrors, UseFormGetValues } from 'react-hook-form';
 
 import { Inputs } from './RowDataInputDialog';
 
@@ -10,7 +10,7 @@ type ControllerDateTimePickerProps = {
   getValues: UseFormGetValues<Inputs>;
   label: string;
   handleDateTimeChange: () => void;
-  errors: DeepMap<DeepPartial<Inputs>, FieldError>;
+  errors: FieldErrors<Inputs>;
 };
 
 export function ControllerDateTimePicker(props: ControllerDateTimePickerProps) {

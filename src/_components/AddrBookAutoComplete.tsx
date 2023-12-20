@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Control, Controller, DeepMap, DeepPartial, FieldError, FieldValues, Path } from 'react-hook-form';
+import { Control, Controller, FieldError, FieldErrors, FieldValues, Path } from 'react-hook-form';
 
 import { Autocomplete, createFilterOptions } from '@material-ui/lab';
 import { CircularProgress, TextField } from '@material-ui/core';
@@ -16,7 +16,7 @@ type AddrBookAutoCompleteType<TFieldValues extends FieldValues, TName extends Pa
   name: TName;
   control: Control<TFieldValues>;
   label: string;
-  errors: DeepMap<DeepPartial<TFieldValues>, FieldError>;
+  errors: FieldErrors<TFieldValues>;
   disabled?: boolean;
   style?: CSSProperties;
 };

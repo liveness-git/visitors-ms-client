@@ -1,16 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  Control,
-  Controller,
-  DeepMap,
-  DeepPartial,
-  FieldError,
-  UseFormClearErrors,
-  UseFormGetValues,
-  UseFormSetValue,
-  useWatch,
-} from 'react-hook-form';
+import { Control, Controller, FieldError, FieldErrors, UseFormClearErrors, UseFormGetValues, UseFormSetValue, useWatch } from 'react-hook-form';
 import {
   Box,
   Button,
@@ -49,7 +39,7 @@ type RoomInputFieldsProps = {
   roomId: string;
   disabledVisitor: boolean;
   disabledRoom?: boolean;
-  errors: DeepMap<DeepPartial<Inputs>, FieldError>;
+  errors: FieldErrors<Inputs>;
 };
 
 export function RoomInputFields(props: RoomInputFieldsProps) {
@@ -108,7 +98,7 @@ export function RoomInputFields(props: RoomInputFieldsProps) {
 
   // 多階層になっている場合の取得回避策
   const getNestedError = (name: string): FieldError => {
-    return get(errors, `resourcies.${roomId}.${name}`) as FieldError;
+    return get(errors, `resourcies.${roomId}.${name}`) as unknown as FieldError;
   };
 
   if (roomsLoading && roomsError) {

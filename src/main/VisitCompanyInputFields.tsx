@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { Control, Controller, DeepMap, DeepPartial, FieldError } from 'react-hook-form';
+import { Control, Controller, FieldErrors } from 'react-hook-form';
 
 import { Grid, IconButton, TextField } from '@material-ui/core';
 import DeleteIcon from '@material-ui/icons/Delete';
@@ -11,7 +11,7 @@ type VisitCompanyInputFieldsProps = {
   index: number;
   remove: (index: number) => void;
   disabledVisitor: boolean;
-  errors: DeepMap<DeepPartial<Inputs>, FieldError>;
+  errors: FieldErrors<Inputs>;
 };
 
 export function VisitCompanyInputFields(props: VisitCompanyInputFieldsProps) {

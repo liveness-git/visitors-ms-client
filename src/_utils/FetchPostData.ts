@@ -4,7 +4,7 @@ import { DeepMap, DeepPartial } from 'react-hook-form/dist/types/utils';
 type FormDataType<T, U> = {
   inputs: T;
   // dirtyFields: { [P in keyof T]?: boolean };
-  dirtyFields: DeepMap<DeepPartial<U>, boolean>;
+  dirtyFields: Partial<Readonly<DeepMap<DeepPartial<U>, boolean>>>;
 };
 
 export async function fetchPostData<T, U, P>(url: string, formData: FormDataType<T, U>) {

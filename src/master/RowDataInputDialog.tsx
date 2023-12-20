@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { DeepPartial, Path, PathValue, SubmitHandler, UnpackNestedValue, useForm, FieldValues, FormProvider } from 'react-hook-form';
+import { DeepPartial, Path, PathValue, SubmitHandler, useForm, FieldValues, FormProvider, DefaultValues } from 'react-hook-form';
 
 import { Box, Grid, Button } from '@material-ui/core';
 import { makeStyles, createStyles, createTheme, ThemeProvider } from '@material-ui/core/styles';
@@ -57,7 +57,7 @@ export type Mastertype = 'role' | 'location' | 'category' | 'room';
 type InputMode = { mode: 'ins' | 'upd' | 'del' };
 export type Inputs<RowData> = InputMode & RowData;
 
-type DefaultValuesType<RowData> = UnpackNestedValue<DeepPartial<Inputs<RowData>>>;
+type DefaultValuesType<RowData> = DefaultValues<DeepPartial<Inputs<RowData>>>;
 export type InputFields<RowData> = {
   type: Mastertype;
   item: React.ReactNode;
@@ -65,8 +65,10 @@ export type InputFields<RowData> = {
 };
 
 // react-hook-formのsetValue。型定義が長いのでショートカット用
-type RHFSetValueP1<RowData> = Path<Inputs<RowData>>;
-type RHFSetValueP2<RowData> = UnpackNestedValue<PathValue<Inputs<RowData>, Path<Inputs<RowData>>>>;
+type RHFSetValueP1<RowData> = Path<DeepPartial<Inputs<RowData>>>;
+type RHFSetValueP2<RowData> = PathValue<DeepPartial<Inputs<RowData>>, Path<DeepPartial<Inputs<RowData>>>>;
+
+//<PathValue<Inputs<RowData>, Path<Inputs<RowData>>>;
 
 type RowDataInputDialogProps<RowData> = {
   inputFields: InputFields<RowData>;
@@ -129,7 +131,7 @@ export function RowDataInputDialog<RowData>(props: RowDataInputDialogProps<RowDa
   };
 
   // データ送信submit
-  const onSubmit: SubmitHandler<Inputs<RowData>> = async (formData) => {
+  const onSubmit: SubmitHandler<DeepPartial<Inputs<RowData>>> = async (formData) => {
     try {
       let url = '';
       switch (formData.mode) {
@@ -163,7 +165,7 @@ export function RowDataInputDialog<RowData>(props: RowDataInputDialogProps<RowDa
           const errors = result!.errors;
           for (let key in errors) {
             let name = key as keyof Inputs<RowData> as Path<Inputs<RowData>>;
-            setError(name, { message: t(errors[name]![0]) });
+            setError(name as Path<DeepPartial<Inputs<RowData>>>, { message: t(errors[name]![0]) });
           }
         }
         // snackberContext.dispatch({ type: 'error', message: t('common.msg.update-failed') });

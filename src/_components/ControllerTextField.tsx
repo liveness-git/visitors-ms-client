@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { MenuItem, TextField } from '@material-ui/core';
-import { Control, Controller, DeepMap, DeepPartial, FieldError, FieldValues, Path, RegisterOptions } from 'react-hook-form';
+import { Control, Controller, FieldError, FieldErrors, FieldValues, Path, RegisterOptions } from 'react-hook-form';
 
 type ControllerTextFieldProps<TFieldValues extends FieldValues, TName extends Path<TFieldValues>> = {
   name: TName;
@@ -11,7 +11,7 @@ type ControllerTextFieldProps<TFieldValues extends FieldValues, TName extends Pa
   multiline?: true | boolean;
   disabled?: true | boolean;
   selectList?: SelectOption[];
-  errors: DeepMap<DeepPartial<TFieldValues>, FieldError>;
+  errors: FieldErrors<TFieldValues>;
 };
 export type SelectOption = {
   label: string;

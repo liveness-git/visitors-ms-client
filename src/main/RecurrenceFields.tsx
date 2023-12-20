@@ -1,6 +1,6 @@
 import { MouseEventHandler, useContext, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { DeepMap, DeepPartial, FieldError, UseFormClearErrors, UseFormGetValues, UseFormSetValue } from 'react-hook-form';
+import { FieldErrors, UseFormClearErrors, UseFormGetValues, UseFormSetValue } from 'react-hook-form';
 
 import { addMonths, addYears, format, startOfDay } from 'date-fns';
 import _ from 'lodash';
@@ -183,7 +183,7 @@ type RecurrenceFieldsProps = {
   getValues: UseFormGetValues<Inputs>;
   setValue: UseFormSetValue<Inputs>;
   clearErrors: UseFormClearErrors<Inputs>;
-  errors: DeepMap<DeepPartial<Inputs>, FieldError>;
+  errors: FieldErrors<Inputs>;
 };
 
 export function RecurrenceFields(props: RecurrenceFieldsProps) {
