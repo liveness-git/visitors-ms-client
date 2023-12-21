@@ -1,7 +1,9 @@
 import { BrowserRouter, Redirect, Route, Switch } from 'react-router-dom';
 
-import { SignIn } from 'login';
-import { AuthorizeWrapper } from 'login/Authorize';
+// import { SignIn } from 'login';
+// import { AuthorizeWrapper } from 'login/Authorize';
+import { SignIn } from 'loginV2';
+import { AuthorizeWrapper } from 'loginV2/Authorize';
 import { VisitList } from 'main/visitList';
 import { ByRoom } from 'main/byRoom';
 import { Front } from 'main/front';
@@ -16,7 +18,8 @@ export function Routes() {
     <BrowserRouter>
       <Switch>
         <Route exact path="/:location?/login" component={SignIn} />
-        <Route exact path="/oauth/redirect" component={AuthorizeWrapper} />
+        {/* <Route exact path="/oauth/redirect" component={AuthorizeWrapper} /> */}
+        <Route exact path="/redirect" component={AuthorizeWrapper} />
         <Route exact path="/:location/main" component={VisitList} />
         <Route exact path="/:location/main/byroom" component={ByRoom} />
         <Route exact path="/:location/front" component={Front} />

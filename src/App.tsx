@@ -6,14 +6,21 @@ import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import JaDateFnsUtils from '_utils/JaDateFnsUtils';
 import jaLocale from 'date-fns/locale/ja';
 
-function App() {
+import { IPublicClientApplication } from '@azure/msal-browser';
+import { MsalProvider } from '@azure/msal-react';
+
+type AppProps = { msalInstance: IPublicClientApplication };
+
+function App({ msalInstance }: AppProps) {
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <MuiPickersUtilsProvider utils={JaDateFnsUtils} locale={jaLocale}>
-        <Routes />
-      </MuiPickersUtilsProvider>
-    </ThemeProvider>
+    <MsalProvider instance={msalInstance}>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <MuiPickersUtilsProvider utils={JaDateFnsUtils} locale={jaLocale}>
+          <Routes />
+        </MuiPickersUtilsProvider>
+      </ThemeProvider>
+    </MsalProvider>
   );
 }
 

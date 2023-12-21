@@ -37,6 +37,7 @@ import { MyLocation } from '_components/MyLocation';
 
 import { User } from '_models/User';
 import { LocationParams } from '_models/Location';
+import { AuthenticatedTemplate, UnauthenticatedTemplate } from '@azure/msal-react';
 
 const useStyles = makeStyles((theme) => {
   const drawerWidth = 230;
@@ -239,24 +240,24 @@ const BaseTemplate = ({ children, adminMode, frontMode, menuOpen }: BaseTemplate
   // MS認証状態の確認
   const checkAuth = useCallback(async () => {
     try {
-      const data = getUserInfo(); //sessionStrageからUser情報を取得
-      if (data) {
-        // sessionStrageから復元
-        const user = JSON.parse(data) as User;
-        dispatch({ type: 'signedIn', user: user });
-      } else {
-        // サーバーのセッションにユーザー情報が登録されているか確認
-        const result = await get<User>('/user/me');
-        if (result.parsedBody) {
-          const user = result.parsedBody;
-          saveUserInfo(JSON.stringify(user)); //sessionStrageにUser情報を格納
-          dispatch({ type: 'signedIn', user: user });
-        } else {
-          removeSessionStrage();
-          dispatch({ type: 'signedOut' });
-          console.log('Failed to retrieve email');
-        }
-      }
+      // const data = getUserInfo(); //sessionStrageからUser情報を取得
+      // if (data) {
+      //   // sessionStrageから復元
+      //   const user = JSON.parse(data) as User;
+      //   dispatch({ type: 'signedIn', user: user });
+      // } else {
+      //   // サーバーのセッションにユーザー情報が登録されているか確認
+      //   const result = await get<User>('/user/me');
+      //   if (result.parsedBody) {
+      //     const user = result.parsedBody;
+      //     saveUserInfo(JSON.stringify(user)); //sessionStrageにUser情報を格納
+      //     dispatch({ type: 'signedIn', user: user });
+      //   } else {
+      //     removeSessionStrage();
+      //     dispatch({ type: 'signedOut' });
+      //     console.log('Failed to retrieve email');
+      //   }
+      // }
     } catch (error) {
       // serverのpoliciesで弾かれた場合、ここへ遷移
       removeSessionStrage();
@@ -291,171 +292,178 @@ const BaseTemplate = ({ children, adminMode, frontMode, menuOpen }: BaseTemplate
     conditionalChildren = error; // フロントRoleエラー
   }
 
-  if (!userStorage.signedIn) {
-    return <></>;
-  }
+  // if (!userStorage.signedIn) {
+  //   return <></>;
+  // }
 
   return (
-    <SessionStrageContext.Provider value={{ userStorage, dispatch }}>
-      <MySnackberProvider>
-        <div className={classes.root}>
-          <AppBar position="absolute" className={clsx(classes.appBar, open && classes.appBarShift)}>
-            <Toolbar className={classes.toolbar}>
-              <IconButton
-                edge="start"
-                color="inherit"
-                aria-label="open drawer"
-                onClick={handleDrawerOpen}
-                className={clsx(classes.menuButton, open && classes.menuButtonHidden)}
+    <>
+      <UnauthenticatedTemplate>
+        <p>No users are signed in!</p>
+      </UnauthenticatedTemplate>
+      <AuthenticatedTemplate>
+        <SessionStrageContext.Provider value={{ userStorage, dispatch }}>
+          <MySnackberProvider>
+            <div className={classes.root}>
+              <AppBar position="absolute" className={clsx(classes.appBar, open && classes.appBarShift)}>
+                <Toolbar className={classes.toolbar}>
+                  <IconButton
+                    edge="start"
+                    color="inherit"
+                    aria-label="open drawer"
+                    onClick={handleDrawerOpen}
+                    className={clsx(classes.menuButton, open && classes.menuButtonHidden)}
+                  >
+                    <MenuIcon />
+                  </IconButton>
+                  <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
+                    {process.env.REACT_APP_SYSTEM_NAME}
+                  </Typography>
+                  <div>
+                    <MyLocation></MyLocation>
+                  </div>
+                  <div>
+                    <IconButton
+                      aria-label="account of current user"
+                      aria-controls="menu-appbar"
+                      aria-haspopup="true"
+                      onClick={handleAccountMenu}
+                      color="inherit"
+                    >
+                      <AccountCircle />
+                    </IconButton>
+                    <Menu
+                      id="menu-appbar"
+                      anchorEl={anchorEl}
+                      anchorOrigin={{
+                        vertical: 'top',
+                        horizontal: 'right',
+                      }}
+                      keepMounted
+                      transformOrigin={{
+                        vertical: 'top',
+                        horizontal: 'right',
+                      }}
+                      open={accountIconOpen}
+                      onClose={handleMenuClose}
+                    >
+                      <MenuItem onClick={handleMenuClose}>{userStorage.email}</MenuItem>
+                      <MenuItem onClick={handleSignOut}>{t('main.menu.logout')}</MenuItem>
+                    </Menu>
+                  </div>
+                </Toolbar>
+              </AppBar>
+              <Drawer
+                variant="permanent"
+                classes={{
+                  paper: clsx(classes.drawerPaper, !open && classes.drawerPaperClose),
+                }}
+                open={open}
               >
-                <MenuIcon />
-              </IconButton>
-              <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
-                {process.env.REACT_APP_SYSTEM_NAME}
-              </Typography>
-              <div>
-                <MyLocation></MyLocation>
-              </div>
-              <div>
-                <IconButton
-                  aria-label="account of current user"
-                  aria-controls="menu-appbar"
-                  aria-haspopup="true"
-                  onClick={handleAccountMenu}
-                  color="inherit"
-                >
-                  <AccountCircle />
-                </IconButton>
-                <Menu
-                  id="menu-appbar"
-                  anchorEl={anchorEl}
-                  anchorOrigin={{
-                    vertical: 'top',
-                    horizontal: 'right',
-                  }}
-                  keepMounted
-                  transformOrigin={{
-                    vertical: 'top',
-                    horizontal: 'right',
-                  }}
-                  open={accountIconOpen}
-                  onClose={handleMenuClose}
-                >
-                  <MenuItem onClick={handleMenuClose}>{userStorage.email}</MenuItem>
-                  <MenuItem onClick={handleSignOut}>{t('main.menu.logout')}</MenuItem>
-                </Menu>
-              </div>
-            </Toolbar>
-          </AppBar>
-          <Drawer
-            variant="permanent"
-            classes={{
-              paper: clsx(classes.drawerPaper, !open && classes.drawerPaperClose),
-            }}
-            open={open}
-          >
-            <div className={classes.drawerCloseIcon}>
-              <IconButton onClick={handleDrawerClose}>
-                <ChevronLeftIcon />
-              </IconButton>
-            </div>
-            <Divider />
-            <List>
-              <Link to={`/${match.params.location}/main`} className={classes.link}>
-                <ListItem button>
-                  <Tooltip title={t('main.menu.created-visit-info') as string}>
-                    <ListItemIcon>
-                      <FaceIcon />
-                    </ListItemIcon>
-                  </Tooltip>
-                  <ListItemText primary={t('main.menu.created-visit-info')} />
-                </ListItem>
-              </Link>
-              <Link to={`/${match.params.location}/main/byroom`} className={classes.link}>
-                <ListItem button>
-                  <Tooltip title={t('main.menu.by-meeting-room') as string}>
-                    <ListItemIcon>
-                      <MeetingRoomIcon />
-                    </ListItemIcon>
-                  </Tooltip>
-                  <ListItemText primary={t('main.menu.by-meeting-room')} />
-                </ListItem>
-              </Link>
-              {userStorage.isFront && (
-                <Link to={`/${match.params.location}/front`} className={classes.link}>
-                  <ListItem button>
-                    <Tooltip title={t('main.menu.front') as string}>
+                <div className={classes.drawerCloseIcon}>
+                  <IconButton onClick={handleDrawerClose}>
+                    <ChevronLeftIcon />
+                  </IconButton>
+                </div>
+                <Divider />
+                <List>
+                  <Link to={`/${match.params.location}/main`} className={classes.link}>
+                    <ListItem button>
+                      <Tooltip title={t('main.menu.created-visit-info') as string}>
+                        <ListItemIcon>
+                          <FaceIcon />
+                        </ListItemIcon>
+                      </Tooltip>
+                      <ListItemText primary={t('main.menu.created-visit-info')} />
+                    </ListItem>
+                  </Link>
+                  <Link to={`/${match.params.location}/main/byroom`} className={classes.link}>
+                    <ListItem button>
+                      <Tooltip title={t('main.menu.by-meeting-room') as string}>
+                        <ListItemIcon>
+                          <MeetingRoomIcon />
+                        </ListItemIcon>
+                      </Tooltip>
+                      <ListItemText primary={t('main.menu.by-meeting-room')} />
+                    </ListItem>
+                  </Link>
+                  {userStorage.isFront && (
+                    <Link to={`/${match.params.location}/front`} className={classes.link}>
+                      <ListItem button>
+                        <Tooltip title={t('main.menu.front') as string}>
+                          <ListItemIcon>
+                            <PeopleIcon />
+                          </ListItemIcon>
+                        </Tooltip>
+                        <ListItemText primary={t('main.menu.front')} />
+                      </ListItem>
+                    </Link>
+                  )}
+                  {userStorage.isAdmin && (
+                    <>
+                      <ListItem button onClick={handleSettingsClick}>
+                        <ListItemIcon>
+                          <SettingsIcon />
+                        </ListItemIcon>
+                        <ListItemText primary={t('main.menu.settings')} />
+                        {settingsOpen ? <ExpandLess /> : <ExpandMore />}
+                      </ListItem>
+                      <Collapse in={settingsOpen} timeout="auto" unmountOnExit>
+                        <Link to={`/${match.params.location}/settings/role`} className={classes.link}>
+                          <ListItem button className={classes.nested}>
+                            <ListItemText primary={t('main.menu.settings.role')} />
+                          </ListItem>
+                        </Link>
+                        <Link to={`/${match.params.location}/settings/location`} className={classes.link}>
+                          <ListItem button className={classes.nested}>
+                            <ListItemText primary={t('main.menu.settings.location')} />
+                          </ListItem>
+                        </Link>
+                        <Link to={`/${match.params.location}/settings/category`} className={classes.link}>
+                          <ListItem button className={classes.nested}>
+                            <ListItemText primary={t('main.menu.settings.category')} />
+                          </ListItem>
+                        </Link>
+                        <Link to={`/${match.params.location}/settings/room`} className={classes.link}>
+                          <ListItem button className={classes.nested}>
+                            <ListItemText primary={t('main.menu.settings.room')} />
+                          </ListItem>
+                        </Link>
+                        <Link to={`/${match.params.location}/settings/resetcache`} className={classes.link}>
+                          <ListItem button className={classes.nested}>
+                            <ListItemText primary={t('main.menu.settings.reset-cache')} />
+                          </ListItem>
+                        </Link>
+                      </Collapse>
+                    </>
+                  )}
+                  <ListItem button onClick={refreshPage}>
+                    <Tooltip title={t('main.menu.refresh') as string}>
                       <ListItemIcon>
-                        <PeopleIcon />
+                        <RefreshIcon />
                       </ListItemIcon>
                     </Tooltip>
-                    <ListItemText primary={t('main.menu.front')} />
+                    <ListItemText primary={t('main.menu.refresh')} />
                   </ListItem>
-                </Link>
-              )}
-              {userStorage.isAdmin && (
-                <>
-                  <ListItem button onClick={handleSettingsClick}>
-                    <ListItemIcon>
-                      <SettingsIcon />
-                    </ListItemIcon>
-                    <ListItemText primary={t('main.menu.settings')} />
-                    {settingsOpen ? <ExpandLess /> : <ExpandMore />}
-                  </ListItem>
-                  <Collapse in={settingsOpen} timeout="auto" unmountOnExit>
-                    <Link to={`/${match.params.location}/settings/role`} className={classes.link}>
-                      <ListItem button className={classes.nested}>
-                        <ListItemText primary={t('main.menu.settings.role')} />
-                      </ListItem>
-                    </Link>
-                    <Link to={`/${match.params.location}/settings/location`} className={classes.link}>
-                      <ListItem button className={classes.nested}>
-                        <ListItemText primary={t('main.menu.settings.location')} />
-                      </ListItem>
-                    </Link>
-                    <Link to={`/${match.params.location}/settings/category`} className={classes.link}>
-                      <ListItem button className={classes.nested}>
-                        <ListItemText primary={t('main.menu.settings.category')} />
-                      </ListItem>
-                    </Link>
-                    <Link to={`/${match.params.location}/settings/room`} className={classes.link}>
-                      <ListItem button className={classes.nested}>
-                        <ListItemText primary={t('main.menu.settings.room')} />
-                      </ListItem>
-                    </Link>
-                    <Link to={`/${match.params.location}/settings/resetcache`} className={classes.link}>
-                      <ListItem button className={classes.nested}>
-                        <ListItemText primary={t('main.menu.settings.reset-cache')} />
-                      </ListItem>
-                    </Link>
-                  </Collapse>
-                </>
-              )}
-              <ListItem button onClick={refreshPage}>
-                <Tooltip title={t('main.menu.refresh') as string}>
-                  <ListItemIcon>
-                    <RefreshIcon />
-                  </ListItemIcon>
-                </Tooltip>
-                <ListItemText primary={t('main.menu.refresh')} />
-              </ListItem>
-            </List>
-          </Drawer>
-          <main className={classes.content}>
-            <div className={classes.appBarSpacer} />
-            <Container maxWidth="lg" className={classes.container}>
-              {/* <Typography component="h2" variant="h5" color="inherit" noWrap className={classes.pageTitle}>
+                </List>
+              </Drawer>
+              <main className={classes.content}>
+                <div className={classes.appBarSpacer} />
+                <Container maxWidth="lg" className={classes.container}>
+                  {/* <Typography component="h2" variant="h5" color="inherit" noWrap className={classes.pageTitle}>
               {title}
             </Typography> */}
-              {conditionalChildren}
-              <Box pt={4}>
-                <Copyright />
-              </Box>
-            </Container>
-          </main>
-        </div>
-      </MySnackberProvider>
-    </SessionStrageContext.Provider>
+                  {conditionalChildren}
+                  <Box pt={4}>
+                    <Copyright />
+                  </Box>
+                </Container>
+              </main>
+            </div>
+          </MySnackberProvider>
+        </SessionStrageContext.Provider>
+      </AuthenticatedTemplate>
+    </>
   );
 };
 
