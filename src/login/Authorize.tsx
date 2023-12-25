@@ -13,6 +13,7 @@ import { Location } from '_models/Location';
 
 type Response = {
   ok: boolean;
+  topPage: string | undefined;
 };
 
 const useStyles = makeLoginStyles();
@@ -61,7 +62,11 @@ export function Authorize() {
             }
           }
           // urlを設定
-          let url = `/${location}/main/byroom`; // let url = `/${location}/main`;
+          let url = `/${location}/main`;
+          if (result.parsedBody && result.parsedBody.topPage) {
+            url = `${url}/${result.parsedBody.topPage}`;
+          }
+
           // ロケーション設定が未だの場合
           if (location === 'undefined') {
             url = '/settings/location';

@@ -68,5 +68,8 @@
     "gulp": "^4.0.2",
     "rxjs": "^6.6.7"
   },
-  "proxy": "https://localhost:1337/"
+  "proxy": "https://localhost:1337/",
+  "volta": {
+    "node": "10.19.0"
+  }
 }
