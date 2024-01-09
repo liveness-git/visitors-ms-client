@@ -1,5 +1,6 @@
 import { Avatar, Box, Container, Typography } from '@material-ui/core';
 import { LockOutlined as LockOutlinedIcon } from '@material-ui/icons';
+import { Alert } from '@material-ui/lab';
 import { Copyright } from '../_components/Copyright';
 import { Spinner } from '../_components/Spinner';
 import { MySnackberContext, MySnackberProvider } from '_components/MySnackbarContext';
@@ -12,6 +13,7 @@ import { Location } from '_models/Location';
 
 type Response = {
   ok: boolean;
+  topPage: string | undefined;
 };
 
 const useStyles = makeLoginStyles();
@@ -31,6 +33,9 @@ export function Authorize() {
 
   // スピナーの状態
   const [isLoading, setLoding] = useState(true);
+
+  // スピナーの状態
+  const [errMsg, setErrMsg] = useState(false);
 
   useEffect(() => {
     // 認可コードをバックエンドへ渡す
@@ -57,7 +62,11 @@ export function Authorize() {
             }
           }
           // urlを設定
-          let url = `/${location}/main/byroom`; // let url = `/${location}/main`;
+          let url = `/${location}/main`;
+          if (result.parsedBody && result.parsedBody.topPage) {
+            url = `${url}/${result.parsedBody.topPage}`;
+          }
+
           // ロケーション設定が未だの場合
           if (location === 'undefined') {
             url = '/settings/location';
@@ -68,6 +77,11 @@ export function Authorize() {
         }
       } catch (error) {
         console.log(error);
+        setLoding(false);
+        setErrMsg(true);
+        setTimeout(() => {
+          window.history.back();
+        }, 5000);
       }
     };
     sendAuthCode();
@@ -85,6 +99,17 @@ export function Authorize() {
           {process.env.REACT_APP_SYSTEM_NAME}
         </Typography>
       </div>
+      {errMsg && (
+        <Box mt={3}>
+          <Alert severity="error">
+            {t('common.msg.login-failed')}
+            <br />
+            {t('common.msg.too_many_requests')}
+            <br />
+            {t('common.msg.back_login')}
+          </Alert>
+        </Box>
+      )}
       <Box mt={8}>
         <Copyright />
       </Box>
